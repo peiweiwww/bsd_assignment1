@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLOWMAIL</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --yellow: #f5e642;
+      --border: 4px solid #000;
+      --border-thick: 8px solid #000;
+      --border-xl: 14px solid #000;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--black);
+      font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+      border: var(--border-xl);
+      min-height: 100vh;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      border-bottom: var(--border-thick);
+      display: grid;
+      grid-template-columns: 1fr auto;
+    }
+
+    .wordmark {
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      line-height: 1;
+      padding: 1.5rem 2rem;
+      border-right: var(--border-thick);
+    }
+
+    .topbar-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+    }
+
+    .topbar-meta span {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-family: 'Arial Narrow', Arial, sans-serif;
+    }
+
+    /* ── MAIN GRID ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      grid-template-rows: auto auto;
+      border-bottom: var(--border-thick);
+    }
+
+    /* ── HERO TEXT ── */
+    .hero {
+      border-right: var(--border-thick);
+      padding: 3rem 2rem 2.5rem;
+      border-bottom: var(--border-thick);
+    }
+
+    .hero h1 {
+      font-size: clamp(4rem, 11vw, 9.5rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 .strike {
+      text-decoration: line-through;
+      text-decoration-thickness: 6px;
+    }
+
+    .hero h1 .inv {
+      background: var(--black);
+      color: var(--white);
+      padding: 0 0.12em;
+    }
+
+    /* ── SIDEBAR STAT ── */
+    .stat-box {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stat-number {
+      font-size: clamp(4.5rem, 9vw, 8rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    .stat-sub {
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+      border-top: var(--border);
+      padding-top: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ── DECLARATION ── */
+    .declaration {
+      border-right: var(--border-thick);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .declaration p {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .declaration p strong {
+      display: block;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── STEPS SIDEBAR ── */
+    .steps {
+      padding: 2.5rem 2rem;
+    }
+
+    .step {
+      padding-bottom: 1.75rem;
+      margin-bottom: 1.75rem;
+      border-bottom: var(--border);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .step-num {
+      font-size: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .step h3 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .step p {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      line-height: 1.55;
+      text-transform: uppercase;
+    }
+
+    /* ── FULL-WIDTH MARQUEE STRIP ── */
+    .strip {
+      background: var(--black);
+      color: var(--white);
+      border-bottom: var(--border-thick);
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+
+    .strip-inner {
+      display: flex;
+      gap: 4rem;
+      white-space: nowrap;
+    }
+
+    .strip-inner span {
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .strip-inner span.sep {
+      color: var(--yellow);
+    }
+
+    /* ── CTA BAR ── */
+    .cta-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      border-bottom: var(--border-thick);
+    }
+
+    .cta-text {
+      padding: 2.5rem 2rem;
+      border-right: var(--border-thick);
+    }
+
+    .cta-text h2 {
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .cta-form {
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.75rem;
+      min-width: 340px;
+    }
+
+    .cta-form input[type="email"] {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: var(--border-thick);
+      background: var(--white);
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .cta-form input[type="email"]::placeholder {
+      color: #aaa;
+      font-weight: 700;
+    }
+
+    .cta-form input[type="email"]:focus {
+      background: var(--yellow);
+    }
+
+    .cta-form button {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      background: var(--black);
+      color: var(--white);
+      border: var(--border-thick);
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .cta-form button:hover {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .footer-cell {
+      padding: 1.25rem 2rem;
+      border-right: var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-cell:last-child {
+      border-right: none;
+    }
+
+    .footer-cell span {
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="wordmark">Slowmail</div>
+    <div class="topbar-meta">
+      <span>Est. 2024</span>
+      <span>Free to use</span>
+      <span>No JS</span>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT GRID -->
+  <div class="layout">
+
+    <!-- HERO HEADLINE -->
+    <div class="hero">
+      <h1>
+        Your<br>
+        email.<br>
+        <span class="inv">Tomorrow.</span>
+      </h1>
+    </div>
+
+    <!-- STAT BOX -->
+    <div class="stat-box">
+      <div>
+        <div class="stat-number">24</div>
+        <div class="stat-label">Hours. Always.</div>
+      </div>
+      <div class="stat-sub">
+        Every email you send is held for exactly one day. No exceptions. No overrides.
+      </div>
+    </div>
+
+    <!-- DECLARATION COPY -->
+    <div class="declaration">
+      <p>
+        <strong>Slow down.<br>On purpose.</strong>
+        We built an email service that refuses to hurry. You write. We wait. They receive — tomorrow.
+      </p>
+      <p>
+        <strong>Why?</strong>
+        Because instant isn't always better. Because some words need a night to settle. Because you deserve an inbox that doesn't demand you perform urgency.
+      </p>
+    </div>
+
+    <!-- STEPS -->
+    <div class="steps">
+      <div class="step">
+        <p class="step-num">Step 01</p>
+        <h3>Write</h3>
+        <p>Compose your message like any other email. Take your time. The delay starts after you hit send.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">Step 02</p>
+        <h3>Hold</h3>
+        <p>We lock it. 24 hours. You can read it. You cannot unsend it. Commitment is the point.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">Step 03</p>
+        <h3>Arrive</h3>
+        <p>Tomorrow, exactly. Your words land — unhurried, unchanged, entirely yours.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TICKER STRIP -->
+  <div class="strip">
+    <div class="strip-inner">
+      <span>Slowmail</span>
+      <span class="sep">✦</span>
+      <span>Every email: +24 hours</span>
+      <span class="sep">✦</span>
+      <span>Write today. Arrive tomorrow.</span>
+      <span class="sep">✦</span>
+      <span>Patience by design</span>
+      <span class="sep">✦</span>
+      <span>No instant send. Ever.</span>
+      <span class="sep">✦</span>
+      <span>Slowmail</span>
+      <span class="sep">✦</span>
+      <span>Every email: +24 hours</span>
+      <span class="sep">✦</span>
+      <span>Write today. Arrive tomorrow.</span>
+      <span class="sep">✦</span>
+      <span>Patience by design</span>
+      <span class="sep">✦</span>
+      <span>No instant send. Ever.</span>
+    </div>
+  </div>
+
+  <!-- CTA BAR -->
+  <div class="cta-bar">
+    <div class="cta-text">
+      <h2>Start<br>sending<br>slower.</h2>
+    </div>
+    <div class="cta-form">
+      <input type="email" placeholder="YOUR@EMAIL.COM">
+      <button>Join the wait &rarr;</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-cell"><span>&copy; 2024 Slowmail</span></div>
+    <div class="footer-cell"><span>Pure HTML &amp; CSS &mdash; No JS</span></div>
+    <div class="footer-cell"><span>Not everything needs to be instant.</span></div>
+  </footer>
+
+</body>
+</html>

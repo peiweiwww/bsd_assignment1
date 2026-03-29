@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — The Art of the Slow-Cooked Email</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --paper:      #faf5e8;
+      --cream:      #f3ead4;
+      --warm:       #e8ddc0;
+      --tan:        #d4c4a0;
+      --gold:       #c8903c;
+      --gold-deep:  #a06c20;
+      --terra:      #c4582c;
+      --terra-dark: #8c3818;
+      --burgundy:   #7a2030;
+      --brown:      #5c3418;
+      --brown-mid:  #8a5030;
+      --brown-pale: #b8845c;
+      --sage:       #6a7c50;
+      --sage-light: #a0b080;
+      --sage-pale:  #d0dcb8;
+      --ink:        #2c1a0e;
+      --ink-soft:   #4a3020;
+      --ink-mid:    #7a5c3c;
+      --ink-dim:    #a88c70;
+      --ink-ghost:  #d0bc9c;
+      --rule:       rgba(90,50,20,0.15);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── UTILITY ── */
+    .script {
+      font-family: 'Brush Script MT', 'Bradley Hand ITC', 'Segoe Script', cursive;
+    }
+
+    .sans {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    .small-caps {
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+    }
+
+    .drop-cap::first-letter {
+      float: left;
+      font-size: 4.5em;
+      line-height: 0.75;
+      font-family: 'Brush Script MT', cursive;
+      padding-right: 0.06em;
+      padding-top: 0.06em;
+      color: var(--terra);
+    }
+
+    hr.recipe-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 1.5rem 0;
+    }
+
+    hr.thick-rule {
+      border: none;
+      border-top: 3px solid var(--ink);
+      margin: 0;
+    }
+
+    hr.double-rule {
+      border: none;
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding-top: 3px;
+      margin: 0;
+    }
+
+    /* ══════════════════════════════
+       MAGAZINE HEADER
+    ══════════════════════════════ */
+    .mag-header {
+      background: var(--paper);
+      padding: 0;
+    }
+
+    .mag-topbar {
+      background: var(--burgundy);
+      color: rgba(250,245,230,0.7);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mag-topbar a {
+      color: rgba(250,245,230,0.6);
+      text-decoration: none;
+    }
+
+    .mag-topbar a:hover { color: rgba(250,245,230,0.9); }
+
+    .mag-masthead {
+      padding: 2rem 2.5rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .masthead-kicker {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 0.5rem;
+    }
+
+    .masthead-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 1;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.3rem;
+      font-family: 'Brush Script MT', 'Bradley Hand ITC', cursive;
+      font-weight: normal;
+    }
+
+    .masthead-sub {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .mag-nav {
+      padding: 0.6rem 2.5rem;
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      border-bottom: 2px solid var(--ink);
+      background: var(--cream);
+    }
+
+    .mag-nav a {
+      text-decoration: none;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding: 0.4rem 1.25rem;
+      border-right: 1px solid var(--rule);
+      font-weight: 600;
+    }
+
+    .mag-nav a:first-child { border-left: 1px solid var(--rule); }
+    .mag-nav a:hover { color: var(--terra); }
+
+    /* ══════════════════════════════
+       HERO — COVER STORY
+    ══════════════════════════════ */
+    .cover {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      min-height: 540px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .cover-text {
+      padding: 3.5rem 3rem 3rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+      border-right: 1px solid var(--rule);
+    }
+
+    .cover-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terra);
+      font-weight: 700;
+    }
+
+    .kicker-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--terra);
+      border-radius: 50%;
+    }
+
+    .cover-headline {
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: normal;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .cover-headline em {
+      font-style: italic;
+      color: var(--terra);
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.1em;
+    }
+
+    .cover-deck {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      font-style: italic;
+      max-width: 460px;
+      border-left: 3px solid var(--gold);
+      padding-left: 1rem;
+    }
+
+    .cover-byline {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .cover-byline strong { color: var(--ink-soft); }
+
+    /* ── CSS ILLUSTRATION — Slow cooker / pot ── */
+    .cover-art {
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background texture */
+    .cover-art::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          rgba(90,50,20,0.04) 0px, rgba(90,50,20,0.04) 1px,
+          transparent 1px, transparent 28px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          rgba(90,50,20,0.04) 0px, rgba(90,50,20,0.04) 1px,
+          transparent 1px, transparent 28px
+        );
+    }
+
+    .pot-scene {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Steam puffs */
+    @keyframes steam-rise {
+      0%   { transform: translateY(0) scaleX(1);    opacity: 0.6; }
+      100% { transform: translateY(-40px) scaleX(1.4); opacity: 0; }
+    }
+
+    .steam {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      height: 48px;
+      align-items: flex-end;
+    }
+
+    .steam-puff {
+      width: 14px;
+      height: 28px;
+      background: rgba(180,160,130,0.5);
+      border-radius: 50% 50% 40% 40%;
+      animation: steam-rise 2.2s ease-out infinite;
+    }
+
+    .steam-puff:nth-child(2) {
+      width: 18px; height: 36px;
+      animation-delay: 0.5s;
+      animation-duration: 2.6s;
+    }
+
+    .steam-puff:nth-child(3) {
+      width: 12px; height: 24px;
+      animation-delay: 1s;
+      animation-duration: 2s;
+    }
+
+    /* Pot lid */
+    .pot-lid {
+      width: 160px;
+      height: 22px;
+      background: linear-gradient(180deg, var(--brown-mid), var(--brown));
+      border-radius: 50% 50% 10% 10% / 60% 60% 40% 40%;
+      position: relative;
+      z-index: 3;
+    }
+
+    .pot-lid::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: var(--brown);
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      border-top: 3px solid var(--brown-mid);
+    }
+
+    /* Pot body */
+    .pot-body {
+      width: 150px;
+      height: 110px;
+      background: linear-gradient(160deg, var(--brown-pale), var(--brown));
+      border-radius: 8px 8px 30px 30px;
+      position: relative;
+      z-index: 2;
+      border: 3px solid var(--brown);
+      overflow: hidden;
+    }
+
+    /* Sheen on pot */
+    .pot-body::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 15px;
+      width: 30px; height: 60px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+      transform: rotate(-10deg);
+    }
+
+    /* Label on pot */
+    .pot-label {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      background: var(--paper);
+      border: 1px solid var(--warm);
+      border-radius: 4px;
+      padding: 4px 6px;
+      text-align: center;
+    }
+
+    .pot-label-text {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 0.72rem;
+      color: var(--ink-soft);
+      display: block;
+      line-height: 1.3;
+    }
+
+    /* Pot handles */
+    .pot-handles {
+      display: flex;
+      justify-content: space-between;
+      width: 184px;
+      margin-top: -80px;
+      position: relative;
+      z-index: 1;
+      padding: 0 2px;
+    }
+
+    .pot-handle {
+      width: 22px;
+      height: 36px;
+      background: var(--brown-mid);
+      border-radius: 8px 8px 4px 4px;
+      border: 2px solid var(--brown);
+    }
+
+    /* Timer dial */
+    .timer-wrap {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .timer-dial {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--cream);
+      border: 3px solid var(--brown);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Timer tick marks */
+    .timer-dial::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      border: 1px dashed var(--ink-ghost);
+    }
+
+    @keyframes tick {
+      from { transform: translate(-50%, -100%) rotate(0deg); transform-origin: bottom center; }
+      to   { transform: translate(-50%, -100%) rotate(360deg); transform-origin: bottom center; }
+    }
+
+    .timer-hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform: translate(-50%, 0) rotate(195deg);
+      transform-origin: bottom center;
+      width: 2px;
+      height: 20px;
+      background: var(--terra);
+      border-radius: 2px;
+    }
+
+    .timer-center {
+      width: 7px; height: 7px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .timer-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .timer-value {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.1rem;
+      color: var(--terra);
+    }
+
+    /* ══════════════════════════════
+       MAIN RECIPE CARD
+    ══════════════════════════════ */
+    .recipe-section {
+      max-width: 1060px;
+      margin: 3rem auto;
+      padding: 0 2.5rem;
+    }
+
+    .recipe-card {
+      background: var(--paper);
+      border: 1px solid var(--warm);
+      position: relative;
+    }
+
+    /* Decorative corner stamps */
+    .recipe-card::before,
+    .recipe-card::after {
+      content: '❧';
+      position: absolute;
+      font-size: 1.2rem;
+      color: var(--terra);
+      opacity: 0.4;
+    }
+
+    .recipe-card::before { top: 0.75rem; left: 1rem; }
+    .recipe-card::after  { bottom: 0.75rem; right: 1rem; transform: rotate(180deg); }
+
+    .recipe-header {
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .recipe-title-area h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: normal;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .recipe-title-area h2 em {
+      font-style: italic;
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.15em;
+      color: var(--terra);
+    }
+
+    .recipe-desc {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      font-style: italic;
+      max-width: 480px;
+      margin-top: 0.5rem;
+    }
+
+    /* Recipe meta box */
+    .recipe-meta {
+      background: var(--cream);
+      border: 1px solid var(--warm);
+      padding: 1.25rem 1.5rem;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px dotted var(--ink-ghost);
+      gap: 1rem;
+    }
+
+    .meta-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .meta-key {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .meta-val {
+      font-size: 0.9rem;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .meta-val.highlight {
+      color: var(--terra);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    /* ── RECIPE BODY — two columns ── */
+    .recipe-body {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+    }
+
+    /* INGREDIENTS */
+    .ingredients {
+      padding: 2rem 2rem 2rem 2.5rem;
+      border-right: 1px solid var(--rule);
+      background: var(--cream);
+    }
+
+    .ingredients h3,
+    .method h3 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--terra);
+      font-weight: 700;
+    }
+
+    .ingredient-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .ingredient-group-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ingredient-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .ingredient-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .ingredient-item {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 0.65rem;
+      align-items: baseline;
+      padding: 0.5rem 0;
+      border-bottom: 1px dotted var(--ink-ghost);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--ink-soft);
+      cursor: default;
+    }
+
+    .ingredient-item:last-child { border-bottom: none; }
+
+    /* CSS checkbox */
+    .ing-check {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--ink-ghost);
+      border-radius: 3px;
+      flex-shrink: 0;
+      position: relative;
+      top: 2px;
+      background: var(--paper);
+    }
+
+    .ingredient-item:hover .ing-check {
+      border-color: var(--terra);
+      background: rgba(196,88,44,0.08);
+    }
+
+    .ing-amount {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.72rem;
+      color: var(--terra);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ing-name { }
+    .ing-note {
+      font-style: italic;
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+    }
+
+    /* METHOD */
+    .method {
+      padding: 2rem 2.5rem 2rem 2rem;
+    }
+
+    .method-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .method-step {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+
+    .method-step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--terra);
+      color: var(--paper);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-body {}
+
+    .step-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      font-style: italic;
+    }
+
+    .step-text {
+      font-size: 0.85rem;
+      line-height: 1.75;
+      color: var(--ink-mid);
+    }
+
+    .step-tip {
+      margin-top: 0.6rem;
+      background: var(--sage-pale);
+      border-left: 3px solid var(--sage);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--sage);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .step-tip strong { color: var(--sage-light); font-style: normal; }
+
+    /* ── COOK'S NOTES bar at bottom of recipe ── */
+    .cooks-notes-bar {
+      padding: 1.25rem 2.5rem;
+      background: var(--terra);
+      color: var(--paper);
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      border-top: 2px solid var(--terra-dark);
+    }
+
+    .notes-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .notes-body {}
+
+    .notes-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.3rem;
+    }
+
+    .notes-text {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════
+       NUTRITION / STATS STRIP
+    ══════════════════════════════ */
+    .nutrition {
+      background: var(--brown);
+      color: var(--cream);
+      padding: 2.5rem 2.5rem;
+    }
+
+    .nutrition-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .nutrition-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(235,215,185,0.5);
+      margin-bottom: 0.5rem;
+    }
+
+    .nutrition h2 {
+      font-size: 1.5rem;
+      font-weight: normal;
+      line-height: 1.3;
+      color: var(--cream);
+      font-family: 'Brush Script MT', cursive;
+    }
+
+    .nutrition-facts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid rgba(235,215,185,0.2);
+    }
+
+    .fact {
+      padding: 1.25rem;
+      border-right: 1px solid rgba(235,215,185,0.15);
+      text-align: center;
+    }
+
+    .fact:last-child { border-right: none; }
+
+    .fact-amount {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: normal;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.02em;
+    }
+
+    .fact-amount sup {
+      font-size: 0.45em;
+      vertical-align: super;
+      color: var(--gold-deep);
+    }
+
+    .fact-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(235,215,185,0.45);
+    }
+
+    /* ══════════════════════════════
+       VARIATIONS — smaller recipe cards
+    ══════════════════════════════ */
+    .variations {
+      padding: 4rem 2.5rem;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    .variations-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .variations-header .script {
+      font-size: 2.2rem;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .variations-header p {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .variation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .variation-card {
+      border: 1px solid var(--warm);
+      background: var(--paper);
+      overflow: hidden;
+    }
+
+    .variation-art {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .variation-art::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0, transparent 4px,
+        rgba(90,50,20,0.04) 4px, rgba(90,50,20,0.04) 8px
+      );
+    }
+
+    .v-art-1 { background: linear-gradient(135deg, #f0d8b0, #e0c090); }
+    .v-art-2 { background: linear-gradient(135deg, #d0e8c0, #b0d0a0); }
+    .v-art-3 { background: linear-gradient(135deg, #f0c8b0, #dca890); }
+
+    .variation-body {
+      padding: 1.25rem;
+      border-top: 2px solid var(--ink);
+    }
+
+    .variation-kicker {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 0.4rem;
+    }
+
+    .variation-card h3 {
+      font-size: 1.1rem;
+      font-weight: normal;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    .variation-card h3 em {
+      font-style: italic;
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.1em;
+      color: var(--terra);
+    }
+
+    .variation-card p {
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: var(--ink-mid);
+    }
+
+    .variation-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dotted var(--ink-ghost);
+    }
+
+    .v-meta-item {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .v-meta-item strong {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 0.72rem;
+    }
+
+    /* ══════════════════════════════
+       READER REVIEWS
+    ══════════════════════════════ */
+    .reviews {
+      background: var(--cream);
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding: 4rem 2.5rem;
+    }
+
+    .reviews-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    .reviews-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: baseline;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .reviews-header h2 {
+      font-size: 1.8rem;
+      font-weight: normal;
+      color: var(--ink);
+      font-family: 'Brush Script MT', cursive;
+    }
+
+    .reviews-count {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .review-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .review-stars {
+      color: var(--gold);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+
+    .review-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    .review-body {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      font-style: italic;
+    }
+
+    .review-author {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      padding-top: 0.5rem;
+      border-top: 1px dotted var(--ink-ghost);
+    }
+
+    /* ══════════════════════════════
+       SUBSCRIBE / SIGN UP
+    ══════════════════════════════ */
+    .subscribe {
+      padding: 5rem 2.5rem;
+      max-width: 1060px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .sub-copy h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: normal;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .sub-copy h2 .script {
+      font-size: 1.2em;
+      color: var(--terra);
+      display: block;
+    }
+
+    .sub-copy p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--ink-mid);
+      font-style: italic;
+      margin-bottom: 1.25rem;
+    }
+
+    .sub-copy-note {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    /* Recipe index card sign-up */
+    .sub-form-card {
+      background: var(--warm-white, #faf8f0);
+      border: 1px solid var(--warm);
+      padding: 2.25rem 2rem;
+      position: relative;
+      box-shadow: 4px 4px 0 var(--warm), 8px 8px 0 var(--tan);
+    }
+
+    /* Punched holes */
+    .sub-form-card::before {
+      content: '';
+      position: absolute;
+      top: 1.75rem;
+      left: -1px;
+      width: 18px;
+      height: calc(100% - 3.5rem);
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 28px,
+        var(--paper) 28px,
+        var(--paper) 44px,
+        transparent 44px,
+        transparent 72px
+      );
+      border-right: 2px solid var(--warm);
+    }
+
+    .sub-form-card .form-title {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+      padding-left: 1.25rem;
+    }
+
+    .sub-form-card .form-sub {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 1.5rem;
+      padding-left: 1.25rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.75rem;
+    }
+
+    .sub-field {
+      margin-bottom: 1rem;
+      padding-left: 1.25rem;
+    }
+
+    .sub-label {
+      display: block;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 0.35rem;
+    }
+
+    .sub-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--tan);
+      padding: 0.5rem 0;
+      font-family: Georgia, serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      letter-spacing: 0.02em;
+    }
+
+    .sub-input::placeholder { color: var(--ink-ghost); font-style: italic; }
+    .sub-input:focus { border-bottom-color: var(--terra); }
+
+    .sub-btn {
+      width: calc(100% - 1.25rem);
+      margin-left: 1.25rem;
+      margin-top: 0.5rem;
+      padding: 0.9rem;
+      background: var(--terra);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .sub-btn:hover { background: var(--terra-dark); }
+
+    .sub-fine {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      color: var(--ink-ghost);
+      text-align: center;
+      margin-top: 0.75rem;
+      padding-left: 1.25rem;
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 2.5rem 2.5rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(235,215,185,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-brand .script {
+      font-size: 1.6rem;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-brand p {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.75rem;
+      color: rgba(235,215,185,0.35);
+      line-height: 1.7;
+      max-width: 200px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(235,215,185,0.35);
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-col ul li a {
+      text-decoration: none;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.78rem;
+      color: rgba(235,215,185,0.3);
+    }
+
+    .footer-col ul li a:hover { color: rgba(235,215,185,0.7); }
+
+    .footer-bottom {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-bottom span {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      color: rgba(235,215,185,0.2);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-bottom .script {
+      font-size: 0.9rem;
+      color: rgba(200,144,60,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       MAGAZINE HEADER
+  ══════════════════════════════ -->
+  <header class="mag-header">
+    <div class="mag-topbar">
+      <div style="display:flex;gap:1.5rem;">
+        <a href="#">Subscribe</a>
+        <a href="#">Archive</a>
+        <a href="#">Newsletter</a>
+      </div>
+      <span>Vol. XIII &nbsp;·&nbsp; The Slow Issue &nbsp;·&nbsp; Spring 2026</span>
+      <div style="display:flex;gap:1.5rem;">
+        <a href="#">Recipes</a>
+        <a href="#">About</a>
+        <a href="#">Shop</a>
+      </div>
+    </div>
+
+    <div class="mag-masthead">
+      <div class="masthead-kicker">A Magazine for the Unhurried</div>
+      <div class="masthead-title script">Slowmail</div>
+      <div class="masthead-sub">Food for Thought &nbsp;·&nbsp; Correspondence &amp; Cuisine &nbsp;·&nbsp; Est. 2024</div>
+    </div>
+
+    <nav class="mag-nav">
+      <a href="#">Recipes</a>
+      <a href="#">Technique</a>
+      <a href="#">Features</a>
+      <a href="#">Pantry</a>
+      <a href="#">Reviews</a>
+      <a href="#">Subscribe</a>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════
+       COVER STORY
+  ══════════════════════════════ -->
+  <section class="cover">
+    <div class="cover-text">
+      <div class="cover-kicker">
+        <span class="kicker-dot"></span>
+        Cover Recipe &nbsp;·&nbsp; Spring 2026
+      </div>
+
+      <h1 class="cover-headline">
+        The Art of the<br>
+        <em>Slow-Cooked</em><br>
+        Email
+      </h1>
+
+      <p class="cover-deck">
+        What happens when you apply the principles of low-and-slow cooking
+        to your inbox? Patience, flavour, and correspondence you'll actually
+        be proud to serve.
+      </p>
+
+      <p class="sans" style="font-size:0.85rem; line-height:1.7; color:var(--ink-mid);">
+        Some of the most beloved dishes in the world take time. A braise that
+        simmers for six hours. A sourdough that ferments for two days. A ragù
+        left alone until Friday. Slowmail applies this same philosophy to email —
+        holding every message for exactly twenty-four hours before it delivers.
+      </p>
+
+      <div class="cover-byline">
+        Recipes &amp; words by <strong>The Slowmail Kitchen</strong> &nbsp;·&nbsp;
+        Photography by <strong>T. Hollingsworth</strong>
+      </div>
+    </div>
+
+    <!-- CSS POT ILLUSTRATION -->
+    <div class="cover-art">
+      <div class="pot-scene">
+        <div class="steam">
+          <div class="steam-puff"></div>
+          <div class="steam-puff"></div>
+          <div class="steam-puff"></div>
+        </div>
+
+        <div class="pot-lid"></div>
+
+        <div style="position:relative;">
+          <div class="pot-handles">
+            <div class="pot-handle"></div>
+            <div style="flex:1;"></div>
+            <div class="pot-handle"></div>
+          </div>
+          <div class="pot-body">
+            <div class="pot-label">
+              <span class="pot-label-text">24-hour<br>slow email</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timer-wrap">
+          <div class="timer-dial">
+            <div class="timer-hand"></div>
+            <div class="timer-center"></div>
+          </div>
+          <span class="timer-label">Set & forget</span>
+          <span class="timer-value">24 hours</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       MAIN RECIPE CARD
+  ══════════════════════════════ -->
+  <section class="recipe-section">
+    <div class="recipe-card">
+
+      <!-- Recipe Header -->
+      <div class="recipe-header">
+        <div class="recipe-title-area">
+          <h2>Slow-Cooked <em>Correspondence</em><br>with Overnight Rest</h2>
+          <p class="recipe-desc">
+            The centrepiece of the Slowmail method. A single email, composed
+            with care, held for twenty-four hours, and delivered exactly as
+            written — unhurried, unchanged, and entirely yours.
+          </p>
+        </div>
+
+        <div class="recipe-meta">
+          <div class="meta-row">
+            <span class="meta-key sans">Prep time</span>
+            <span class="meta-val">5 minutes</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key sans">Cook time</span>
+            <span class="meta-val highlight">24 hours</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key sans">Total time</span>
+            <span class="meta-val">24 hrs 5 min</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key sans">Yield</span>
+            <span class="meta-val">1 email</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key sans">Difficulty</span>
+            <span class="meta-val">Easy</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key sans">Occasion</span>
+            <span class="meta-val">Any</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe Body -->
+      <div class="recipe-body">
+
+        <!-- INGREDIENTS -->
+        <div class="ingredients">
+          <h3 class="sans">Ingredients</h3>
+
+          <div class="ingredient-group">
+            <div class="ingredient-group-label sans">For the message</div>
+            <ul class="ingredient-list">
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">1</span>
+                  <span class="ing-name"> email, carefully composed</span>
+                </div>
+              </li>
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">1 full night</span>
+                  <span class="ing-name"> to sleep on it</span>
+                </div>
+              </li>
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">a pinch</span>
+                  <span class="ing-name"> of restraint</span>
+                  <div class="ing-note">do not rush this step</div>
+                </div>
+              </li>
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">to taste</span>
+                  <span class="ing-name"> second thoughts</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="ingredient-group">
+            <div class="ingredient-group-label sans">For the hold</div>
+            <ul class="ingredient-list">
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">86,400</span>
+                  <span class="ing-name"> seconds, undisturbed</span>
+                </div>
+              </li>
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">AES-256</span>
+                  <span class="ing-name"> encryption</span>
+                  <div class="ing-note">to keep it safe while it rests</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="ingredient-group">
+            <div class="ingredient-group-label sans">Optional, to finish</div>
+            <ul class="ingredient-list">
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">1</span>
+                  <span class="ing-name"> recall, if needed</span>
+                  <div class="ing-note">available during the full 24-hour window</div>
+                </div>
+              </li>
+              <li class="ingredient-item">
+                <div class="ing-check"></div>
+                <div>
+                  <span class="ing-amount">1</span>
+                  <span class="ing-name"> delivery notification</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <hr class="recipe-rule">
+
+          <div style="font-size:0.75rem; font-style:italic; color:var(--ink-dim); line-height:1.65;">
+            <strong style="font-style:normal; color:var(--ink-mid);">Pairs well with:</strong>
+            A morning coffee, a good night's rest, and the knowledge that
+            you have twenty-four hours to change your mind.
+          </div>
+        </div>
+
+        <!-- METHOD -->
+        <div class="method">
+          <h3 class="sans">Method</h3>
+
+          <div class="method-steps">
+
+            <div class="method-step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">Compose your message with intention.</div>
+                <p class="step-text drop-cap">
+                  Open Slowmail and begin writing as you normally would. Add your
+                  recipients, your subject, your attachments. Say what you mean to say.
+                  Take your time here — the twenty-four hour clock does not start until
+                  you press send, so there is no hurry in the writing.
+                </p>
+                <div class="step-tip">
+                  <strong>Chef's note:</strong> This is the preparation stage. Read it aloud
+                  before proceeding. Does it sound like you at your best?
+                </div>
+              </div>
+            </div>
+
+            <div class="method-step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">Press send. Begin the slow cook.</div>
+                <p class="step-text">
+                  The moment you send, your message enters the Slowmail queue.
+                  It is sealed, encrypted, and left to rest at exactly the right
+                  temperature — unhurried, undisturbed. The timer is set for
+                  twenty-four hours. Resist the urge to interfere.
+                </p>
+                <div class="step-tip">
+                  <strong>Chef's note:</strong> The most common mistake at this stage is
+                  impatience. Trust the process. Low and slow is the whole method.
+                </div>
+              </div>
+            </div>
+
+            <div class="method-step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">Allow to rest overnight. Taste if necessary.</div>
+                <p class="step-text">
+                  During the hold, you may re-read your message at any time. If upon
+                  reflection it needs adjustment — or should not be sent at all —
+                  use the recall function. This is the equivalent of tasting your braise
+                  before it goes to the table. It is not weakness. It is technique.
+                </p>
+              </div>
+            </div>
+
+            <div class="method-step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">Serve at exactly 24 hours. No sooner.</div>
+                <p class="step-text">
+                  After twenty-four hours, your email is delivered to its recipient —
+                  unchanged, on time, exactly as you wrote it. You will receive
+                  a quiet notification. The correspondence is complete. It arrived
+                  at the right moment, because the right moment was always tomorrow.
+                </p>
+                <div class="step-tip">
+                  <strong>Chef's note:</strong> Do not attempt to accelerate delivery.
+                  The twenty-four hour rest is not a setting. It is the recipe itself.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Cook's Notes -->
+      <div class="cooks-notes-bar">
+        <div class="notes-icon">👨‍🍳</div>
+        <div class="notes-body">
+          <div class="notes-label sans">Cook's Notes</div>
+          <div class="notes-text">
+            "The twenty-four hour hold has a secondary effect we did not anticipate when we built it:
+            it changes not just what you send, but how you receive. When your outgoing messages
+            move slowly, you stop expecting fast replies. The whole kitchen slows down.
+            Everyone breathes. The food is better for it." — The Slowmail Kitchen
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       NUTRITION / STATS
+  ══════════════════════════════ -->
+  <section class="nutrition">
+    <div class="nutrition-inner">
+      <div>
+        <div class="nutrition-label sans">Nutritional information</div>
+        <h2 class="script">Per serving</h2>
+      </div>
+      <div class="nutrition-facts">
+        <div class="fact">
+          <div class="fact-amount">24<sup>hrs</sup></div>
+          <div class="fact-label sans">Hold time</div>
+        </div>
+        <div class="fact">
+          <div class="fact-amount">40<sup>%</sup></div>
+          <div class="fact-label sans">Fewer regrets</div>
+        </div>
+        <div class="fact">
+          <div class="fact-amount">12<sup>k</sup></div>
+          <div class="fact-label sans">Happy cooks</div>
+        </div>
+        <div class="fact">
+          <div class="fact-amount">$0</div>
+          <div class="fact-label sans">To start</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       VARIATIONS
+  ══════════════════════════════ -->
+  <section class="variations">
+    <div class="variations-header">
+      <span class="script">Recipe Variations</span>
+      <p class="sans">Three ways to use the Slowmail method</p>
+    </div>
+
+    <div class="variation-grid">
+
+      <div class="variation-card">
+        <div class="variation-art v-art-1">📧</div>
+        <div class="variation-body">
+          <div class="variation-kicker sans">The Classic</div>
+          <h3>The <em>Standard</em> Slow Send</h3>
+          <p>The base recipe. Write, send, wait twenty-four hours, deliver.
+             Works for any occasion: professional, personal, difficult, or tender.</p>
+          <div class="variation-meta">
+            <div class="v-meta-item sans"><strong>24h</strong>Cook time</div>
+            <div class="v-meta-item sans"><strong>Any</strong>Occasion</div>
+            <div class="v-meta-item sans"><strong>Easy</strong>Difficulty</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variation-card">
+        <div class="variation-art v-art-2">↩️</div>
+        <div class="variation-body">
+          <div class="variation-kicker sans">The Rescue</div>
+          <h3>The <em>Morning-After</em> Recall</h3>
+          <p>Write late at night. Wake up. Re-read. If necessary, recall
+             before delivery. The kitchen stays clean. The apology is avoided.</p>
+          <div class="variation-meta">
+            <div class="v-meta-item sans"><strong>24h</strong>Window</div>
+            <div class="v-meta-item sans"><strong>Emergency</strong>Occasion</div>
+            <div class="v-meta-item sans"><strong>Easy</strong>Difficulty</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="variation-card">
+        <div class="variation-art v-art-3">🤝</div>
+        <div class="variation-body">
+          <div class="variation-kicker sans">The Team Method</div>
+          <h3>The <em>Collaborative</em> Slow Braise</h3>
+          <p>When the whole team uses Slowmail, the entire culture changes.
+             Reactive all-hands threads become considered correspondence.</p>
+          <div class="variation-meta">
+            <div class="v-meta-item sans"><strong>24h</strong>Per send</div>
+            <div class="v-meta-item sans"><strong>Workplace</strong>Occasion</div>
+            <div class="v-meta-item sans"><strong>Medium</strong>Transition</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       READER REVIEWS
+  ══════════════════════════════ -->
+  <section class="reviews">
+    <div class="reviews-inner">
+      <div class="reviews-header">
+        <h2 class="script">Reader Reviews</h2>
+        <span class="reviews-count sans">From the Slowmail community &nbsp;·&nbsp; 12,000+ cooks</span>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-title">Made it twice. Recalled it once.</div>
+          <p class="review-body">"I wrote a very strongly worded message to a supplier on a Tuesday evening.
+            Wednesday morning I recalled it, rewrote it, and we sorted the issue over the
+            phone like adults. I genuinely think this recipe saved a client relationship."</p>
+          <div class="review-author sans">— M. Rosario, Partnerships Manager</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-title">Finally, an email that tastes like it was made with care.</div>
+          <p class="review-body">"I was sceptical. Twenty-four hours felt like an eternity.
+            By the third week, I couldn't imagine going back. My emails are better.
+            Shorter, warmer, more considered. My colleagues noticed before I did."</p>
+          <div class="review-author sans">— J. Kimura, Product Designer</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-title">The overnight rest makes all the difference.</div>
+          <p class="review-body">"Like bread that proves overnight, or stock that reduces for hours —
+            the patience is the technique. I didn't understand that until I used it.
+            Now it's the only way I send anything important."</p>
+          <div class="review-author sans">— C. Halloway, Writer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       SUBSCRIBE
+  ══════════════════════════════ -->
+  <section class="subscribe">
+    <div class="sub-copy">
+      <h2>
+        Begin cooking.
+        <span class="script">Your first email<br>serves tomorrow.</span>
+      </h2>
+      <p>
+        Free to start, with no instruction manual required. Open an account,
+        write your first slow message, and discover what it feels like to send
+        something you've actually had time to mean.
+      </p>
+      <p class="sub-copy-note sans">
+        No credit card &nbsp;·&nbsp; Free forever for up to 50 emails/month<br>
+        Your first delivery: tomorrow, exactly on time
+      </p>
+    </div>
+
+    <div class="sub-form-card">
+      <div class="form-title script">Get the recipe</div>
+      <div class="form-sub sans">Start your free Slowmail account</div>
+
+      <div class="sub-field">
+        <label class="sub-label sans" for="sub-name">Your name</label>
+        <input class="sub-input" type="text" id="sub-name" placeholder="How you'd like to be addressed">
+      </div>
+
+      <div class="sub-field">
+        <label class="sub-label sans" for="sub-email">Email address</label>
+        <input class="sub-input" type="email" id="sub-email" placeholder="you@example.com">
+      </div>
+
+      <button class="sub-btn sans">Start cooking &rarr;</button>
+      <p class="sub-fine">Your first email simmers for 24 hours, then serves itself.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       FOOTER
+  ══════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="script">Slowmail</span>
+        <p>A magazine and email service for people who believe the best things — correspondence included — are worth waiting for.</p>
+      </div>
+      <div class="footer-col">
+        <h4 class="sans">Recipes</h4>
+        <ul>
+          <li><a href="#">The slow send</a></li>
+          <li><a href="#">The recall</a></li>
+          <li><a href="#">Team method</a></li>
+          <li><a href="#">All recipes</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="sans">Magazine</h4>
+        <ul>
+          <li><a href="#">Current issue</a></li>
+          <li><a href="#">Archive</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 class="sans">Legal</h4>
+        <ul>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Slowmail &nbsp;·&nbsp; All emails slow-cooked for 24 hours &nbsp;·&nbsp; Est. 2024</span>
+      <span class="script">Good things take time.</span>
+    </div>
+  </footer>
+
+</body>
+</html>

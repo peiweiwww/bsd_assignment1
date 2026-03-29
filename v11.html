@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>~~*~~ SLOWMAIL HOMEPAGE ~~*~~ THE BEST EMAIL ON THE WEB!!!</title>
+  <style>
+    /* ===== BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hot-pink:  #ff00ff;
+      --lime:      #00ff00;
+      --cyan:      #00ffff;
+      --yellow:    #ffff00;
+      --orange:    #ff8800;
+      --red:       #ff0000;
+      --purple:    #cc00ff;
+      --white:     #ffffff;
+      --navy:      #000033;
+    }
+
+    body {
+      background-color: var(--navy);
+      /* Tiled star pattern via radial gradients */
+      background-image:
+        radial-gradient(1px 1px at 20px 30px, #fff 0%, transparent 100%),
+        radial-gradient(1px 1px at 80px 10px, #fff 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50px 80px, rgba(255,255,255,0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 120px 20px, #fff 0%, transparent 100%),
+        radial-gradient(1px 1px at 160px 60px, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10px 60px, #fff 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 140px 90px, #fff 0%, transparent 100%),
+        radial-gradient(1px 1px at 100px 50px, rgba(255,255,255,0.5) 0%, transparent 100%);
+      background-size: 180px 100px;
+      color: var(--white);
+      font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes blink {
+      0%, 49%  { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-rev {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(110%); }
+      100% { transform: translateX(-110%); }
+    }
+
+    @keyframes rainbow {
+      0%   { color: var(--red); }
+      14%  { color: var(--orange); }
+      28%  { color: var(--yellow); }
+      42%  { color: var(--lime); }
+      57%  { color: var(--cyan); }
+      71%  { color: #4488ff; }
+      85%  { color: var(--purple); }
+      100% { color: var(--red); }
+    }
+
+    @keyframes rainbow-bg {
+      0%   { background-color: var(--red); }
+      16%  { background-color: var(--orange); }
+      32%  { background-color: var(--yellow); }
+      48%  { background-color: var(--lime); }
+      64%  { background-color: var(--cyan); }
+      80%  { background-color: var(--purple); }
+      100% { background-color: var(--red); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.08); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-4px) rotate(-1deg); }
+      75%       { transform: translateX(4px) rotate(1deg); }
+    }
+
+    @keyframes star-spin {
+      0%   { transform: rotate(0deg) scale(1); }
+      50%  { transform: rotate(180deg) scale(1.2); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    @keyframes counter-tick {
+      from { opacity: 0.7; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes slide-in {
+      from { transform: translateX(-200px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ===== MARQUEE STRIP ===== */
+    .marquee-bar {
+      background: var(--hot-pink);
+      border-top: 3px solid var(--yellow);
+      border-bottom: 3px solid var(--yellow);
+      padding: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-inner {
+      display: inline-block;
+      animation: marquee 18s linear infinite;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--yellow);
+      letter-spacing: 0.05em;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    /* ===== TOP HEADER ===== */
+    .site-header {
+      padding: 1.5rem 1rem 0.5rem;
+      border-bottom: 4px dashed var(--hot-pink);
+    }
+
+    .blink { animation: blink 1s step-end infinite; }
+    .blink-slow { animation: blink 1.8s step-end infinite; }
+
+    .rainbow-text {
+      animation: rainbow 1.5s linear infinite;
+      font-weight: bold;
+    }
+
+    .site-title {
+      font-size: clamp(2.4rem, 8vw, 5rem);
+      font-weight: bold;
+      text-shadow:
+        3px 3px 0 #ff0000,
+        6px 6px 0 #ff00ff,
+        2px 2px 8px rgba(0,255,255,0.8);
+      animation: pulse 2s ease-in-out infinite;
+      display: inline-block;
+      color: var(--yellow);
+      letter-spacing: 0.04em;
+    }
+
+    .site-tagline {
+      font-size: 1.1rem;
+      color: var(--cyan);
+      text-shadow: 1px 1px 4px #000;
+      margin: 0.4rem 0;
+      animation: rainbow 2.5s linear infinite;
+    }
+
+    .best-viewed {
+      font-size: 0.7rem;
+      color: #aaaaaa;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== SPINNING STAR ===== */
+    .spinning-star {
+      display: inline-block;
+      font-size: 1.8rem;
+      animation: star-spin 2s linear infinite;
+      color: var(--yellow);
+      text-shadow: 0 0 10px var(--yellow);
+    }
+
+    .spin-slow { animation: spin 4s linear infinite; display: inline-block; }
+    .spin-fast { animation: spin 0.6s linear infinite; display: inline-block; }
+    .float-el  { animation: float 3s ease-in-out infinite; display: inline-block; }
+
+    /* ===== UNDER CONSTRUCTION BANNER ===== */
+    .under-construction {
+      background: repeating-linear-gradient(
+        45deg,
+        #000000 0px, #000000 10px,
+        #ffcc00 10px, #ffcc00 20px
+      );
+      border: 4px solid var(--red);
+      padding: 0.75rem 1.5rem;
+      margin: 0.75rem auto;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .construction-text {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #000;
+      text-shadow: 1px 1px 0 #fff;
+      animation: shake 0.5s ease-in-out infinite;
+      background: var(--yellow);
+      padding: 0.2rem 0.75rem;
+    }
+
+    /* ===== MAIN TABLE LAYOUT ===== */
+    .layout-table {
+      width: 96%;
+      max-width: 960px;
+      margin: 1rem auto;
+      border-collapse: separate;
+      border-spacing: 8px;
+    }
+
+    /* ===== BOXES / PANELS ===== */
+    .box {
+      border: 3px solid var(--hot-pink);
+      background: rgba(0,0,51,0.85);
+      padding: 1rem;
+    }
+
+    .box-cyan  { border-color: var(--cyan); }
+    .box-lime  { border-color: var(--lime); }
+    .box-yellow{ border-color: var(--yellow); }
+    .box-orange{ border-color: var(--orange); }
+    .box-purple{ border-color: var(--purple); }
+
+    .box-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 0.3rem 0.75rem;
+      margin: -1rem -1rem 0.75rem;
+      text-align: center;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .box-title-pink   { background: var(--hot-pink); color: #000; }
+    .box-title-cyan   { background: var(--cyan);     color: #000; }
+    .box-title-lime   { background: var(--lime);     color: #000; }
+    .box-title-yellow { background: var(--yellow);   color: #000; }
+    .box-title-purple { background: var(--purple);   color: #fff; }
+    .box-title-orange { background: var(--orange);   color: #000; }
+
+    /* ===== WELCOME SECTION ===== */
+    .welcome-text {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--white);
+    }
+
+    .welcome-text p { margin-bottom: 0.6rem; }
+
+    .em-yellow  { color: var(--yellow);  font-weight: bold; }
+    .em-pink    { color: var(--hot-pink);font-weight: bold; }
+    .em-cyan    { color: var(--cyan);    font-weight: bold; }
+    .em-lime    { color: var(--lime);    font-weight: bold; }
+    .em-orange  { color: var(--orange);  font-weight: bold; }
+
+    /* ===== HR STYLES ===== */
+    hr.rainbow-hr {
+      border: none;
+      height: 6px;
+      background: linear-gradient(
+        90deg,
+        red, orange, yellow, lime, cyan, blue, violet
+      );
+      margin: 0.75rem 0;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+
+    hr.pink-hr {
+      border: none;
+      height: 3px;
+      background: var(--hot-pink);
+      margin: 0.5rem 0;
+    }
+
+    hr.dashed-hr {
+      border: 2px dashed var(--cyan);
+      margin: 0.5rem 0;
+    }
+
+    /* ===== FEATURES TABLE ===== */
+    .features-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .features-table th {
+      background: var(--hot-pink);
+      color: #000;
+      padding: 0.5rem;
+      border: 2px solid var(--yellow);
+      font-size: 0.9rem;
+    }
+
+    .features-table td {
+      padding: 0.5rem 0.75rem;
+      border: 2px solid var(--cyan);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .features-table tr:nth-child(even) td { background: rgba(0,255,255,0.07); }
+    .features-table tr:nth-child(odd)  td { background: rgba(255,0,255,0.07); }
+
+    .check-yes { color: var(--lime);  font-size: 1.1rem; }
+    .check-no  { color: var(--red);   font-size: 1.1rem; }
+
+    /* ===== VISITOR COUNTER ===== */
+    .visitor-counter {
+      background: #000;
+      border: 3px inset #888;
+      padding: 0.5rem 1rem;
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      margin: 0.5rem;
+    }
+
+    .counter-digits {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .counter-digit {
+      background: #001100;
+      color: var(--lime);
+      border: 1px solid #004400;
+      font-size: 1.6rem;
+      font-weight: bold;
+      width: 28px;
+      text-align: center;
+      text-shadow: 0 0 8px var(--lime);
+      animation: counter-tick 0.5s ease-in-out infinite alternate;
+      font-family: 'Courier New', monospace;
+    }
+
+    .counter-digit:nth-child(2) { animation-delay: 0.1s; }
+    .counter-digit:nth-child(3) { animation-delay: 0.2s; }
+    .counter-digit:nth-child(4) { animation-delay: 0.3s; }
+    .counter-digit:nth-child(5) { animation-delay: 0.4s; }
+    .counter-digit:nth-child(6) { animation-delay: 0.5s; }
+
+    /* ===== BUTTONS ===== */
+    .btn-geocities {
+      display: inline-block;
+      background: var(--hot-pink);
+      color: #000;
+      border: 3px outset #ff88ff;
+      padding: 0.4rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      margin: 0.3rem;
+      text-shadow: none;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .btn-geocities:hover { background: var(--yellow); border-style: inset; }
+
+    .btn-lime   { background: var(--lime);   border-color: #88ff88; animation-delay: 0.3s; }
+    .btn-cyan   { background: var(--cyan);   border-color: #88ffff; animation-delay: 0.6s; }
+    .btn-yellow { background: var(--yellow); border-color: #ffff88; animation-delay: 0.9s; }
+
+    /* ===== SIGN UP FORM ===== */
+    .signup-label {
+      font-size: 0.8rem;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 0.3rem;
+      text-align: left;
+    }
+
+    .signup-input {
+      width: 100%;
+      background: #000033;
+      border: 2px inset var(--cyan);
+      color: var(--lime);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.6rem;
+      outline: none;
+    }
+
+    .signup-input::placeholder { color: #336633; }
+    .signup-input:focus { border-color: var(--hot-pink); color: var(--white); }
+
+    /* ===== WEBRING ===== */
+    .webring {
+      background: #000;
+      border: 2px solid var(--yellow);
+      padding: 0.6rem;
+      font-size: 0.72rem;
+      display: inline-block;
+    }
+
+    /* ===== AWARDS ===== */
+    .award {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      margin: 0.4rem;
+    }
+
+    .award-badge {
+      width: 64px;
+      height: 64px;
+      border: 3px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      font-weight: bold;
+      flex-direction: column;
+      gap: 2px;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .award-badge-star {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .award-name {
+      font-size: 0.58rem;
+      color: #aaa;
+      max-width: 70px;
+    }
+
+    /* ===== CSS SPINNING CONSTRUCTION ICON ===== */
+    .construction-icon {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .cone-body {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 45px solid var(--orange);
+    }
+
+    .cone-stripe {
+      position: absolute;
+      bottom: 14px; left: 50%;
+      transform: translateX(-50%);
+      width: 28px; height: 7px;
+      background: var(--white);
+    }
+
+    .cone-top {
+      position: absolute;
+      bottom: 43px; left: 50%;
+      transform: translateX(-50%);
+      width: 8px; height: 8px;
+      background: var(--white);
+      border-radius: 50%;
+    }
+
+    /* ===== COOL LINKS ===== */
+    .links-list {
+      list-style: none;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .links-list li {
+      padding: 0.2rem 0;
+      border-bottom: 1px dotted #444;
+    }
+
+    .links-list li::before {
+      content: '★ ';
+      color: var(--yellow);
+    }
+
+    .links-list a {
+      color: var(--cyan);
+      font-weight: bold;
+    }
+
+    .links-list a:hover { color: var(--hot-pink); }
+
+    /* ===== GUESTBOOK ===== */
+    .guestbook-entry {
+      background: rgba(0,0,80,0.8);
+      border: 1px solid var(--purple);
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+      text-align: left;
+      font-size: 0.8rem;
+    }
+
+    .gb-name { color: var(--lime); font-weight: bold; }
+    .gb-date { color: #888; font-size: 0.7rem; }
+    .gb-msg  { color: var(--white); margin-top: 0.2rem; }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      background: #000;
+      border-top: 5px solid var(--hot-pink);
+      padding: 1.25rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+    }
+
+    /* ===== DECORATIVE STARS ROW ===== */
+    .stars-row {
+      color: var(--yellow);
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      animation: rainbow 3s linear infinite;
+    }
+
+    /* ===== FLAME CSS ===== */
+    .flame {
+      display: inline-block;
+      font-size: 1.4rem;
+      animation: float 0.8s ease-in-out infinite alternate;
+    }
+
+    .flame:nth-child(even) {
+      animation-direction: alternate-reverse;
+      animation-delay: 0.2s;
+    }
+
+    /* ===== SCROLL CONTAINER ===== */
+    .scroll-box {
+      height: 80px;
+      overflow: hidden;
+      background: #000022;
+      border: 2px solid var(--cyan);
+      padding: 0.4rem;
+      position: relative;
+    }
+
+    .scroll-content {
+      position: absolute;
+      animation: marquee 12s linear infinite;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--lime);
+      top: 0.4rem;
+    }
+
+    /* ===== SIDEBAR ORNAMENTS ===== */
+    .ornament-row {
+      font-size: 1.2rem;
+      letter-spacing: 0.2em;
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ MARQUEE TOP STRIP ══ -->
+  <div class="marquee-bar">
+    <span class="marquee-inner">
+      ★ WELCOME TO SLOWMAIL — THE GREATEST EMAIL SITE ON THE WHOLE ENTIRE INTERNET!!! ★ YOUR EMAIL WILL ARRIVE TOMORROW AND THAT IS A PROMISE!!! ★ SIGN MY GUESTBOOK PLEASE!!!! ★ THIS SITE IS BEST VIEWED IN 800x600 ★ THANKS FOR VISITING!!!! ★
+    </span>
+  </div>
+
+  <!-- ══ SITE HEADER ══ -->
+  <div class="site-header">
+
+    <div style="margin-bottom:0.5rem;">
+      <span class="spinning-star">✦</span>
+      <span class="spinning-star" style="animation-delay:0.3s;">★</span>
+      <span class="spinning-star" style="animation-delay:0.6s;">✦</span>
+    </div>
+
+    <div class="site-title">~~*~~ SLOWMAIL ~~*~~</div>
+    <br>
+    <div class="site-tagline">THE WORLD'S #1 SLOW EMAIL SERVICE!!!</div>
+
+    <div style="font-size:1rem; color:var(--hot-pink); margin:0.4rem 0; animation: blink 0.9s step-end infinite;">
+      ⚡ YOUR EMAIL ARRIVES TOMORROW ⚡
+    </div>
+
+    <div class="best-viewed">
+      *** Best viewed in Netscape Navigator 4.0 at 800×600 resolution ***<br>
+      This page uses ADVANCED HTML TECHNOLOGY and may not display correctly in inferior browsers!!!
+    </div>
+
+    <div style="margin-top:0.6rem;">
+      <span class="flame">🔥</span>
+      <span class="flame">🔥</span>
+      <span class="flame">🔥</span>
+      <span style="color:var(--yellow); font-size:1.1rem; font-weight:bold; animation:rainbow 1s linear infinite;">
+        &nbsp;THIS SITE IS ON FIRE!!!&nbsp;
+      </span>
+      <span class="flame">🔥</span>
+      <span class="flame">🔥</span>
+      <span class="flame">🔥</span>
+    </div>
+
+  </div>
+
+  <!-- ══ UNDER CONSTRUCTION ══ -->
+  <div class="under-construction">
+    <div class="construction-icon">
+      <div class="cone-top"></div>
+      <div class="cone-stripe"></div>
+      <div class="cone-body"></div>
+    </div>
+    <span class="construction-text">!! UNDER CONSTRUCTION !!</span>
+    <div class="construction-icon" style="transform:scaleX(-1);">
+      <div class="cone-top"></div>
+      <div class="cone-stripe"></div>
+      <div class="cone-body"></div>
+    </div>
+  </div>
+
+  <div style="font-size:0.8rem; color:var(--yellow); margin:0.3rem 0;">
+    <span class="blink">▶▶</span>
+    Last Updated: March 28, 2026 at 11:59 PM!!!
+    <span class="blink">◀◀</span>
+  </div>
+
+  <hr class="rainbow-hr" style="margin:0.5rem auto;max-width:900px;">
+
+  <!-- ══ MAIN TABLE LAYOUT ══ -->
+  <table class="layout-table">
+    <tr>
+
+      <!-- LEFT COLUMN -->
+      <td style="width:200px; vertical-align:top;">
+
+        <!-- VISITOR COUNTER -->
+        <div class="box box-lime">
+          <div class="box-title box-title-lime">👁 SITE HITS 👁</div>
+          <div style="font-size:0.7rem; color:var(--yellow); margin-bottom:0.4rem;">
+            You are visitor number:
+          </div>
+          <div class="visitor-counter">
+            <div class="counter-digits">
+              <div class="counter-digit">0</div>
+              <div class="counter-digit">0</div>
+              <div class="counter-digit">4</div>
+              <div class="counter-digit">2</div>
+              <div class="counter-digit">1</div>
+              <div class="counter-digit">7</div>
+            </div>
+          </div>
+          <div style="font-size:0.65rem; color:#aaa; margin-top:0.4rem;">
+            since Jan 1, 2024!!!
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- NAVIGATION -->
+        <div class="box box-yellow">
+          <div class="box-title box-title-yellow">🌟 NAVIGATE 🌟</div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <a href="#" class="btn-geocities" style="display:block; text-align:center;">🏠 HOME</a>
+            <a href="#" class="btn-geocities btn-lime" style="display:block; text-align:center;">📧 ABOUT</a>
+            <a href="#" class="btn-geocities btn-cyan" style="display:block; text-align:center;">✍️ GUESTBOOK</a>
+            <a href="#" class="btn-geocities btn-yellow" style="display:block; text-align:center;">🔗 COOL LINKS</a>
+            <a href="#" class="btn-geocities" style="display:block; text-align:center; background:var(--purple); border-color:#cc88ff;">📬 SIGN UP</a>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- AWARDS -->
+        <div class="box" style="border-color:var(--yellow);">
+          <div class="box-title box-title-yellow">🏆 AWARDS WON 🏆</div>
+
+          <div class="award">
+            <div class="award-badge" style="border-color:var(--yellow); color:var(--yellow); background:rgba(255,255,0,0.1);">
+              <div class="award-badge-star">⭐</div>
+              <div>SITE OF<br>THE DAY</div>
+            </div>
+            <div class="award-name">Cool Site of the Day 1999</div>
+          </div>
+
+          <div class="award">
+            <div class="award-badge" style="border-color:var(--hot-pink); color:var(--hot-pink); background:rgba(255,0,255,0.1);">
+              <div class="award-badge-star">💎</div>
+              <div>5 STAR<br>AWARD</div>
+            </div>
+            <div class="award-name">WebRing Diamond Award</div>
+          </div>
+
+          <div class="award">
+            <div class="award-badge" style="border-color:var(--cyan); color:var(--cyan); background:rgba(0,255,255,0.1);">
+              <div class="award-badge-star">🌐</div>
+              <div>BEST<br>OF WEB</div>
+            </div>
+            <div class="award-name">Best Email Site 2025</div>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- COOL LINKS -->
+        <div class="box box-cyan">
+          <div class="box-title box-title-cyan">🔗 COOL LINKZ 🔗</div>
+          <ul class="links-list">
+            <li><a href="#">Ask Jeeves</a></li>
+            <li><a href="#">AltaVista</a></li>
+            <li><a href="#">Angelfire</a></li>
+            <li><a href="#">Tripod</a></li>
+            <li><a href="#">My Friend Dave's Page</a></li>
+            <li><a href="#">Hamster Dance</a></li>
+          </ul>
+        </div>
+
+      </td>
+
+      <!-- CENTRE COLUMN -->
+      <td style="vertical-align:top;">
+
+        <!-- WELCOME BOX -->
+        <div class="box">
+          <div class="box-title box-title-pink">
+            💌 WELCOME TO SLOWMAIL!!! 💌
+          </div>
+
+          <div class="ornament-row">
+            <span style="color:var(--cyan);">~*~</span>
+            <span class="spinning-star" style="font-size:1rem;">★</span>
+            <span style="color:var(--hot-pink);">~*~</span>
+            <span class="spinning-star" style="font-size:1rem; animation-direction:reverse;">★</span>
+            <span style="color:var(--cyan);">~*~</span>
+          </div>
+
+          <div class="welcome-text">
+            <p>
+              <span class="em-yellow">HELLO AND WELCOME!!!</span> 🎉🎉🎉 You have found the <span class="em-pink">GREATEST EMAIL SERVICE</span> on the whole entire World Wide Web!!!
+            </p>
+            <p>
+              Slowmail is <span class="em-cyan">TOTALLY DIFFERENT</span> from all those other email services because we <span class="em-lime">HOLD YOUR EMAIL FOR 24 HOURS</span> before sending it!!!! Can you believe it?!?! <span class="blink" style="color:var(--red);">WOW!!!</span>
+            </p>
+            <p>
+              Why do we do this?? Because <span class="em-yellow">SOME THINGS ARE WORTH WAITING FOR!!!</span> 🌟 Like Christmas. Or pizza. Or a really good email. 😊
+            </p>
+            <p style="animation: rainbow 2s linear infinite; font-weight:bold;">
+              ✨ YOUR EMAIL ARRIVES TOMORROW AND THAT IS THE WHOLE POINT ✨
+            </p>
+          </div>
+
+          <hr class="rainbow-hr">
+
+          <div style="font-size:0.85rem; color:var(--yellow); animation: blink 1.2s step-end infinite;">
+            🚨 IMPORTANT ANNOUNCEMENT 🚨
+          </div>
+          <div style="font-size:0.8rem; color:var(--white); margin-top:0.3rem;">
+            We have just added a <span class="em-lime">GUESTBOOK</span>!! Please sign it!!
+            Also we got <span class="em-pink">12,000 VISITORS</span> this month which is like the most ever!!! Thank you!!!
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- HOW IT WORKS -->
+        <div class="box box-cyan">
+          <div class="box-title box-title-cyan">
+            ❓ HOW DOES IT WORK?? ❓
+          </div>
+
+          <table class="features-table">
+            <tr>
+              <th>STEP</th>
+              <th>WHAT YOU DO</th>
+              <th>WHAT WE DO</th>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="font-size:1.5rem;">1️⃣</span><br>
+                <span class="em-yellow">WRITE</span>
+              </td>
+              <td>You write your email just like normal!!! Easy!!! 📝</td>
+              <td>We get ready to receive your email!!! We are very excited!!!!</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="font-size:1.5rem;">2️⃣</span><br>
+                <span class="em-lime">WAIT</span>
+              </td>
+              <td>You hit send and then you go do something else. Watch TV. Eat a sandwich. Have a nap. Whatever!!!</td>
+              <td>We hold your email for <span class="em-yellow">EXACTLY 24 HOURS</span>. It is very safe with us. We promise!!!! 🔒</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">
+                <span style="font-size:1.5rem;">3️⃣</span><br>
+                <span class="em-pink">ARRIVE!!!</span>
+              </td>
+              <td>You wake up the next day and your email has been sent!!! It's like magic!!! ✨</td>
+              <td>We send the email!!! Everyone is happy!!!! 🎉🎉🎉</td>
+            </tr>
+          </table>
+
+          <div style="margin-top:0.75rem; font-size:0.85rem; color:var(--yellow);">
+            <span class="blink">★</span>
+            IT'S THAT SIMPLE!!!
+            <span class="blink">★</span>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- SCROLLING TESTIMONIALS -->
+        <div class="box box-orange">
+          <div class="box-title box-title-orange">📣 WHAT PEOPLE ARE SAYING!!! 📣</div>
+          <div class="scroll-box">
+            <div class="scroll-content">
+              ★ "This is the most amazing website I have ever seen on the internet!!!" — CoolDude99 &nbsp;&nbsp;&nbsp;
+              ★ "I used Slowmail and now my life is completely different!!!" — xXEmailLover2000Xx &nbsp;&nbsp;&nbsp;
+              ★ "The 24 hour thing is genius. It is like the postal service but on the computer!!!" — NetSurfer42 &nbsp;&nbsp;&nbsp;
+              ★ "I signed the guestbook and they said thank you. AMAZING SERVICE!!!" — TurboCat &nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- FEATURES LIST -->
+        <div class="box box-lime">
+          <div class="box-title box-title-lime">⚡ AWESOME FEATURES ⚡</div>
+          <table class="features-table">
+            <tr>
+              <th>FEATURE</th>
+              <th>SLOWMAIL HAS IT??</th>
+              <th>OTHER EMAILS??</th>
+            </tr>
+            <tr>
+              <td>24 Hour Email Delay (COOLEST FEATURE EVER!!!)</td>
+              <td class="check-yes" style="text-align:center;">✅ YES YES YES</td>
+              <td class="check-no" style="text-align:center;">❌ NO WAY</td>
+            </tr>
+            <tr>
+              <td>Send Email To People</td>
+              <td class="check-yes" style="text-align:center;">✅ YES!</td>
+              <td class="check-yes" style="text-align:center;">✅ yes but boring</td>
+            </tr>
+            <tr>
+              <td>Cancel Email Before It Sends (cool recall thing)</td>
+              <td class="check-yes" style="text-align:center;">✅ TOTALLY</td>
+              <td class="check-no" style="text-align:center;">❌ NOPE</td>
+            </tr>
+            <tr>
+              <td>Completely Free!!!</td>
+              <td class="check-yes" style="text-align:center;">✅ 100% FREE!!!</td>
+              <td style="text-align:center; color:var(--orange);">🤔 maybe???</td>
+            </tr>
+            <tr>
+              <td>Encryption and Security (very technical stuff)</td>
+              <td class="check-yes" style="text-align:center;">✅ OH YEAH</td>
+              <td class="check-no" style="text-align:center;">❌ probably not</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- SIGN UP FORM -->
+        <div class="box" style="border-color:var(--purple);">
+          <div class="box-title box-title-purple">
+            <span class="float-el">💌</span>
+            JOIN SLOWMAIL TODAY IT IS FREE!!!
+            <span class="float-el">💌</span>
+          </div>
+
+          <div style="font-size:0.9rem; color:var(--yellow); margin-bottom:0.75rem; animation:pulse 1.5s ease-in-out infinite;">
+            ⬇️ ENTER YOUR EMAIL ADDRESS BELOW AND CLICK THE BUTTON!!! ⬇️
+          </div>
+
+          <div style="max-width:400px; margin:0 auto; text-align:left;">
+            <label class="signup-label" for="gc-email">
+              📧 Your E-Mail Address (required!!!):
+            </label>
+            <input
+              class="signup-input"
+              type="email"
+              id="gc-email"
+              placeholder="you@youremail.com"
+            >
+
+            <label class="signup-label" for="gc-name">
+              😊 Your Name (so we know who you are!!!):
+            </label>
+            <input
+              class="signup-input"
+              type="text"
+              id="gc-name"
+              placeholder="Cool Person"
+            >
+          </div>
+
+          <div style="margin-top:0.75rem;">
+            <button class="btn-geocities" style="font-size:1rem; padding:0.6rem 2rem; animation-duration:0.8s;">
+              🚀 CLICK HERE TO SIGN UP IT IS FREE!!! 🚀
+            </button>
+          </div>
+
+          <div style="font-size:0.7rem; color:#aaaaaa; margin-top:0.5rem;">
+            * We will never spam you. Except with your own emails but those arrive tomorrow so that is fine.
+          </div>
+
+          <hr class="dashed-hr" style="margin:0.75rem 0;">
+
+          <div style="font-size:0.8rem; color:var(--lime);">
+            ✅ No credit card needed!!! &nbsp;
+            ✅ No instant emails ever!!! &nbsp;
+            ✅ 100% pure HTML and CSS!!!
+          </div>
+        </div>
+
+      </td>
+
+      <!-- RIGHT COLUMN -->
+      <td style="width:190px; vertical-align:top;">
+
+        <!-- ABOUT THE AUTHOR -->
+        <div class="box box-purple">
+          <div class="box-title box-title-purple">👤 ABOUT ME 👤</div>
+          <div style="font-size:0.78rem; line-height:1.7; text-align:left;">
+            <p style="color:var(--yellow); font-weight:bold;">Hi!!! I am the creator of Slowmail!!!</p>
+            <hr class="pink-hr">
+            <p style="color:var(--white);">I made this website because I sent a really bad email one time and I wished I could have waited before sending it.</p>
+            <hr class="pink-hr">
+            <p style="color:var(--cyan);">Now ALL emails wait 24 hours. Problem solved!!!! 😊</p>
+            <hr class="pink-hr">
+            <p style="color:var(--lime);">
+              <a href="mailto:hello@slowmail.com" style="color:var(--lime);">
+                📧 E-MAIL ME!!!
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- TODAY'S MOOD -->
+        <div class="box" style="border-color:var(--orange);">
+          <div class="box-title box-title-orange">😊 TODAY'S MOOD</div>
+          <div style="font-size:2.5rem; animation:float 2s ease-in-out infinite;">😌</div>
+          <div style="font-size:0.8rem; color:var(--white); margin-top:0.3rem;">
+            Patient and chill!<br>
+            <span style="color:var(--yellow);">Waiting for tomorrow's emails!</span>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- GUESTBOOK -->
+        <div class="box box-cyan">
+          <div class="box-title box-title-cyan">📖 GUESTBOOK 📖</div>
+
+          <div class="guestbook-entry">
+            <div class="gb-name">CoolDude99</div>
+            <div class="gb-date">March 27, 2026</div>
+            <div class="gb-msg">GREAT SITE!!!! I love waiting for emails!!!!</div>
+          </div>
+
+          <div class="guestbook-entry">
+            <div class="gb-name">xXnetsurf_queenXx</div>
+            <div class="gb-date">March 25, 2026</div>
+            <div class="gb-msg">The best!! I signed up and my email came tomorrow just like it said 😮</div>
+          </div>
+
+          <div class="guestbook-entry">
+            <div class="gb-name">TurboCat</div>
+            <div class="gb-date">March 20, 2026</div>
+            <div class="gb-msg">I told all my friends about this site. 5 stars!!! ⭐⭐⭐⭐⭐</div>
+          </div>
+
+          <div style="margin-top:0.5rem;">
+            <a href="#" class="btn-geocities btn-cyan" style="font-size:0.72rem; display:block; text-align:center;">
+              ✍️ SIGN MY GUESTBOOK!!!
+            </a>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- WEB RING -->
+        <div class="webring">
+          <div style="font-size:0.68rem; color:var(--yellow); font-weight:bold; margin-bottom:0.3rem;">
+            🌐 SLOW EMAIL WEBRING 🌐
+          </div>
+          <div style="display:flex; gap:4px; justify-content:center; align-items:center; font-size:0.72rem;">
+            <a href="#" style="color:var(--cyan);">◀ PREV</a>
+            <span style="color:#888;">|</span>
+            <a href="#" style="color:var(--lime);">RANDOM</a>
+            <span style="color:#888;">|</span>
+            <a href="#" style="color:var(--cyan);">NEXT ▶</a>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- RANDOM FACTS -->
+        <div class="box" style="border-color:var(--yellow);">
+          <div class="box-title box-title-yellow">📊 FUN FACTS!! 📊</div>
+          <div style="font-size:0.78rem; text-align:left; line-height:1.8;">
+            <div>📧 <span class="em-yellow">24</span> hours delay</div>
+            <div>👤 <span class="em-lime">12,000+</span> users</div>
+            <div>💌 <span class="em-cyan">FREE</span> forever</div>
+            <div>🔒 <span class="em-pink">100%</span> encrypted</div>
+            <div>🌟 <span class="em-orange">0</span> instant sends</div>
+            <div>😊 <span class="em-yellow">∞</span> patience</div>
+          </div>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <!-- TIME ON SITE -->
+        <div style="border:2px solid var(--lime); background:#001100; padding:0.5rem; font-size:0.7rem; font-family:'Courier New',monospace;">
+          <div style="color:var(--lime); animation:blink 1s step-end infinite;">█ SYSTEM STATUS █</div>
+          <div style="color:#00aa00; margin-top:0.3rem;">EMAIL_QUEUE: ACTIVE</div>
+          <div style="color:#00aa00;">DELAY_TIMER: 86400s</div>
+          <div style="color:#00aa00;">NEXT_SEND: TOMORROW</div>
+          <div style="color:var(--red); animation:blink 0.8s step-end infinite;">INSTANT_SEND: OFF</div>
+        </div>
+
+      </td>
+
+    </tr>
+  </table>
+
+  <!-- ══ DECORATIVE STARS ROW ══ -->
+  <div class="stars-row" style="margin:0.5rem 0;">
+    ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★ · · · ★
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="site-footer">
+    <hr class="rainbow-hr" style="margin-bottom:0.75rem;">
+
+    <div style="font-size:0.8rem; color:var(--cyan); margin-bottom:0.4rem;">
+      <span class="spinning-star" style="font-size:0.9rem;">✦</span>
+      &nbsp; Copyright © 2024–2026 SLOWMAIL.COM All Rights Reserved Maybe &nbsp;
+      <span class="spinning-star" style="font-size:0.9rem; animation-direction:reverse;">✦</span>
+    </div>
+
+    <div style="font-size:0.72rem; color:#888; line-height:1.8;">
+      This page has been visited <span style="color:var(--lime); font-weight:bold;">42,197</span> times since January 1, 2024!!!<br>
+      This site is 100% made with <span style="color:var(--red);">❤</span> and pure HTML + CSS — no JavaScript!!!<br>
+      <span class="blink-slow" style="color:var(--yellow);">★ Please bookmark this page and tell all your friends!!! ★</span><br>
+      <br>
+      <span style="color:var(--hot-pink);">[ Home ]</span> &nbsp;·&nbsp;
+      <span style="color:var(--cyan);">[ About ]</span> &nbsp;·&nbsp;
+      <span style="color:var(--lime);">[ Sign Up FREE ]</span> &nbsp;·&nbsp;
+      <span style="color:var(--yellow);">[ Guestbook ]</span> &nbsp;·&nbsp;
+      <span style="color:var(--orange);">[ Cool Links ]</span> &nbsp;·&nbsp;
+      <span style="color:var(--purple);">[ Email Me!!! ]</span>
+    </div>
+
+    <div style="margin-top:0.6rem; font-size:0.68rem; color:#555;">
+      Made with Notepad™ &nbsp;·&nbsp; Hosted on GeoCities &nbsp;·&nbsp; Please use Netscape &nbsp;·&nbsp;
+      <span class="blink" style="color:var(--red); font-size:0.75rem;">✦ NO HOTLINKING ✦</span>
+    </div>
+  </div>
+
+</body>
+</html>

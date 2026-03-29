@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — Maison de Correspondance</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --cream:      #f7f2e9;
+      --parchment:  #ede5d0;
+      --warm-white: #faf7f2;
+      --gold:       #b8963e;
+      --gold-pale:  #d4b96a;
+      --gold-faint: #e8d9aa;
+      --gold-rule:  rgba(184,150,62,0.3);
+      --ink:        #1a1612;
+      --ink-soft:   #3d342a;
+      --ink-mid:    #7a6e62;
+      --ink-pale:   #b0a596;
+      --ink-ghost:  #d4ccc0;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════
+       GLOBAL RULES
+    ══════════════════════════════ */
+    .gold-rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--gold-rule) 20%,
+        var(--gold) 50%,
+        var(--gold-rule) 80%,
+        transparent 100%
+      );
+    }
+
+    .gold-rule-short {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--cream);
+      padding: 1.75rem 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    .nav-left {
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      font-weight: 400;
+    }
+
+    nav a:hover { color: var(--ink); }
+
+    .nav-wordmark {
+      font-size: 1.1rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-weight: normal;
+      text-align: center;
+      font-family: Georgia, serif;
+    }
+
+    /* ══════════════════════════════
+       HERO — FULL HEIGHT
+    ══════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 3.5rem 5rem;
+      position: relative;
+      text-align: center;
+    }
+
+    /* Subtle grain texture via gradient */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(184,150,62,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4rem;
+    }
+
+    /* ── CSS ART — Wax-sealed envelope ── */
+    .envelope-art {
+      position: relative;
+      width: 220px;
+      height: 150px;
+      margin: 0 auto 4.5rem;
+    }
+
+    /* Envelope body */
+    .env-body {
+      position: absolute;
+      inset: 0;
+      background: var(--parchment);
+      border: 1px solid var(--gold-faint);
+    }
+
+    /* Top flap — triangle fold */
+    .env-flap {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-top: 72px solid var(--warm-white);
+      z-index: 2;
+    }
+
+    /* Flap border line */
+    .env-flap-line {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 3;
+      overflow: hidden;
+      height: 73px;
+    }
+
+    .env-flap-line::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-top: 72px solid var(--gold-faint);
+    }
+
+    .env-flap-line::after {
+      content: '';
+      position: absolute;
+      top: 1px; left: 0;
+      width: 0; height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-top: 71px solid var(--warm-white);
+    }
+
+    /* Bottom fold lines */
+    .env-bottom-left {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 110px solid var(--gold-faint);
+      border-top: 70px solid transparent;
+      z-index: 1;
+    }
+
+    .env-bottom-right {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 0; height: 0;
+      border-right: 110px solid var(--gold-faint);
+      border-top: 70px solid transparent;
+      z-index: 1;
+    }
+
+    /* Wax seal */
+    .env-seal {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -30%);
+      z-index: 4;
+      width: 42px;
+      height: 42px;
+    }
+
+    .seal-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, var(--gold-pale), var(--gold));
+      border: 1px solid rgba(184,150,62,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(184,150,62,0.35), inset 0 1px 2px rgba(255,255,255,0.3);
+    }
+
+    .seal-initial {
+      font-size: 0.9rem;
+      color: rgba(26,22,18,0.7);
+      letter-spacing: 0.05em;
+      font-style: italic;
+    }
+
+    /* ── MAIN HEADLINE ── */
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      font-weight: normal;
+      line-height: 1.2;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      margin-bottom: 2.5rem;
+      max-width: 700px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .hero-sub {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      margin-bottom: 4.5rem;
+      line-height: 2;
+    }
+
+    /* Scroll cue */
+    .scroll-cue {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--gold));
+    }
+
+    .scroll-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.5rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+    }
+
+    /* ══════════════════════════════
+       PHILOSOPHY — FULL BLEED
+    ══════════════════════════════ */
+    .philosophy {
+      background: var(--ink);
+      padding: 9rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Gold corner marks */
+    .philosophy::before,
+    .philosophy::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+    }
+
+    .philosophy::before {
+      top: 3rem; left: 3rem;
+      border-top: 1px solid var(--gold-rule);
+      border-left: 1px solid var(--gold-rule);
+    }
+
+    .philosophy::after {
+      bottom: 3rem; right: 3rem;
+      border-bottom: 1px solid var(--gold-rule);
+      border-right: 1px solid var(--gold-rule);
+    }
+
+    .philosophy-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .philosophy-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .philosophy h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      font-weight: normal;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      color: var(--parchment);
+      font-style: italic;
+    }
+
+    .philosophy-body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.72rem;
+      line-height: 2.2;
+      letter-spacing: 0.08em;
+      color: rgba(237,229,208,0.45);
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════
+       THE NUMBER — 24
+    ══════════════════════════════ */
+    .the-number {
+      padding: 9rem 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .number-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .number-display {
+      font-size: clamp(7rem, 18vw, 14rem);
+      font-weight: normal;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--ink-ghost);
+      font-style: italic;
+      position: relative;
+    }
+
+    .number-unit {
+      display: block;
+      font-size: 0.65rem;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      -webkit-text-stroke: 0;
+      font-style: normal;
+      margin-top: 1.5rem;
+    }
+
+    .number-right {
+      padding-top: 1rem;
+    }
+
+    .number-right p {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: var(--ink-soft);
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .number-right .fine {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      line-height: 2;
+      font-style: normal;
+    }
+
+    /* ══════════════════════════════
+       MAISON — THREE PILLARS
+    ══════════════════════════════ */
+    .maison {
+      background: var(--parchment);
+      padding: 8rem 3.5rem;
+    }
+
+    .maison-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .maison-eyebrow {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+    }
+
+    .maison-header h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .pillars {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .pillar {
+      padding: 0 3.5rem;
+      border-right: 1px solid var(--gold-rule);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .pillar:first-child { padding-left: 0; }
+    .pillar:last-child  { padding-right: 0; border-right: none; }
+
+    /* Roman numeral */
+    .pillar-num {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .pillar-rule {
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .pillar h3 {
+      font-size: 1rem;
+      font-weight: normal;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .pillar p {
+      font-size: 0.78rem;
+      line-height: 1.9;
+      color: var(--ink-mid);
+      font-style: italic;
+      max-width: 220px;
+    }
+
+    /* ══════════════════════════════
+       FULL-BLEED INTERLUDE
+    ══════════════════════════════ */
+    .interlude {
+      padding: 7rem 3.5rem;
+      text-align: right;
+      max-width: 900px;
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2rem;
+    }
+
+    .interlude blockquote {
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-style: italic;
+      font-weight: normal;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      max-width: 620px;
+    }
+
+    .interlude cite {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    /* ══════════════════════════════
+       INVITATION — SIGN UP
+    ══════════════════════════════ */
+    .invitation {
+      background: var(--warm-white);
+      border-top: 1px solid var(--gold-rule);
+      border-bottom: 1px solid var(--gold-rule);
+      padding: 9rem 3.5rem;
+    }
+
+    .invitation-inner {
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .invitation-eyebrow {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .invitation h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: normal;
+      line-height: 1.4;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+    }
+
+    .invitation h2 em { font-style: italic; color: var(--ink-soft); }
+
+    .invitation-note {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--ink-pale);
+      line-height: 1.9;
+      text-transform: uppercase;
+    }
+
+    /* The card form */
+    .card-form {
+      width: 100%;
+      border: 1px solid var(--gold-faint);
+      background: var(--cream);
+      padding: 3rem 2.5rem 2.5rem;
+      position: relative;
+    }
+
+    /* Corner ornaments */
+    .card-form::before,
+    .card-form::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+    }
+
+    .card-form::before {
+      top: -1px; left: -1px;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+    }
+
+    .card-form::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+      margin-bottom: 0.75rem;
+    }
+
+    .form-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--gold-rule);
+      padding: 0.6rem 0;
+      font-family: Georgia, serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      outline: none;
+      letter-spacing: 0.04em;
+      transition: border-color 0.3s;
+    }
+
+    .form-input::placeholder {
+      color: var(--ink-ghost);
+      font-style: italic;
+    }
+
+    .form-input:focus {
+      border-bottom-color: var(--gold);
+    }
+
+    .form-submit {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      padding: 1.1rem 2rem;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    .form-submit:hover {
+      background: var(--gold);
+      color: var(--cream);
+    }
+
+    .form-disclaimer {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      color: var(--ink-ghost);
+      text-align: center;
+      margin-top: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      padding: 3rem 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+    }
+
+    .footer-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .footer-wordmark {
+      font-size: 0.8rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+    }
+
+    .footer-sub {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+    }
+
+    .footer-right {
+      text-align: right;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+    }
+
+    /* ── GOLD MONOGRAM ── */
+    .monogram {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--gold-faint);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .monogram::before,
+    .monogram::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+    }
+
+    .monogram::before {
+      border: 1px solid var(--gold-rule);
+    }
+
+    .monogram-letter {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    /* ── DECORATIVE HORIZONTAL RULE ── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
+      padding: 2.5rem 0;
+    }
+
+    .orn-line {
+      flex: 1;
+      max-width: 120px;
+      height: 1px;
+      background: var(--gold-rule);
+    }
+
+    .orn-diamond {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    .orn-diamond-sm {
+      width: 3px;
+      height: 3px;
+      background: var(--gold-faint);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       NAV
+  ══════════════════════════════ -->
+  <nav>
+    <div class="nav-left">
+      <a href="#">Maison</a>
+      <a href="#">Correspondence</a>
+    </div>
+    <span class="nav-wordmark">Slowmail</span>
+    <div class="nav-right">
+      <a href="#">The Delay</a>
+      <a href="#">Request Access</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════
+       HERO
+  ══════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-eyebrow">Maison de Correspondance &nbsp;·&nbsp; Est. 2024</div>
+
+    <!-- Envelope with wax seal -->
+    <div class="envelope-art">
+      <div class="env-body"></div>
+      <div class="env-bottom-left"></div>
+      <div class="env-bottom-right"></div>
+      <div class="env-flap-line"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">
+        <div class="seal-circle">
+          <span class="seal-initial">S</span>
+        </div>
+      </div>
+    </div>
+
+    <h1>
+      The correspondence<br>
+      that arrives <em>tomorrow.</em>
+    </h1>
+
+    <div class="hero-sub">
+      Every letter held for twenty-four hours &nbsp;·&nbsp; Always
+    </div>
+
+    <div class="gold-rule-short"></div>
+
+    <div class="scroll-cue">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Discover</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       PHILOSOPHY
+  ══════════════════════════════ -->
+  <section class="philosophy">
+    <div class="philosophy-inner">
+      <span class="philosophy-kicker">The Philosophy</span>
+      <div class="gold-rule-short"></div>
+      <h2>
+        We believe the finest correspondence<br>
+        is never the fastest.
+      </h2>
+      <p class="philosophy-body">
+        Composed with intention &nbsp;·&nbsp; Delivered with grace &nbsp;·&nbsp; Received the following day
+      </p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       THE NUMBER
+  ══════════════════════════════ -->
+  <section class="the-number">
+    <div class="number-left">
+      <div class="number-display">
+        24
+        <span class="number-unit">Hours &nbsp;·&nbsp; Always</span>
+      </div>
+    </div>
+
+    <div class="number-right">
+      <p>
+        Each letter you compose is held in our care for
+        exactly twenty-four hours. Not as inconvenience —
+        as craftsmanship. The interval between writing
+        and arrival is where the meaning settles.
+      </p>
+      <p class="fine">
+        Compose today. &nbsp; Arrive tomorrow. &nbsp; Always.
+      </p>
+    </div>
+  </section>
+
+  <div class="gold-rule" style="max-width:1100px; margin:0 auto; padding:0 3.5rem;">
+    <div class="gold-rule"></div>
+  </div>
+
+  <!-- ORNAMENTAL DIVIDER -->
+  <div class="ornament">
+    <div class="orn-line"></div>
+    <div class="orn-diamond-sm"></div>
+    <div class="orn-diamond"></div>
+    <div class="orn-diamond-sm"></div>
+    <div class="orn-line"></div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MAISON — THREE PILLARS
+  ══════════════════════════════ -->
+  <section class="maison">
+    <div class="maison-header">
+      <div class="maison-eyebrow">The Atelier</div>
+      <div class="monogram" style="margin-bottom:1.75rem;">
+        <span class="monogram-letter">S</span>
+      </div>
+      <h2>Three Principles</h2>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <span class="pillar-num">I</span>
+        <div class="pillar-rule"></div>
+        <h3>Compose</h3>
+        <p>Write with the same freedom you have always known. There is no constraint on the act of composition.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">II</span>
+        <div class="pillar-rule"></div>
+        <h3>Rest</h3>
+        <p>Your letter rests with us for one full day. Sealed. Considered. Untouched. This is not a delay. It is a grace.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">III</span>
+        <div class="pillar-rule"></div>
+        <h3>Arrive</h3>
+        <p>Tomorrow, without ceremony, your words find their reader. Exactly as written. Entirely as intended.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       INTERLUDE QUOTE
+  ══════════════════════════════ -->
+  <div class="interlude">
+    <blockquote>
+      "The letter that arrives the next morning carries something
+      the instant message can never possess: the knowledge that
+      it survived a night of second thoughts."
+    </blockquote>
+    <cite>On the art of correspondence</cite>
+  </div>
+
+  <div style="padding: 0 3.5rem;">
+    <div class="gold-rule"></div>
+  </div>
+
+  <!-- ══════════════════════════════
+       INVITATION
+  ══════════════════════════════ -->
+  <section class="invitation">
+    <div class="invitation-inner">
+      <span class="invitation-eyebrow">Request an Invitation</span>
+
+      <h2>
+        Begin your first<br>
+        <em>slow letter.</em>
+      </h2>
+
+      <p class="invitation-note">
+        Complimentary access · No obligation · Your first letter arrives tomorrow
+      </p>
+
+      <div class="card-form">
+        <div class="form-group">
+          <label class="form-label" for="name-field">Your Name</label>
+          <input
+            class="form-input"
+            type="text"
+            id="name-field"
+            placeholder="As you wish to be addressed"
+          >
+        </div>
+        <div class="form-group" style="margin-bottom:2.5rem;">
+          <label class="form-label" for="email-field">Correspondence Address</label>
+          <input
+            class="form-input"
+            type="email"
+            id="email-field"
+            placeholder="your@address.com"
+          >
+        </div>
+
+        <button class="form-submit">Request Access</button>
+
+        <p class="form-disclaimer">
+          Correspondence will be delivered in no fewer than twenty-four hours.
+          This is the only promise we make — and the only one that matters.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORNAMENTAL DIVIDER -->
+  <div class="ornament">
+    <div class="orn-line"></div>
+    <div class="orn-diamond-sm"></div>
+    <div class="orn-diamond"></div>
+    <div class="orn-diamond-sm"></div>
+    <div class="orn-line"></div>
+  </div>
+
+  <!-- ══════════════════════════════
+       FOOTER
+  ══════════════════════════════ -->
+  <footer>
+    <div class="footer-left">
+      &copy; 2024 Slowmail<br>All rights reserved
+    </div>
+    <div class="footer-center">
+      <span class="footer-wordmark">Slowmail</span>
+      <span class="footer-sub">Maison de Correspondance &nbsp;·&nbsp; Est. 2024</span>
+    </div>
+    <div class="footer-right">
+      Privacy &nbsp;·&nbsp; Terms<br>
+      Paris &nbsp;·&nbsp; New York &nbsp;·&nbsp; Tokyo
+    </div>
+  </footer>
+
+</body>
+</html>

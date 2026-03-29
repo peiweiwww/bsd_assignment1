@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — email that actually waits for you 💌</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --mint:       #c0f5e8;
+      --mint-deep:  #3ecfaa;
+      --lav:        #ddd6fe;
+      --lav-deep:   #8b5cf6;
+      --peach:      #ffd6ba;
+      --peach-deep: #f97316;
+      --lemon:      #fef08a;
+      --lemon-deep: #eab308;
+      --sky:        #bae6fd;
+      --sky-deep:   #0ea5e9;
+      --pink:       #fce7f3;
+      --pink-deep:  #ec4899;
+      --ink:        #18103a;
+      --ink-soft:   #4a3f6b;
+      --white:      #ffffff;
+      --off:        #fafafa;
+      --r-full:     999px;
+      --r-xl:       28px;
+      --r-lg:       20px;
+      --r-md:       14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+      background: var(--off);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ─────────────────────────── */
+    nav {
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+      border-bottom: 2.5px solid var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-blob {
+      width: 36px;
+      height: 36px;
+      background: var(--lemon);
+      border-radius: 50% 40% 55% 35% / 40% 50% 35% 55%;
+      border: 2.5px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .nav-pills {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-pills a {
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--r-full);
+    }
+
+    .nav-pills a:hover {
+      background: var(--lav);
+      color: var(--ink);
+    }
+
+    .btn-nav {
+      background: var(--ink);
+      color: var(--white);
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 0.55rem 1.25rem;
+      border-radius: var(--r-full);
+      border: 2.5px solid var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-nav:hover {
+      background: var(--lav-deep);
+      border-color: var(--lav-deep);
+    }
+
+    /* ── HERO ────────────────────────── */
+    .hero {
+      background: var(--lav);
+      border-bottom: 2.5px solid var(--ink);
+      padding: 5rem 2.5rem 0;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 3rem;
+      align-items: flex-end;
+      max-width: 100%;
+    }
+
+    /* decorative blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50% 60% 40% 55% / 55% 40% 60% 45%;
+      z-index: 0;
+    }
+
+    .blob-a {
+      width: 260px; height: 260px;
+      background: var(--mint);
+      top: -60px; right: 380px;
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .blob-b {
+      width: 180px; height: 180px;
+      background: var(--lemon);
+      bottom: 40px; right: 60px;
+      border-radius: 40% 55% 50% 60% / 60% 45% 55% 40%;
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .blob-c {
+      width: 120px; height: 120px;
+      background: var(--peach);
+      top: 30px; left: 40%;
+      border-radius: 55% 40% 60% 45% / 45% 60% 40% 55%;
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 4rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--white);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-full);
+      padding: 0.35rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 1.75rem;
+    }
+
+    .badge-dot {
+      width: 8px; height: 8px;
+      background: var(--mint-deep);
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+    }
+
+    h1 .wave {
+      display: inline-block;
+      background: var(--lemon);
+      border-radius: 8px;
+      padding: 0 0.12em;
+      border: 2.5px solid var(--ink);
+    }
+
+    h1 .pop {
+      color: var(--lav-deep);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      max-width: 460px;
+      margin-bottom: 2.25rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-big {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--ink);
+      color: var(--white);
+      font-weight: 900;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: var(--r-full);
+      border: 2.5px solid var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 4px 4px 0 var(--lav-deep);
+    }
+
+    .btn-big:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--lav-deep);
+    }
+
+    .btn-soft {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--white);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: var(--r-full);
+      border: 2.5px solid var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.12);
+    }
+
+    .btn-soft:hover {
+      background: var(--mint);
+    }
+
+    .hero-note {
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      opacity: 0.7;
+    }
+
+    /* ── CSS ILLUSTRATION — phone mockup ── */
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 0;
+    }
+
+    .phone {
+      width: 240px;
+      background: var(--white);
+      border: 3px solid var(--ink);
+      border-bottom: none;
+      border-radius: 28px 28px 0 0;
+      padding: 1rem;
+      box-shadow: 6px 0 0 var(--ink), -6px 0 0 var(--ink), 8px 8px 0 rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .phone-notch {
+      width: 60px;
+      height: 10px;
+      background: var(--ink);
+      border-radius: var(--r-full);
+      margin: 0 auto 0.5rem;
+    }
+
+    .phone-msg {
+      border-radius: var(--r-lg);
+      padding: 0.75rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.5;
+      border: 2px solid var(--ink);
+      position: relative;
+    }
+
+    .phone-msg.out {
+      background: var(--lav);
+      margin-left: 1.5rem;
+      border-radius: var(--r-lg) var(--r-lg) 4px var(--r-lg);
+    }
+
+    .phone-msg.sys {
+      background: var(--lemon);
+      font-size: 0.65rem;
+      text-align: center;
+      border-style: dashed;
+    }
+
+    .phone-msg.in {
+      background: var(--mint);
+      margin-right: 1.5rem;
+      border-radius: var(--r-lg) var(--r-lg) var(--r-lg) 4px;
+    }
+
+    .msg-meta {
+      font-size: 0.6rem;
+      font-weight: 600;
+      opacity: 0.55;
+      margin-top: 0.25rem;
+    }
+
+    .phone-timer {
+      background: var(--peach);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-md);
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .timer-icon {
+      width: 28px; height: 28px;
+      background: var(--white);
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    /* ── WAVE DIVIDER ── */
+    .wave-div {
+      height: 60px;
+      background: var(--white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+      margin-top: -2px;
+    }
+
+    /* ── HOW IT WORKS ─────────────────── */
+    .how {
+      background: var(--white);
+      padding: 5rem 2.5rem;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      background: var(--lemon);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-full);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title h2 {
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+
+    .section-title p {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      margin-top: 0.75rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Steps row */
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Connector line */
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 52px;
+      left: calc(16.66% + 1.5rem);
+      right: calc(16.66% + 1.5rem);
+      height: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0, var(--ink) 8px,
+        transparent 8px, transparent 16px
+      );
+    }
+
+    .step-card {
+      background: var(--white);
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-xl);
+      padding: 2rem 1.75rem;
+      text-align: center;
+      box-shadow: 5px 5px 0 var(--ink);
+      position: relative;
+    }
+
+    .step-card:nth-child(1) { background: var(--mint); }
+    .step-card:nth-child(2) { background: var(--lav); }
+    .step-card:nth-child(3) { background: var(--peach); }
+
+    .step-num-badge {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 2.5px solid var(--ink);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin: 0 auto 1.25rem;
+    }
+
+    .step-card h3 {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+
+    .step-card p {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    /* ── FEATURES ─────────────────────── */
+    .features {
+      background: var(--lemon);
+      border-top: 2.5px solid var(--ink);
+      border-bottom: 2.5px solid var(--ink);
+      padding: 5rem 2.5rem;
+    }
+
+    .features-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-tile {
+      background: var(--white);
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-xl);
+      padding: 2rem;
+      box-shadow: 5px 5px 0 var(--ink);
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .feature-tile.wide {
+      grid-column: 1 / -1;
+      grid-template-columns: 64px 1fr;
+      background: var(--ink);
+      color: var(--white);
+      box-shadow: 5px 5px 0 var(--lav-deep);
+    }
+
+    .feature-tile.wide p { color: rgba(255,255,255,0.65); }
+
+    /* CSS shape icons */
+    .feat-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--r-md);
+      border: 2.5px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .feature-tile.wide .feat-icon {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .feature-tile h3 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .feature-tile p {
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    /* ── STICKER ROW ─────────────────── */
+    .stickers {
+      background: var(--sky);
+      border-bottom: 2.5px solid var(--ink);
+      padding: 3.5rem 2.5rem;
+      overflow: hidden;
+    }
+
+    .sticker-track {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .sticker {
+      background: var(--white);
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-full);
+      padding: 0.6rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--ink);
+      white-space: nowrap;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .sticker:nth-child(even) { background: var(--peach); transform: rotate(-1.5deg); }
+    .sticker:nth-child(3n)   { background: var(--mint);  transform: rotate(1deg); }
+    .sticker:nth-child(5n)   { background: var(--lav);   transform: rotate(-0.8deg); }
+    .sticker:nth-child(7n)   { background: var(--lemon); transform: rotate(1.5deg); }
+
+    /* ── TESTIMONIALS ─────────────────── */
+    .testimonials {
+      background: var(--white);
+      padding: 5rem 2.5rem;
+    }
+
+    .testimonials-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .testi-card {
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-xl);
+      padding: 1.75rem;
+      box-shadow: 5px 5px 0 var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .testi-card:nth-child(1) { background: var(--pink);  }
+    .testi-card:nth-child(2) { background: var(--sky);   }
+    .testi-card:nth-child(3) { background: var(--mint);  }
+
+    .testi-stars {
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .testi-card blockquote {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-top: auto;
+    }
+
+    /* CSS avatar */
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .author-name {
+      font-size: 0.8rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .author-handle {
+      font-size: 0.7rem;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    /* ── BIG CTA ─────────────────────── */
+    .cta-section {
+      background: var(--peach);
+      border-top: 2.5px solid var(--ink);
+      border-bottom: 2.5px solid var(--ink);
+      padding: 6rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative big circles */
+    .cta-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 3px solid rgba(0,0,0,0.07);
+    }
+
+    .cta-circle-a {
+      width: 400px; height: 400px;
+      top: -200px; left: -100px;
+      background: var(--lemon);
+    }
+
+    .cta-circle-b {
+      width: 300px; height: 300px;
+      bottom: -150px; right: -80px;
+      background: var(--mint);
+    }
+
+    .cta-section > * { position: relative; z-index: 1; }
+
+    .cta-section h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      max-width: 400px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .cta-form input[type="email"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.9rem 1.25rem;
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-full);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: var(--white);
+      color: var(--ink);
+      outline: none;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .cta-form input[type="email"]::placeholder { color: var(--ink-soft); opacity: 0.5; }
+    .cta-form input[type="email"]:focus { box-shadow: 4px 4px 0 var(--lav-deep); border-color: var(--lav-deep); }
+
+    .btn-cta {
+      background: var(--ink);
+      color: var(--white);
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.95rem;
+      padding: 0.9rem 1.75rem;
+      border-radius: var(--r-full);
+      border: 2.5px solid var(--ink);
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--lav-deep);
+    }
+
+    .btn-cta:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--lav-deep);
+    }
+
+    .cta-note {
+      margin-top: 1.25rem;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+
+    /* ── CSS CLOCK ILLUSTRATION ── */
+    .clock-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .clock {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 3px solid var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Clock face numbers as tick marks */
+    .clock::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(0,0,0,0.12);
+    }
+
+    /* Hour hand */
+    .clock-hour {
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 2px);
+      width: 4px;
+      height: 32px;
+      background: var(--ink);
+      border-radius: 4px;
+      transform-origin: bottom center;
+      transform: rotate(-60deg);
+    }
+
+    /* Minute hand */
+    .clock-min {
+      position: absolute;
+      bottom: 50%;
+      left: calc(50% - 1.5px);
+      width: 3px;
+      height: 42px;
+      background: var(--lav-deep);
+      border-radius: 4px;
+      transform-origin: bottom center;
+      transform: rotate(130deg);
+    }
+
+    /* Center dot */
+    .clock-center {
+      width: 10px; height: 10px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* +24h badge on clock */
+    .clock-badge {
+      position: absolute;
+      top: -14px; right: -20px;
+      background: var(--lemon);
+      border: 2.5px solid var(--ink);
+      border-radius: var(--r-full);
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 0.2rem 0.6rem;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    /* ── FOOTER ────────────────────── */
+    footer {
+      background: var(--ink);
+      padding: 3rem 2.5rem 2rem;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-logo {
+      font-weight: 900;
+      font-size: 1.15rem;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-logo-blob {
+      width: 32px; height: 32px;
+      background: var(--lemon);
+      border-radius: 50% 40% 55% 35% / 40% 50% 35% 55%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .footer-bottom span {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+      font-weight: 600;
+    }
+
+    .footer-pill {
+      background: var(--lav);
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.3rem 0.9rem;
+      border-radius: var(--r-full);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="nav-logo">
+      <div class="logo-blob">💌</div>
+      Slowmail
+    </div>
+    <ul class="nav-pills">
+      <li><a href="#">How it works</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <a href="#" class="btn-nav">Sign up free ✨</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        🎉 &nbsp;Now in beta — it's free!
+      </div>
+
+      <h1>
+        Email that<br>
+        <span class="wave">waits</span> for<br>
+        you. <span class="pop">Always.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Slowmail holds every email you send for <strong>exactly 24 hours</strong>
+        before it delivers. Because not everything needs to land in someone's
+        inbox the second you hit send. 🌙
+      </p>
+
+      <div class="hero-actions">
+        <a href="#" class="btn-big">Get started free 🚀</a>
+        <a href="#" class="btn-soft">See how it works</a>
+      </div>
+      <p class="hero-note">No credit card · No instant sending · Just vibes ✌️</p>
+    </div>
+
+    <div class="hero-right">
+      <div class="phone">
+        <div class="phone-notch"></div>
+
+        <div class="phone-msg out">
+          hey, about last week… i've been thinking 🤔
+          <div class="msg-meta">Sent — delivering in 22h</div>
+        </div>
+
+        <div class="phone-msg sys">
+          ⏳ &nbsp;Slowmail is holding this for you
+        </div>
+
+        <div class="phone-timer">
+          <div class="timer-icon">⏰</div>
+          <div>
+            <div>Delivers in</div>
+            <div style="font-size:1rem; letter-spacing:-0.02em;">22:14:08</div>
+          </div>
+        </div>
+
+        <div class="phone-msg in">
+          omg thank you for saying this 🥹
+          <div class="msg-meta">Received · yesterday</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="how">
+    <div class="section-title">
+      <span class="section-eyebrow">✨ How it works</span>
+      <h2>Three steps.<br>One whole day of patience.</h2>
+      <p>It's really not that complicated. In fact, that's kind of the whole point.</p>
+    </div>
+
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num-badge">✍️</div>
+        <h3>You write it</h3>
+        <p>Compose your email the same way you always do. Take your time — the 24 hours don't start until you hit send.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num-badge">💤</div>
+        <h3>We hold it</h3>
+        <p>Your email chills with us for exactly one day. You can read it, edit it, or pull it back. No pressure.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num-badge">📬</div>
+        <h3>It arrives</h3>
+        <p>Tomorrow, right on time, your message lands in their inbox. Exactly as you wrote it. No surprises.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="features">
+    <div class="section-title" style="margin-bottom:2.5rem;">
+      <span class="section-eyebrow">🛠 Features</span>
+      <h2>Everything you need.<br>Nothing you don't.</h2>
+    </div>
+
+    <div class="features-grid" style="max-width:960px; margin:0 auto;">
+      <div class="feature-tile wide">
+        <div class="feat-icon" style="font-size:1.6rem;">⏳</div>
+        <div>
+          <h3>The 24-hour hold — always on, no exceptions</h3>
+          <p>Every single email goes through the queue. No override button. No "send now" for VIPs. The constraint is the feature — and honestly it's the best part.</p>
+        </div>
+      </div>
+
+      <div class="feature-tile" style="background:var(--lav);">
+        <div class="feat-icon" style="background:var(--white);">↩️</div>
+        <div>
+          <h3>Pre-delivery recall</h3>
+          <p>Regret it? Pull the message back anytime before it delivers. You've got 24 hours.</p>
+        </div>
+      </div>
+
+      <div class="feature-tile" style="background:var(--mint);">
+        <div class="feat-icon" style="background:var(--white);">🔒</div>
+        <div>
+          <h3>Encrypted while waiting</h3>
+          <p>Your queued messages are fully encrypted at rest. Not even we can read them.</p>
+        </div>
+      </div>
+
+      <div class="feature-tile" style="background:var(--peach);">
+        <div class="feat-icon" style="background:var(--white);">🔔</div>
+        <div>
+          <h3>Delivery pings</h3>
+          <p>Get a notification the second your email is delivered. Know when they've got it.</p>
+        </div>
+      </div>
+
+      <div class="feature-tile" style="background:var(--sky);">
+        <div class="feat-icon" style="background:var(--white);">📋</div>
+        <div>
+          <h3>Smart drafts</h3>
+          <p>See your whole conversation history while composing. Never lose context again.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STICKER ROW ── -->
+  <section class="stickers">
+    <div class="sticker-track">
+      <span class="sticker">💌 24-hour delay</span>
+      <span class="sticker">✨ No instant sending</span>
+      <span class="sticker">🧘 Actually calming</span>
+      <span class="sticker">↩️ Pre-send recall</span>
+      <span class="sticker">🔒 End-to-end encrypted</span>
+      <span class="sticker">🆓 Free to start</span>
+      <span class="sticker">📬 Delivered tomorrow</span>
+      <span class="sticker">🌙 Sleep on it</span>
+      <span class="sticker">💬 Better convos</span>
+      <span class="sticker">⏳ Worth the wait</span>
+      <span class="sticker">🤝 No JS frameworks</span>
+      <span class="sticker">🎉 Gen Z approved</span>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section class="testimonials">
+    <div class="section-title">
+      <span class="section-eyebrow">💬 People are saying stuff</span>
+      <h2>Don't take our word for it</h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <blockquote>"I almost sent the most unhinged email to my manager at midnight. Slowmail saved me. I woke up, recalled it, and rewrote the whole thing. 10/10."</blockquote>
+        <div class="testi-author">
+          <div class="avatar" style="background:var(--lav);">🦋</div>
+          <div>
+            <div class="author-name">Maya R.</div>
+            <div class="author-handle">@mayarwrites</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <blockquote>"ok this sounds annoying but it genuinely changed how I communicate. my emails are so much better now. like actually thoughtful lol"</blockquote>
+        <div class="testi-author">
+          <div class="avatar" style="background:var(--sky);">🌊</div>
+          <div>
+            <div class="author-name">Jordan K.</div>
+            <div class="author-handle">@jkdesigns</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <blockquote>"my therapist told me to slow down and think before reacting. couldn't afford to keep seeing her so i just use slowmail now"</blockquote>
+        <div class="testi-author">
+          <div class="avatar" style="background:var(--peach);">🌿</div>
+          <div>
+            <div class="author-name">Sam L.</div>
+            <div class="author-handle">@samlmakes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <div class="cta-circle cta-circle-a"></div>
+    <div class="cta-circle cta-circle-b"></div>
+
+    <div class="clock-wrap">
+      <div class="clock">
+        <div class="clock-hour"></div>
+        <div class="clock-min"></div>
+        <div class="clock-center"></div>
+        <div class="clock-badge">+24h ⏰</div>
+      </div>
+    </div>
+
+    <h2>Ready to send<br>something tomorrow? 💌</h2>
+    <p>
+      Join thousands of people who've slowed their inbox down
+      and actually started enjoying email again.
+    </p>
+
+    <div class="cta-form">
+      <input type="email" placeholder="your@email.com">
+      <button class="btn-cta">Let's go 🚀</button>
+    </div>
+    <p class="cta-note">Free forever · Your first email arrives tomorrow · No credit card needed 🎉</p>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-logo">
+        <div class="footer-logo-blob">💌</div>
+        Slowmail
+      </div>
+      <div class="footer-links">
+        <a href="#">Features</a>
+        <a href="#">How it works</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 Slowmail — All emails delayed 24hrs by design</span>
+      <span class="footer-pill">Made with patience 🌙</span>
+    </div>
+  </footer>
+
+</body>
+</html>
