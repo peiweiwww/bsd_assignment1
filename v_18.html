@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — Intentional Email for Modern Teams</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blue-600:  #2563eb;
+      --blue-500:  #3b82f6;
+      --blue-400:  #60a5fa;
+      --blue-100:  #dbeafe;
+      --blue-50:   #eff6ff;
+      --navy:      #0f172a;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-100: #f1f5f9;
+      --white:     #ffffff;
+      --green:     #10b981;
+      --purple:    #8b5cf6;
+      --amber:     #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      background: var(--white);
+      color: var(--navy);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--blue-600);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .nav-logo-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-500);
+    }
+
+    .nav-links a:hover { color: var(--navy); }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-ghost {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-700);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-ghost:hover { background: var(--slate-100); }
+
+    .btn-primary {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--blue-600);
+      border: none;
+      cursor: pointer;
+      padding: 0.55rem 1.25rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 1px 2px rgba(37,99,235,0.3);
+    }
+
+    .btn-primary:hover { background: #1d4ed8; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(180deg, var(--blue-50) 0%, var(--white) 100%);
+      padding: 7rem 2rem 5rem;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blue-100);
+      color: var(--blue-600);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--blue-500);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--navy);
+      max-width: 780px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .hero h1 .highlight {
+      color: var(--blue-600);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--slate-500);
+      max-width: 520px;
+      margin: 0 auto 2.75rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--blue-600);
+      border: none;
+      cursor: pointer;
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+      text-decoration: none;
+    }
+
+    .btn-hero:hover { background: #1d4ed8; }
+
+    .btn-outline {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: var(--white);
+      border: 1.5px solid var(--slate-300);
+      cursor: pointer;
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+    }
+
+    .btn-outline:hover { border-color: var(--slate-500); }
+
+    .hero-note {
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--slate-300);
+    }
+
+    /* ── BROWSER MOCKUP ── */
+    .mockup-wrapper {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .browser {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg), 0 0 0 1px var(--slate-100);
+      overflow: hidden;
+    }
+
+    .browser-bar {
+      background: var(--slate-100);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--slate-300);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .browser-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .browser-dot:nth-child(1) { background: #ff5f57; }
+    .browser-dot:nth-child(2) { background: #febc2e; }
+    .browser-dot:nth-child(3) { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      background: var(--white);
+      border-radius: 6px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--slate-500);
+      border: 1px solid var(--slate-300);
+    }
+
+    .browser-body {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.5rem;
+      min-height: 260px;
+    }
+
+    /* Fake sidebar */
+    .mock-sidebar {
+      border-right: 1px solid var(--slate-100);
+      padding-right: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mock-sidebar-item {
+      height: 14px;
+      border-radius: 4px;
+      background: var(--slate-100);
+    }
+
+    .mock-sidebar-item.active {
+      background: var(--blue-100);
+      width: 70%;
+    }
+
+    .mock-sidebar-item:nth-child(1) { width: 55%; }
+    .mock-sidebar-item:nth-child(3) { width: 80%; }
+    .mock-sidebar-item:nth-child(4) { width: 60%; }
+
+    /* Fake inbox */
+    .mock-inbox {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .mock-email {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--slate-100);
+      border-radius: var(--radius-sm);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .mock-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .mock-email-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .mock-line {
+      height: 10px;
+      border-radius: 3px;
+      background: var(--slate-100);
+    }
+
+    .mock-line.bold { background: var(--slate-300); width: 55%; }
+    .mock-line.short { width: 40%; }
+
+    .mock-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: var(--blue-100);
+      color: var(--blue-600);
+      white-space: nowrap;
+    }
+
+    .mock-badge.pending { background: #fef3c7; color: #92400e; }
+
+    /* ── LOGOS / SOCIAL PROOF ── */
+    .logos-bar {
+      border-top: 1px solid var(--slate-100);
+      border-bottom: 1px solid var(--slate-100);
+      padding: 2.25rem 2rem;
+    }
+
+    .logos-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .logos-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slate-300);
+    }
+
+    .logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .logo-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.35;
+    }
+
+    .logo-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--slate-700);
+    }
+
+    .logo-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--slate-700);
+      letter-spacing: -0.02em;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      background: var(--navy);
+      padding: 5rem 2rem;
+    }
+
+    .stats-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-right: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-number {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-number .unit {
+      color: var(--blue-400);
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 6rem 2rem;
+    }
+
+    .section-header {
+      max-width: 600px;
+      margin: 0 auto 4rem;
+      text-align: center;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue-600);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .section-header p {
+      font-size: 1rem;
+      color: var(--slate-500);
+      line-height: 1.7;
+    }
+
+    .features-grid {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--slate-100);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .feature-card.featured {
+      border-color: var(--blue-100);
+      background: var(--blue-50);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .icon-blue   { background: var(--blue-100); }
+    .icon-green  { background: #d1fae5; }
+    .icon-purple { background: #ede9fe; }
+    .icon-amber  { background: #fef3c7; }
+    .icon-rose   { background: #ffe4e6; }
+    .icon-sky    { background: #e0f2fe; }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.875rem;
+      color: var(--slate-500);
+      line-height: 1.65;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--blue-600);
+      background: var(--blue-100);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    /* ── WIDE FEATURE ── */
+    .feature-wide {
+      max-width: 1080px;
+      margin: 1.5rem auto 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      background: var(--slate-100);
+      padding: 6rem 2rem;
+    }
+
+    .how-inner {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .how-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .how-step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--slate-300);
+      align-items: flex-start;
+    }
+
+    .how-step:last-child { border-bottom: none; }
+
+    .how-step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--blue-600);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .how-step-body h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+      margin-top: 0.5rem;
+    }
+
+    .how-step-body p {
+      font-size: 0.9rem;
+      color: var(--slate-500);
+      line-height: 1.65;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      padding: 6rem 2rem;
+    }
+
+    .testimonials-grid {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .testimonial {
+      background: var(--white);
+      border: 1px solid var(--slate-100);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stars {
+      color: var(--amber);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial blockquote {
+      font-size: 0.9rem;
+      color: var(--slate-700);
+      line-height: 1.7;
+      font-style: italic;
+      margin-bottom: 1.25rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .author-info .name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .author-info .role {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+    }
+
+    /* ── PRICING ── */
+    .pricing {
+      background: var(--blue-50);
+      padding: 6rem 2rem;
+    }
+
+    .pricing-cards {
+      max-width: 820px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border: 1px solid var(--slate-100);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pricing-card.popular {
+      border-color: var(--blue-600);
+      box-shadow: 0 0 0 2px var(--blue-600), var(--shadow-md);
+      position: relative;
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--blue-600);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 1rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .pricing-tier {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-price {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .pricing-price .currency {
+      font-size: 1.5rem;
+      vertical-align: super;
+      font-weight: 600;
+    }
+
+    .pricing-cadence {
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      margin-bottom: 1.75rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .pricing-features li {
+      font-size: 0.875rem;
+      color: var(--slate-700);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #d1fae5;
+      color: var(--green);
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .btn-plan {
+      display: block;
+      width: 100%;
+      padding: 0.85rem;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--slate-300);
+      background: var(--white);
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .btn-plan.primary {
+      background: var(--blue-600);
+      border-color: var(--blue-600);
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    }
+
+    .btn-plan:hover { opacity: 0.88; }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      background: var(--navy);
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      margin-bottom: 1rem;
+      line-height: 1.15;
+    }
+
+    .final-cta p {
+      font-size: 1.05rem;
+      color: var(--slate-500);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .cta-input-group {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .cta-input-group input[type="email"] {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.07);
+      color: var(--white);
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .cta-input-group input[type="email"]::placeholder {
+      color: var(--slate-500);
+    }
+
+    .cta-input-group input[type="email"]:focus {
+      border-color: var(--blue-400);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .cta-input-group button {
+      padding: 0.85rem 1.4rem;
+      background: var(--blue-600);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+    }
+
+    .cta-input-group button:hover { background: #1d4ed8; }
+
+    .final-note {
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: var(--slate-500);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060d1a;
+      padding: 3rem 2rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      line-height: 1.65;
+      margin-top: 0.75rem;
+      max-width: 220px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: 1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-col ul li a {
+      text-decoration: none;
+      font-size: 0.82rem;
+      color: #4a5568;
+    }
+
+    .footer-col ul li a:hover { color: var(--slate-500); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-bottom span {
+      font-size: 0.75rem;
+      color: #2d3748;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">⏱</div>
+        <span class="nav-logo-name">Slowmail</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#">Features</a></li>
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#" class="btn-ghost">Sign in</a>
+        <a href="#" class="btn-primary">Get started free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now in public beta — free for early users
+    </div>
+    <h1>Email that <span class="highlight">waits 24 hours</span><br>before it sends.</h1>
+    <p class="hero-sub">
+      Slowmail is the intentional email platform that holds every message for exactly one day —
+      giving you space to think, reconsider, and communicate with clarity.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-hero">Start for free &rarr;</a>
+      <a href="#" class="btn-outline">See how it works</a>
+    </div>
+    <p class="hero-note">No credit card required &nbsp;·&nbsp; Free plan available &nbsp;·&nbsp; Cancel anytime</p>
+  </section>
+
+  <!-- ── BROWSER MOCKUP ── -->
+  <div class="mockup-wrapper">
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+        </div>
+        <div class="browser-url">app.slowmail.io/inbox</div>
+      </div>
+      <div class="browser-body">
+        <div class="mock-sidebar">
+          <div class="mock-sidebar-item" style="background:#dbeafe;width:100%;height:18px;border-radius:5px;"></div>
+          <div style="height:12px;"></div>
+          <div class="mock-sidebar-item"></div>
+          <div class="mock-sidebar-item active"></div>
+          <div class="mock-sidebar-item"></div>
+          <div class="mock-sidebar-item"></div>
+          <div style="height:16px; border-top:1px solid #e2e8f0; margin-top:8px;"></div>
+          <div class="mock-sidebar-item" style="width:75%;"></div>
+          <div class="mock-sidebar-item" style="width:50%;"></div>
+        </div>
+        <div class="mock-inbox">
+          <div class="mock-email" style="border-color:#dbeafe; background:#eff6ff;">
+            <div class="mock-avatar" style="background:#bfdbfe;"></div>
+            <div class="mock-email-lines">
+              <div class="mock-line bold"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <span class="mock-badge pending">Sending in 18h</span>
+          </div>
+          <div class="mock-email">
+            <div class="mock-avatar" style="background:#d1fae5;"></div>
+            <div class="mock-email-lines">
+              <div class="mock-line bold"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <span class="mock-badge pending">Sending in 6h</span>
+          </div>
+          <div class="mock-email">
+            <div class="mock-avatar" style="background:#fde8d8;"></div>
+            <div class="mock-email-lines">
+              <div class="mock-line bold"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <span class="mock-badge" style="background:#d1fae5;color:#065f46;">Delivered</span>
+          </div>
+          <div class="mock-email">
+            <div class="mock-avatar" style="background:#ede9fe;"></div>
+            <div class="mock-email-lines">
+              <div class="mock-line bold"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <span class="mock-badge" style="background:#d1fae5;color:#065f46;">Delivered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGOS ── -->
+  <section class="logos-bar" style="margin-top:4rem;">
+    <div class="logos-inner">
+      <span class="logos-label">Trusted by teams at</span>
+      <div class="logos-row">
+        <div class="logo-pill"><div class="logo-icon" style="background:#6366f1;border-radius:6px;"></div><span class="logo-name">Meridian</span></div>
+        <div class="logo-pill"><div class="logo-icon" style="background:#0f766e;border-radius:8px;"></div><span class="logo-name">Verdant</span></div>
+        <div class="logo-pill"><div class="logo-icon" style="background:#b45309;border-radius:50%;"></div><span class="logo-name">Nomad</span></div>
+        <div class="logo-pill"><div class="logo-icon" style="background:#1d4ed8;border-radius:6px;"></div><span class="logo-name">Axion</span></div>
+        <div class="logo-pill"><div class="logo-icon" style="background:#7c3aed;border-radius:4px;"></div><span class="logo-name">Lumen</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <section class="stats">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="stat-number">24<span class="unit">h</span></div>
+        <div class="stat-label">Guaranteed delivery delay</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">40<span class="unit">%</span></div>
+        <div class="stat-label">Fewer emails users regret</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">12<span class="unit">k</span></div>
+        <div class="stat-label">Active users in beta</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">4.9<span class="unit">★</span></div>
+        <div class="stat-label">Average user rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="features">
+    <div class="section-header">
+      <span class="section-label">Features</span>
+      <h2>Everything you need to<br>email with intention.</h2>
+      <p>Slowmail is a full-featured email client with one deliberate constraint built in. The 24-hour hold isn't a bug. It's the product.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card featured">
+        <div class="feature-icon icon-blue">⏳</div>
+        <h3>24-Hour Send Queue</h3>
+        <p>Every email you send is held for exactly 24 hours. Review it, recall it, or let it send automatically — the choice is yours up until delivery.</p>
+        <span class="feature-tag">Core feature</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-green">↩️</div>
+        <h3>Pre-Delivery Recall</h3>
+        <p>Changed your mind? Recall any queued message before it delivers. Available for the full 24-hour hold window, with one click.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-purple">🔔</div>
+        <h3>Delivery Notifications</h3>
+        <p>Get notified the moment your message lands. Know exactly when it was read, and how long they took to reply.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-amber">📋</div>
+        <h3>Draft Intelligence</h3>
+        <p>Our smart drafting tools surface previous messages to the same contact, keeping context front of mind as you write.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-rose">🔒</div>
+        <h3>End-to-End Encryption</h3>
+        <p>Your queued emails are encrypted at rest and in transit. Even our servers can't read what you're sending while it waits.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-sky">⚡</div>
+        <h3>Instant Mode</h3>
+        <p>Need to send something now? Toggle Instant Mode for true emergencies. It's opt-in, not the default — and that's intentional.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="how">
+    <div class="how-inner">
+      <div class="section-header" style="text-align:left; max-width:100%; margin-bottom:3rem;">
+        <span class="section-label">How it works</span>
+        <h2>Three steps.<br>One day of patience.</h2>
+      </div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-num">1</div>
+          <div class="how-step-body">
+            <h3>Write your email as normal</h3>
+            <p>Compose, attach files, add recipients — Slowmail works exactly like any email client. There's nothing new to learn. Hit send when you're ready.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">2</div>
+          <div class="how-step-body">
+            <h3>Your message enters the 24-hour hold</h3>
+            <p>Instead of sending immediately, Slowmail queues your email for exactly 24 hours. You'll see it in your Pending folder, with a countdown timer. You can read it, edit it, or recall it at any time before delivery.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">3</div>
+          <div class="how-step-body">
+            <h3>It delivers — automatically</h3>
+            <p>After 24 hours, your email is sent without any further action from you. You'll get a delivery confirmation, and the message moves to Sent. No surprises, no manual steps.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section class="testimonials">
+    <div class="section-header">
+      <span class="section-label">Customer stories</span>
+      <h2>What our users are saying</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I've recalled four emails in the first two weeks. Two of them would have been genuinely career-damaging. Slowmail paid for itself in the first month."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: linear-gradient(135deg,#60a5fa,#818cf8);"></div>
+          <div class="author-info">
+            <p class="name">Marcus T.</p>
+            <p class="role">Head of Partnerships, Meridian</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The 24-hour window completely changed how I write emails to my team. I'm more thoughtful, less reactive, and honestly — my writing is just better now."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: linear-gradient(135deg,#34d399,#60a5fa);"></div>
+          <div class="author-info">
+            <p class="name">Priya K.</p>
+            <p class="role">Engineering Manager, Verdant</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"At first I thought the delay would drive me crazy. Three months in, I can't imagine going back. It's changed my whole relationship with communication."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar" style="background: linear-gradient(135deg,#f472b6,#fb923c);"></div>
+          <div class="author-info">
+            <p class="name">Dominic W.</p>
+            <p class="role">Founder, Lumen Studio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ── -->
+  <section class="pricing">
+    <div class="section-header">
+      <span class="section-label">Pricing</span>
+      <h2>Simple, honest pricing.</h2>
+      <p>Start free. Upgrade when you're ready. No annual contracts, no surprise fees.</p>
+    </div>
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price"><span class="currency">$</span>0</div>
+        <div class="pricing-cadence">Free forever</div>
+        <ul class="pricing-features">
+          <li>Up to 50 emails / month</li>
+          <li>24-hour send queue</li>
+          <li>Pre-delivery recall</li>
+          <li>5 GB storage</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#" class="btn-plan">Get started free</a>
+      </div>
+      <div class="pricing-card popular">
+        <div class="popular-badge">Most popular</div>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price"><span class="currency">$</span>12</div>
+        <div class="pricing-cadence">per month, billed monthly</div>
+        <ul class="pricing-features">
+          <li>Unlimited emails</li>
+          <li>24-hour send queue</li>
+          <li>Pre-delivery recall</li>
+          <li>50 GB storage</li>
+          <li>Delivery read receipts</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn-plan primary">Start Pro free trial</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ── -->
+  <section class="final-cta">
+    <h2>Ready to slow<br>your inbox down?</h2>
+    <p>Join 12,000+ users who've discovered that the best emails are the ones that waited a day.</p>
+    <div class="cta-input-group">
+      <input type="email" placeholder="you@company.com">
+      <button>Get early access</button>
+    </div>
+    <p class="final-note">Free to start &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; Your first email sends tomorrow</p>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="nav-logo-mark">⏱</div>
+            <span class="nav-logo-name" style="color:#94a3b8;">Slowmail</span>
+          </div>
+          <p>The intentional email platform. Every message waits 24 hours before it sends.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">How it works</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Status</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2024 Slowmail Inc. All rights reserved.</span>
+        <span>Made with patience.</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

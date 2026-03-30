@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — 間</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --washi:      #f7f3ec;
+      --paper:      #f0ead8;
+      --parchment:  #e8dfc8;
+      --ink:        #1c1814;
+      --ink-soft:   #3a342c;
+      --ink-faint:  #8c8278;
+      --ink-ghost:  #c4bdb2;
+      --rule:       #ddd6c8;
+      --vermillion: #9b3a2a;
+      --indigo:     #2c3e6b;
+    }
+
+    html {
+      font-size: 15px;
+    }
+
+    body {
+      background-color: var(--washi);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── HAIRLINE UTILITY ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* ══════════════════════════════
+       HEADER
+    ══════════════════════════════ */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 3rem 4rem 0;
+    }
+
+    .wordmark {
+      font-size: 0.78rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .header-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .header-right span {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    /* ══════════════════════════════
+       OPENING — MA (間) SECTION
+    ══════════════════════════════ */
+    .opening {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px;
+      min-height: 88vh;
+      padding: 0 4rem;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Vertical text — left pillar */
+    .vert-left {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 0;
+      border-right: 1px solid var(--rule);
+    }
+
+    /* Vertical text — right pillar */
+    .vert-right {
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 0;
+      border-left: 1px solid var(--rule);
+    }
+
+    /* Centre content */
+    .opening-center {
+      padding: 5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.5rem;
+    }
+
+    /* Enso-like circle */
+    .enso {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ink-ghost);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* The gap in the circle — a cut-out achieved with a white overlay arc */
+    .enso::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      right: 4px;
+      width: 18px;
+      height: 8px;
+      background: var(--washi);
+      transform: rotate(30deg);
+    }
+
+    .enso-inner {
+      font-size: 1.5rem;
+      color: var(--ink-ghost);
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    /* Main character — Japanese kanji for interval/space */
+    .kanji-display {
+      font-size: 5rem;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-weight: normal;
+    }
+
+    .kanji-gloss {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      text-align: center;
+    }
+
+    .opening-rule {
+      width: 1px;
+      height: 3rem;
+      background: var(--rule);
+    }
+
+    .opening-headline {
+      font-size: 1.6rem;
+      font-weight: normal;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      text-align: center;
+      max-width: 420px;
+    }
+
+    .opening-headline em {
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .opening-sub {
+      font-size: 0.82rem;
+      line-height: 2;
+      color: var(--ink-faint);
+      text-align: center;
+      max-width: 340px;
+      letter-spacing: 0.03em;
+    }
+
+    .opening-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .link-quiet {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.15rem;
+    }
+
+    .link-quiet:hover {
+      color: var(--ink);
+      border-bottom-color: var(--ink-faint);
+    }
+
+    .scroll-note {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    /* ══════════════════════════════
+       INTERVAL — THE 24 HOURS
+    ══════════════════════════════ */
+    .interval {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      background: var(--paper);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .interval-left {
+      padding: 6rem 5rem 6rem 4rem;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .interval-number {
+      font-size: 7rem;
+      font-weight: normal;
+      line-height: 0.9;
+      color: var(--ink);
+      letter-spacing: -0.04em;
+    }
+
+    .interval-number sub {
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
+      vertical-align: baseline;
+      font-style: italic;
+    }
+
+    .interval-body {
+      font-size: 0.85rem;
+      line-height: 2;
+      color: var(--ink-faint);
+      max-width: 320px;
+    }
+
+    .interval-right {
+      padding: 6rem 4rem 6rem 5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      justify-content: center;
+    }
+
+    /* Timeline dots */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 10px;
+      bottom: 10px;
+      width: 1px;
+      background: var(--rule);
+    }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 1rem;
+      padding-bottom: 2.5rem;
+      align-items: start;
+    }
+
+    .tl-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .tl-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid var(--ink-ghost);
+      background: var(--paper);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .tl-dot.filled {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .tl-body {}
+
+    .tl-time {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      margin-bottom: 0.3rem;
+    }
+
+    .tl-text {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+    }
+
+    /* ══════════════════════════════
+       PRINCIPLES
+    ══════════════════════════════ */
+    .principles {
+      padding: 7rem 4rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .principles-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      align-self: flex-start;
+      padding-top: 0.5rem;
+    }
+
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .principle {
+      padding: 2.25rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 3rem;
+      align-items: baseline;
+    }
+
+    .principle:first-child {
+      border-top: 1px solid var(--rule);
+    }
+
+    .principle-name {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .principle-name .kanji {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 1.4rem;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink-ghost);
+      margin-bottom: 0.35rem;
+    }
+
+    .principle-text {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--ink-faint);
+    }
+
+    /* ══════════════════════════════
+       QUOTE
+    ══════════════════════════════ */
+    .quote-section {
+      background: var(--parchment);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 7rem 4rem;
+      text-align: center;
+    }
+
+    .quote-mark {
+      font-size: 4rem;
+      color: var(--rule);
+      line-height: 0.5;
+      font-family: Georgia, serif;
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    .quote-text {
+      font-size: 1.35rem;
+      font-weight: normal;
+      font-style: italic;
+      line-height: 1.8;
+      color: var(--ink-soft);
+      max-width: 560px;
+      margin: 0 auto 2rem;
+    }
+
+    .quote-attr {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    /* ══════════════════════════════
+       SIGN UP
+    ══════════════════════════════ */
+    .signup-section {
+      padding: 8rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      max-width: 960px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .signup-copy h2 {
+      font-size: 1.5rem;
+      font-weight: normal;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+
+    .signup-copy p {
+      font-size: 0.82rem;
+      line-height: 2;
+      color: var(--ink-faint);
+    }
+
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-field label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .form-field input[type="email"] {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 0.6rem 0;
+      font-family: Georgia, serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      outline: none;
+      width: 100%;
+      letter-spacing: 0.03em;
+    }
+
+    .form-field input[type="email"]::placeholder {
+      color: var(--ink-ghost);
+      font-style: italic;
+    }
+
+    .form-field input[type="email"]:focus {
+      border-bottom-color: var(--ink-faint);
+    }
+
+    .form-note {
+      font-size: 0.68rem;
+      line-height: 1.7;
+      color: var(--ink-ghost);
+      font-style: italic;
+    }
+
+    .btn-zen {
+      align-self: flex-start;
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      background: transparent;
+      border: 1px solid var(--ink-ghost);
+      padding: 0.75rem 2rem;
+      cursor: pointer;
+    }
+
+    .btn-zen:hover {
+      background: var(--ink);
+      color: var(--washi);
+      border-color: var(--ink);
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2.5rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .footer-center {
+      font-size: 1.35rem;
+      color: var(--rule);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-right {
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--ink-ghost);
+    }
+
+    /* ══════════════════════════════
+       VERMILLION ACCENT — seal
+    ══════════════════════════════ */
+    .seal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--vermillion);
+      font-size: 1rem;
+      color: #fff;
+      font-family: Georgia, serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       HEADER
+  ══════════════════════════════ -->
+  <header>
+    <span class="wordmark">Slowmail</span>
+    <div class="header-right">
+      <span>Est. 2024</span>
+      <span>Correspondence · Patience · Form</span>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════
+       OPENING
+  ══════════════════════════════ -->
+  <section class="opening">
+
+    <div class="vert-left">Between writing and arrival</div>
+
+    <div class="opening-center">
+
+      <div class="enso">
+        <span class="enso-inner">◯</span>
+      </div>
+
+      <div style="text-align:center;">
+        <div class="kanji-display">間</div>
+        <div class="kanji-gloss">Ma &nbsp;·&nbsp; the meaningful interval</div>
+      </div>
+
+      <div class="opening-rule"></div>
+
+      <h1 class="opening-headline">
+        Every email you send<br>
+        waits <em>one full day</em><br>
+        before it arrives.
+      </h1>
+
+      <p class="opening-sub">
+        Slowmail is a correspondence service built around a single constraint:
+        a twenty-four hour interval between writing and delivery.
+        Not a delay. A considered pause.
+      </p>
+
+      <div class="opening-cta">
+        <a href="#begin" class="link-quiet">Begin corresponding</a>
+        <span class="scroll-note">↓ &nbsp; Scroll to learn more</span>
+      </div>
+
+    </div>
+
+    <div class="vert-right">Twenty-four hours · Always</div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════
+       INTERVAL
+  ══════════════════════════════ -->
+  <section class="interval">
+
+    <div class="interval-left">
+      <span class="section-tag">The interval</span>
+
+      <div class="interval-number">
+        24<sub>hours</sub>
+      </div>
+
+      <p class="interval-body">
+        One day. Not an inconvenience — a gift.
+        The same span of time that separates a hasty word
+        from a chosen one. A reaction from a response.
+        A message sent in haste from one sent with care.
+      </p>
+    </div>
+
+    <div class="interval-right">
+      <span class="section-tag">What happens</span>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot filled"></div>
+          <div class="tl-body">
+            <p class="tl-time">Hour 0 &nbsp;·&nbsp; You write</p>
+            <p class="tl-text">Compose your message at whatever hour feels right. The words are yours. Take the time they deserve.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <p class="tl-time">Hours 1–23 &nbsp;·&nbsp; We hold</p>
+            <p class="tl-text">Your letter rests with us — sealed, unread, waiting. This is the interval. The space between intention and consequence.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <p class="tl-time">Hour 24 &nbsp;·&nbsp; It arrives</p>
+            <p class="tl-text">Quietly, exactly on time, your message reaches its reader. Unchanged. Unhurried. Entirely as you meant it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════
+       PRINCIPLES
+  ══════════════════════════════ -->
+  <section class="principles">
+
+    <div class="principles-label">On slowness</div>
+
+    <div class="principles-list">
+
+      <div class="principle">
+        <div class="principle-name">
+          <span class="kanji">間</span>
+          Ma
+        </div>
+        <p class="principle-text">
+          In Japanese aesthetics, <em>ma</em> is the deliberate pause —
+          the silence between notes, the empty space in a room,
+          the breath before a word. Slowmail is built on this idea.
+          The gap between writing and sending is not empty. It is full of meaning.
+        </p>
+      </div>
+
+      <div class="principle">
+        <div class="principle-name">
+          <span class="kanji">待</span>
+          Matsu
+        </div>
+        <p class="principle-text">
+          <em>Matsu</em> means to wait — but in its fullest sense,
+          to wait with care and readiness. Not passive. Not anxious.
+          A held breath. We ask both writer and reader to practice matsu:
+          one in the composing, one in the receiving.
+        </p>
+      </div>
+
+      <div class="principle">
+        <div class="principle-name">
+          <span class="kanji">心</span>
+          Kokoro
+        </div>
+        <p class="principle-text">
+          <em>Kokoro</em> is heart, mind, and spirit at once.
+          The 24-hour interval creates space for kokoro to inform your words —
+          to ask whether what you have written is truly what you feel,
+          rather than what you felt in the moment of writing.
+        </p>
+      </div>
+
+      <div class="principle">
+        <div class="principle-name">
+          <span class="kanji">形</span>
+          Katachi
+        </div>
+        <p class="principle-text">
+          Form is not a constraint. Form is what gives meaning its shape.
+          The single rule of Slowmail — one day, always — is a form.
+          Within that form, your correspondence becomes something different:
+          considered, intentional, and in some small way, beautiful.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════
+       QUOTE
+  ══════════════════════════════ -->
+  <section class="quote-section">
+    <span class="quote-mark">&ldquo;</span>
+    <p class="quote-text">
+      In the space between the brushstroke and the page,<br>
+      the whole of the painting is decided.
+    </p>
+    <span class="quote-attr">On the art of the interval</span>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       SIGN UP
+  ══════════════════════════════ -->
+  <section class="signup-section" id="begin">
+
+    <div class="signup-copy">
+      <h2>
+        Begin your<br>
+        first slow letter.
+      </h2>
+      <p>
+        There is no onboarding sequence. No tutorial.
+        You write. We hold. It arrives.
+        Your first message will reach its reader
+        exactly twenty-four hours from now.
+      </p>
+    </div>
+
+    <div class="signup-form">
+      <div class="form-field">
+        <label for="email-input">Your address</label>
+        <input type="email" id="email-input" placeholder="you@example.com">
+      </div>
+      <p class="form-note">
+        Free to use. No urgency required.
+        Your first email will arrive tomorrow —
+        and that is precisely the point.
+      </p>
+      <button class="btn-zen">Begin &rarr;</button>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════
+       FOOTER
+  ══════════════════════════════ -->
+  <footer>
+    <span class="footer-left">&copy; 2024 Slowmail &nbsp;·&nbsp; All correspondence delayed 24 hours</span>
+    <span class="footer-center">
+      <span class="seal">間</span>
+    </span>
+    <span class="footer-right">Patience is not a limitation. It is the practice.</span>
+  </footer>
+
+</body>
+</html>
