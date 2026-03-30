@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Slowmail Gazette — Vol. I, No. 1</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink:       #0a0a0a;
+      --ink-mid:   #333333;
+      --ink-dim:   #666666;
+      --ink-pale:  #999999;
+      --rule:      #cccccc;
+      --rule-dark: #888888;
+      --paper:     #faf8f4;
+      --red:       #b5121b;
+      --bg:        #f2ede6;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── UTILITIES ── */
+    .col-rule {
+      border-right: 1px solid var(--rule);
+    }
+
+    .section-rule {
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: 0;
+    }
+
+    .thin-rule { border-top: 1px solid var(--rule); }
+    .thick-rule { border-top: 2px solid var(--ink); }
+
+    /* Drop cap */
+    .drop-cap::first-letter {
+      float: left;
+      font-size: 4.2em;
+      line-height: 0.78;
+      padding-right: 0.08em;
+      padding-top: 0.05em;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Small caps style */
+    .small-caps {
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+    }
+
+    /* ════════════════════════════════
+       OUTER WRAPPER
+    ════════════════════════════════ */
+    .newspaper {
+      max-width: 1080px;
+      margin: 2rem auto;
+      background: var(--paper);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* ════════════════════════════════
+       VERY TOP BAR
+    ════════════════════════════════ */
+    .top-bar {
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 1.5rem;
+      font-size: 0.68rem;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: var(--ink-dim);
+      letter-spacing: 0.02em;
+    }
+
+    .top-bar-left { display: flex; gap: 1.5rem; }
+    .top-bar-right { display: flex; gap: 1.5rem; }
+
+    .top-bar a {
+      color: var(--ink-dim);
+      text-decoration: none;
+    }
+
+    .top-bar a:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════
+       MASTHEAD
+    ════════════════════════════════ */
+    .masthead {
+      padding: 1.5rem 1.5rem 0.75rem;
+      display: grid;
+      grid-template-rows: auto auto;
+    }
+
+    .masthead-top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .masthead-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .masthead-left span,
+    .masthead-right span {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      color: var(--ink-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .masthead-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      align-items: flex-end;
+    }
+
+    .flag {
+      text-align: center;
+    }
+
+    .flag h1 {
+      font-size: clamp(2.8rem, 6.5vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--ink);
+      font-style: italic;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.08);
+    }
+
+    .flag-sub {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-top: 0.2rem;
+    }
+
+    /* Masthead double rule */
+    .masthead-rule {
+      border-top: 4px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      height: 7px;
+      margin-top: 0.6rem;
+    }
+
+    /* ════════════════════════════════
+       SECTION NAV
+    ════════════════════════════════ */
+    .section-nav {
+      border-bottom: 1px solid var(--rule);
+      padding: 0.45rem 1.5rem;
+      display: flex;
+      gap: 0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .section-nav a {
+      text-decoration: none;
+      color: var(--ink);
+      padding: 0.1rem 0.9rem;
+      border-right: 1px solid var(--rule);
+    }
+
+    .section-nav a:first-child { padding-left: 0; }
+    .section-nav a:last-child  { border-right: none; }
+    .section-nav a:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════
+       MAIN PAGE AREA
+    ════════════════════════════════ */
+    .page {
+      padding: 0 1.5rem;
+    }
+
+    /* ════════════════════════════════
+       TOP TEASER STRIP
+    ════════════════════════════════ */
+    .teaser-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 2px solid var(--ink);
+      padding: 0.6rem 0;
+      gap: 0;
+    }
+
+    .teaser {
+      padding: 0 1rem;
+      border-right: 1px solid var(--rule);
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .teaser:first-child { padding-left: 0; }
+    .teaser:last-child  { border-right: none; }
+
+    .teaser-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.2rem;
+    }
+
+    .teaser strong {
+      font-size: 0.78rem;
+      font-style: italic;
+    }
+
+    /* ════════════════════════════════
+       FRONT PAGE GRID
+    ════════════════════════════════ */
+    .front-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      border-bottom: 2px solid var(--ink);
+      /* Column rules via background-image */
+    }
+
+    /* ── LEAD STORY (4 cols) ── */
+    .lead {
+      grid-column: 1 / 5;
+      padding: 1.25rem 1.5rem 1.25rem 0;
+      border-right: 1px solid var(--rule);
+    }
+
+    .lead-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--red);
+      display: inline-block;
+    }
+
+    .lead-headline {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 0.6rem;
+    }
+
+    .lead-deck {
+      font-size: 1rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--ink-mid);
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.6rem;
+    }
+
+    .byline {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-dim);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .byline span {
+      font-weight: 400;
+      font-style: italic;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* Two-column body in lead */
+    .lead-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .lead-body p {
+      font-size: 0.86rem;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      margin-bottom: 0.7rem;
+    }
+
+    /* ── CSS ILLUSTRATION — envelope ── */
+    .art-box {
+      background: #e8e4dc;
+      border: 1px solid var(--rule-dark);
+      margin: 0.75rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .envelope-art {
+      width: 140px;
+      height: 90px;
+      background: var(--paper);
+      border: 2px solid var(--ink-mid);
+      position: relative;
+    }
+
+    /* envelope flap */
+    .envelope-art::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 0;
+      border-left: 70px solid transparent;
+      border-right: 70px solid transparent;
+      border-top: 40px solid #d8d4cc;
+      border-top-color: #c8c4bc;
+    }
+
+    /* envelope bottom folds */
+    .envelope-art::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 0;
+      border-left: 70px solid transparent;
+      border-right: 70px solid transparent;
+      border-bottom: 35px solid #d0ccc4;
+    }
+
+    .envelope-stamp {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 28px;
+      background: #e8e4dc;
+      border: 1.5px solid var(--ink-mid);
+      font-size: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--red);
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .art-caption {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.62rem;
+      color: var(--ink-dim);
+      font-style: italic;
+      padding: 0.3rem 0.5rem;
+      text-align: left;
+      background: #e8e4dc;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* ── SIDEBAR (2 cols) ── */
+    .sidebar {
+      grid-column: 5 / 7;
+      padding: 1.25rem 0 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ── SIDEBAR STORY ── */
+    .sidebar-story {
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .sidebar-story:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .sidebar-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-headline {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    .sidebar-body {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--ink-mid);
+    }
+
+    /* Subscribe box in sidebar */
+    .subscribe-box {
+      border: 2px solid var(--ink);
+      padding: 1rem;
+      text-align: center;
+      background: var(--ink);
+      color: var(--paper);
+      margin-top: auto;
+    }
+
+    .subscribe-box .sb-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rule);
+      margin-bottom: 0.5rem;
+    }
+
+    .subscribe-box h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+      font-style: italic;
+    }
+
+    .subscribe-box input[type="email"] {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      background: transparent;
+      border: 1px solid var(--rule-dark);
+      color: var(--paper);
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      margin-bottom: 0.5rem;
+      outline: none;
+    }
+
+    .subscribe-box input[type="email"]::placeholder { color: var(--ink-pale); font-style: italic; }
+
+    .subscribe-box button {
+      width: 100%;
+      padding: 0.5rem;
+      background: var(--red);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .subscribe-box button:hover { background: #8a0d14; }
+
+    .subscribe-fine {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      color: var(--ink-pale);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* ════════════════════════════════
+       PULL QUOTE
+    ════════════════════════════════ */
+    .pull-quote {
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      padding: 0.75rem 0;
+      margin: 0.85rem 0;
+      text-align: center;
+    }
+
+    .pull-quote p {
+      font-size: 1.05rem;
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+
+    .pull-quote cite {
+      display: block;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      font-style: normal;
+      margin-top: 0.4rem;
+    }
+
+    /* ════════════════════════════════
+       BELOW-FOLD SECTION
+    ════════════════════════════════ */
+    .below-fold {
+      border-top: 1px solid var(--rule);
+    }
+
+    .below-fold-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      display: inline-block;
+      padding: 0.2rem 0.75rem;
+      margin-bottom: 0;
+    }
+
+    .below-fold-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 2px solid var(--ink);
+    }
+
+    .bf-story {
+      padding: 1.1rem 1.25rem 1.1rem 0;
+      border-right: 1px solid var(--rule);
+    }
+
+    .bf-story:last-child {
+      border-right: none;
+      padding-right: 0;
+      padding-left: 1.25rem;
+    }
+
+    .bf-story:not(:first-child):not(:last-child) {
+      padding-left: 1.25rem;
+    }
+
+    .bf-num {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--rule);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.04em;
+    }
+
+    .bf-num .unit {
+      font-size: 1rem;
+      color: var(--ink-pale);
+      font-style: italic;
+    }
+
+    .bf-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 0.4rem;
+    }
+
+    .bf-story p {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--ink-mid);
+    }
+
+    /* ════════════════════════════════
+       OP-ED SECTION
+    ════════════════════════════════ */
+    .oped-section {
+      border-top: 1px solid var(--rule);
+    }
+
+    .oped-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      border-top: 2px solid var(--ink);
+    }
+
+    .oped-main {
+      padding: 1.25rem 1.5rem 1.25rem 0;
+      border-right: 1px solid var(--rule);
+    }
+
+    .oped-item {
+      padding: 1.25rem 0 1.25rem 1.25rem;
+      border-right: 1px solid var(--rule);
+    }
+
+    .oped-item:last-child {
+      border-right: none;
+    }
+
+    .oped-kicker {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.3rem;
+    }
+
+    .oped-headline {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.4rem;
+      font-style: italic;
+    }
+
+    .oped-main .oped-headline {
+      font-size: 1.5rem;
+    }
+
+    .oped-body {
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: var(--ink-mid);
+    }
+
+    /* Large oped pull quote */
+    .oped-pull {
+      font-size: 1.2rem;
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--ink);
+      border-left: 3px solid var(--red);
+      padding-left: 0.75rem;
+      margin: 0.75rem 0;
+    }
+
+    /* ════════════════════════════════
+       CLASSIFIEDS / CTA
+    ════════════════════════════════ */
+    .classifieds {
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      padding: 0.5rem 0;
+    }
+
+    .classifieds-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--ink-dim);
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .classifieds-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .classified {
+      padding: 0 1rem;
+      border-right: 1px solid var(--rule);
+      font-size: 0.75rem;
+      line-height: 1.55;
+      color: var(--ink-mid);
+    }
+
+    .classified:first-child { padding-left: 0; }
+    .classified:last-child  { border-right: none; }
+
+    .classified strong {
+      display: block;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    .paper-footer {
+      border-top: 4px solid var(--ink);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .paper-footer span {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.62rem;
+      color: var(--ink-dim);
+      letter-spacing: 0.03em;
+    }
+
+    .paper-footer .flag-small {
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+<div class="newspaper">
+
+  <!-- ── VERY TOP BAR ── -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <a href="#">Technology</a>
+      <a href="#">Opinion</a>
+      <a href="#">Culture</a>
+      <a href="#">Science</a>
+      <a href="#">Business</a>
+    </div>
+    <div class="top-bar-right">
+      <a href="#">Subscribe</a>
+      <a href="#">Archive</a>
+      <a href="#">Account</a>
+    </div>
+  </div>
+
+  <!-- ── MASTHEAD ── -->
+  <div class="masthead">
+    <div class="masthead-top">
+      <div class="masthead-left">
+        <span>Saturday, March 28, 2026</span>
+        <span>Vol. I &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Est. 2024</span>
+        <span>Print edition: $2.50</span>
+      </div>
+      <div class="flag">
+        <h1>The Slowmail Gazette</h1>
+        <div class="flag-sub">All the news that's fit to wait</div>
+      </div>
+      <div class="masthead-right">
+        <span>Late City Edition</span>
+        <span>Weather: Tomorrow</span>
+        <span>Digital edition: Free</span>
+      </div>
+    </div>
+    <div class="masthead-rule"></div>
+  </div>
+
+  <!-- ── SECTION NAV ── -->
+  <nav class="section-nav">
+    <a href="#">Home</a>
+    <a href="#">Technology</a>
+    <a href="#">Opinion</a>
+    <a href="#">Letters</a>
+    <a href="#">Correspondence</a>
+    <a href="#">Slow Living</a>
+    <a href="#">Obituaries</a>
+    <a href="#">Classifieds</a>
+  </nav>
+
+  <!-- ── PAGE BODY ── -->
+  <div class="page">
+
+    <!-- TOP TEASERS -->
+    <div class="teaser-strip">
+      <div class="teaser">
+        <div class="teaser-kicker">Opinion</div>
+        <p><strong>"The reply-all culture was always going to collapse under its own weight."</strong> — p. A14</p>
+      </div>
+      <div class="teaser">
+        <div class="teaser-kicker">Technology</div>
+        <p><strong>Silicon Valley investors call 24-hour email delay "disruptive."</strong> Founders say that's the point.</p>
+      </div>
+      <div class="teaser">
+        <div class="teaser-kicker">Slow Living</div>
+        <p><strong>What a letter posted in 1987 taught us about digital patience</strong> — Weekend Magazine</p>
+      </div>
+    </div>
+
+    <!-- FRONT PAGE GRID -->
+    <div class="front-grid">
+
+      <!-- LEAD STORY -->
+      <article class="lead">
+        <div class="lead-kicker">Breaking · Communications Technology</div>
+        <h2 class="lead-headline">New Email Service Forces Users to Wait a Full Day Before Messages Are Delivered</h2>
+        <p class="lead-deck">
+          Slowmail, a San Francisco start-up, has launched what it calls "the most significant
+          rethinking of electronic mail since its invention" — a platform that holds every message
+          for exactly twenty-four hours before sending it.
+        </p>
+        <div class="byline">By <span>Alexandra Morse</span> &nbsp;·&nbsp; Technology Correspondent &nbsp;·&nbsp; <span>March 28, 2026</span></div>
+
+        <div class="lead-body">
+          <div class="left-col">
+            <p class="drop-cap">
+              In an era defined by the expectation of instantaneous reply, a small company
+              operating from a converted warehouse in San Francisco's Mission district has
+              introduced a product that does the opposite of everything the industry has
+              optimised for: it makes you wait.
+            </p>
+            <p>
+              Slowmail, founded in 2024, offers a fully functional email client with a
+              single, non-negotiable constraint built into its architecture. Every message
+              composed within the application is held in an encrypted queue for precisely
+              twenty-four hours before it is transmitted to its recipient.
+            </p>
+            <p>
+              "We are not fixing email," said the company's founder in a brief telephone
+              interview conducted — fittingly — by letter, the reply of which arrived the
+              following morning. "We are restoring to it something that was always there
+              and that we have, through haste, discarded."
+            </p>
+
+            <div class="pull-quote">
+              <p>"The twenty-four hour delay is not a bug we forgot to fix. It is the entire product."</p>
+              <cite>— Slowmail Founder, via correspondence</cite>
+            </div>
+
+            <p>
+              The company declined to identify its founder by name, communicating all press
+              inquiries through a postal address. Response times, a spokesperson noted,
+              should be expected within one business day.
+            </p>
+          </div>
+          <div class="right-col">
+            <div class="art-box" style="height: 160px;">
+              <div class="envelope-art">
+                <div class="envelope-stamp">24h</div>
+              </div>
+            </div>
+            <div class="art-caption">
+              An outgoing message as it appears in the Slowmail queue. Users may recall
+              the message at any point during the hold period. (Illustration: T. Hollingsworth)
+            </div>
+
+            <p style="font-size:0.86rem; line-height:1.7; color:var(--ink-mid); margin-top:0.75rem;">
+              Early users, numbering some twelve thousand since the service's public beta
+              launched in January, report a phenomenon the company has begun calling
+              "the overnight edit" — a tendency to recall and substantially revise messages
+              after sleeping on them.
+            </p>
+            <p style="font-size:0.86rem; line-height:1.7; color:var(--ink-mid);">
+              "I recalled four emails in the first two weeks," said one beta user, a
+              partnerships manager at a technology company who asked not to be named.
+              "Two of them would have been genuinely damaging. The other two were simply
+              embarrassing. The service has paid for itself many times over."
+            </p>
+            <p style="font-size:0.86rem; line-height:1.7; color:var(--ink-mid);">
+              The service is free to use, with a paid tier available for teams requiring
+              additional storage and read receipts. No feature, the company emphasises,
+              will ever allow a message to bypass the twenty-four hour queue.
+            </p>
+
+            <p style="font-size:0.78rem; color:var(--ink-dim); margin-top:0.6rem; font-style:italic;">
+              Continued on Page A6 ›
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <div class="sidebar-story">
+          <div class="sidebar-kicker">Analysis</div>
+          <h3 class="sidebar-headline">Why Instant Delivery Became Email's Original Sin</h3>
+          <p class="sidebar-body">
+            The first electronic mail message was sent in 1971. It travelled between computers
+            in the same room. It was not expected to be answered immediately. Somewhere between
+            then and now, we forgot that.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.4rem;">— p. B1</p>
+        </div>
+
+        <div class="sidebar-story">
+          <div class="sidebar-kicker">Markets</div>
+          <h3 class="sidebar-headline">Productivity Software Stocks Fall on News of "Deliberate Friction" Trend</h3>
+          <p class="sidebar-body">
+            Shares in several real-time collaboration platforms declined modestly on Thursday
+            following reports that enterprise customers were trialling intentional delay tools.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.4rem;">— p. C4</p>
+        </div>
+
+        <div class="sidebar-story">
+          <div class="sidebar-kicker">Letters to the Editor</div>
+          <h3 class="sidebar-headline">"I Sent an Email. It Has Not Yet Arrived. I Am Fine."</h3>
+          <p class="sidebar-body">
+            Readers respond to last week's coverage of Slowmail with their own reflections
+            on patience, regret, and the things they wish they had never sent.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.4rem;">— p. A22</p>
+        </div>
+
+        <!-- Subscribe Box -->
+        <div class="subscribe-box">
+          <div class="sb-kicker">Start corresponding</div>
+          <h3>Receive your first email tomorrow.</h3>
+          <input type="email" placeholder="your@address.com">
+          <button>Subscribe — it's free</button>
+          <p class="subscribe-fine">All messages delivered in exactly 24 hours. No exceptions.</p>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- BELOW FOLD STATS STRIP -->
+    <div class="below-fold">
+      <span class="below-fold-label">By the numbers</span>
+      <div class="below-fold-grid">
+        <div class="bf-story" style="padding-left:0;">
+          <div class="bf-num">24<span class="unit">h</span></div>
+          <div class="bf-label">The hold period</div>
+          <p>Every message, without exception, waits exactly twenty-four hours. The constraint is absolute, architectural, and deliberate.</p>
+        </div>
+        <div class="bf-story">
+          <div class="bf-num">12<span class="unit">k</span></div>
+          <div class="bf-label">Beta users enrolled</div>
+          <p>Since the public beta opened in January, demand has exceeded the company's projections by a factor of six.</p>
+        </div>
+        <div class="bf-story">
+          <div class="bf-num">40<span class="unit">%</span></div>
+          <div class="bf-label">Fewer regretted messages</div>
+          <p>Users report recalling or substantially revising nearly two in every five messages before they are delivered.</p>
+        </div>
+        <div class="bf-story">
+          <div class="bf-num">$0</div>
+          <div class="bf-label">Cost to start</div>
+          <p>The service is free at launch. A professional tier with team features is available for twelve dollars per month.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OP-ED SECTION -->
+    <div class="oped-section">
+      <span class="below-fold-label">Opinion &amp; Commentary</span>
+      <div class="oped-grid">
+
+        <div class="oped-main">
+          <div class="oped-kicker">Essay</div>
+          <h3 class="oped-headline">We Did Not Lose Our Patience. We Were Trained Out of It.</h3>
+          <div class="byline" style="margin-bottom:0.65rem;">By <span>Constance Halloway</span> &nbsp;·&nbsp; Contributing Writer</div>
+          <p class="oped-body">
+            The assumption buried in every email client ever built is that speed is virtue.
+            That to reply swiftly is to respect the sender. That to let a message sit
+            unread past lunchtime is a small act of cruelty.
+          </p>
+          <div class="oped-pull">
+            "We were not born in a hurry. We were taught to hurry by tools that profited from our hurrying."
+          </div>
+          <p class="oped-body">
+            Slowmail does not argue against communication. It argues, quietly and by design,
+            that communication improved by a single night's reflection is communication
+            worth having. The twenty-four hour delay is not an obstacle. It is the editorial
+            process that electronic mail was never given.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.5rem;">
+            Constance Halloway is the author of <em>The Patience Economy</em>.
+          </p>
+        </div>
+
+        <div class="oped-item">
+          <div class="oped-kicker">Counterpoint</div>
+          <h3 class="oped-headline">A Reasonable Person's Case Against Waiting</h3>
+          <div class="byline" style="margin-bottom:0.5rem;">By <span>R. Drummond</span></div>
+          <p class="oped-body">
+            There are emails that cannot wait twenty-four hours. There are contexts
+            in which delay is not a virtue but a dereliction. Slowmail knows this.
+            Its answer — Instant Mode, opt-in, and deliberately buried in settings —
+            reveals that even its founders understand the limits of their thesis.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.5rem;">
+            — p. A15 ›
+          </p>
+        </div>
+
+        <div class="oped-item">
+          <div class="oped-kicker">Notebook</div>
+          <h3 class="oped-headline">The Email I Never Sent — and Why I Am Grateful</h3>
+          <div class="byline" style="margin-bottom:0.5rem;">By <span>P. Achebe</span></div>
+          <p class="oped-body">
+            In 2019, I drafted a message to my employer that would have ended my career
+            in a paragraph. I did not send it. I simply closed the laptop. Slowmail
+            would have made that act of restraint structural rather than accidental.
+          </p>
+          <p style="font-size:0.72rem; font-style:italic; color:var(--ink-dim); margin-top:0.5rem;">
+            — p. A16 ›
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CLASSIFIEDS -->
+    <div class="classifieds">
+      <div class="classifieds-label">Notices &amp; Announcements</div>
+      <div class="classifieds-row">
+        <div class="classified">
+          <strong>Free Account — Limited Time</strong>
+          Slowmail is currently free for all new subscribers during the public beta period.
+          Sign up at slowmail.io. Your first message will be delivered tomorrow.
+          No credit card required. Patience required.
+        </div>
+        <div class="classified">
+          <strong>On Recall &amp; Regret</strong>
+          Any message may be recalled within the 24-hour hold window.
+          After delivery, the usual rules of correspondence apply.
+          We recommend re-reading everything before the clock expires.
+        </div>
+        <div class="classified">
+          <strong>A Note on Urgency</strong>
+          If your message cannot wait one day, we gently suggest it may
+          be better delivered by telephone, or in person, or perhaps
+          not at all. We mean this sincerely. —&nbsp;The Editors
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.page -->
+
+  <!-- ── PAPER FOOTER ── -->
+  <div class="paper-footer">
+    <span>© 2026 The Slowmail Gazette · All correspondence delayed 24 hours by design</span>
+    <span class="flag-small">The Slowmail Gazette</span>
+    <span>Printed on recycled patience · Page 1 of 1</span>
+  </div>
+
+</div><!-- /.newspaper -->
+</body>
+</html>

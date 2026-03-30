@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — Email Worth Waiting For</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #f9f7f4;
+      color: #2c2c2c;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e5e0d8;
+    }
+
+    .wordmark {
+      font-size: 1.25rem;
+      letter-spacing: 0.04em;
+      color: #2c2c2c;
+      font-style: italic;
+    }
+
+    nav {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+    }
+
+    .hero {
+      max-width: 560px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #a89e90;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: normal;
+      line-height: 1.2;
+      color: #1a1a1a;
+      margin-bottom: 1.75rem;
+    }
+
+    .divider {
+      width: 2.5rem;
+      height: 1px;
+      background-color: #c8c0b4;
+      margin: 0 auto 1.75rem;
+    }
+
+    .tagline {
+      font-size: 1.125rem;
+      line-height: 1.75;
+      color: #555;
+      margin-bottom: 3rem;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #d4cfc8;
+      border-radius: 3px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .email-form input[type="email"] {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border: none;
+      outline: none;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.9rem;
+      color: #2c2c2c;
+      background: transparent;
+    }
+
+    .email-form input[type="email"]::placeholder {
+      color: #b0a898;
+    }
+
+    .email-form button {
+      padding: 0.85rem 1.25rem;
+      background-color: #2c2c2c;
+      color: #f9f7f4;
+      border: none;
+      cursor: pointer;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .fine-print {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.72rem;
+      color: #b0a898;
+      letter-spacing: 0.03em;
+    }
+
+    .how-it-works {
+      padding: 4rem 2rem 5rem;
+      background-color: #fff;
+      border-top: 1px solid #e5e0d8;
+    }
+
+    .how-it-works-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .section-label {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #a89e90;
+      margin-bottom: 2.5rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+
+    .step {
+      text-align: left;
+    }
+
+    .step-number {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #c8c0b4;
+      margin-bottom: 0.6rem;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: normal;
+      margin-bottom: 0.5rem;
+      color: #1a1a1a;
+    }
+
+    .step p {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: #888;
+    }
+
+    footer {
+      padding: 1.75rem 3rem;
+      border-top: 1px solid #e5e0d8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.72rem;
+      color: #b0a898;
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #c8c0b4;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="wordmark">Slowmail</span>
+    <nav>Est. 2024 &nbsp;·&nbsp; Free to use</nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="eyebrow">A different kind of inbox</p>
+      <h1>Email delivered<br>24 hours later.</h1>
+      <div class="divider"></div>
+      <p class="tagline">
+        Write your message. We hold it overnight.<br>
+        It arrives tomorrow — exactly as you meant it.
+      </p>
+      <div class="cta-group">
+        <div class="email-form">
+          <input type="email" placeholder="your@address.com">
+          <button>Get started</button>
+        </div>
+        <p class="fine-print">No credit card required. No instant gratification either.</p>
+      </div>
+    </div>
+  </main>
+
+  <section class="how-it-works">
+    <div class="how-it-works-inner">
+      <p class="section-label">How it works</p>
+      <div class="steps">
+        <div class="step">
+          <p class="step-number">Step 01</p>
+          <h3>Write</h3>
+          <p>Compose your email the way you always have. Take your time. There's no rush — delivery is already delayed.</p>
+        </div>
+        <div class="step">
+          <p class="step-number">Step 02</p>
+          <h3>Wait</h3>
+          <p>We hold your message for exactly 24 hours. Long enough to sleep on it. Long enough to mean it.</p>
+        </div>
+        <div class="step">
+          <p class="step-number">Step 03</p>
+          <h3>Arrive</h3>
+          <p>Your email lands in their inbox the next day, unhurried and unedited — just the words you chose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-copy">&copy; 2024 Slowmail</span>
+    <span class="footer-tagline">Because not everything needs to be instant.</span>
+  </footer>
+
+</body>
+</html>

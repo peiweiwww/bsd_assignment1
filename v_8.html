@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — On the Efficacy of Enforced Transmission Delay in Asynchronous Electronic Communication</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink:        #000000;
+      --ink-soft:   #1a1a1a;
+      --ink-mid:    #333333;
+      --ink-dim:    #555555;
+      --ink-pale:   #777777;
+      --ink-ghost:  #999999;
+      --rule:       #cccccc;
+      --rule-light: #e8e8e8;
+      --blue:       #0000cc;
+      --blue-vis:   #551a8b;
+      --bg:         #f0f0f0;
+      --paper:      #ffffff;
+      --highlight:  #ffffcc;
+    }
+
+    /* ── COUNTER for footnotes ── */
+    body {
+      counter-reset: footnote figure table-num;
+    }
+
+    html { font-size: 15px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Times New Roman', Times, Georgia, serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════
+       JOURNAL TOP BAR
+    ══════════════════════════════ */
+    .journal-bar {
+      background: var(--ink);
+      color: rgba(255,255,255,0.85);
+      padding: 0.4rem 0;
+      text-align: center;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+    }
+
+    .journal-bar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ══════════════════════════════
+       PAPER SHELL
+    ══════════════════════════════ */
+    .paper {
+      max-width: 900px;
+      margin: 2rem auto 3rem;
+      background: var(--paper);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+      padding: 3rem 3.5rem 4rem;
+    }
+
+    /* ══════════════════════════════
+       TITLE SECTION (single col)
+    ══════════════════════════════ */
+    .paper-meta-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .journal-name {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-dim);
+      text-transform: uppercase;
+    }
+
+    .paper-ids {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.65rem;
+      color: var(--ink-pale);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .paper-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      line-height: 1.3;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+
+    .paper-authors {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+
+    .author-name {
+      font-style: normal;
+    }
+
+    .author-super {
+      font-size: 0.65em;
+      vertical-align: super;
+      color: var(--ink-dim);
+    }
+
+    .paper-affiliations {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--ink-pale);
+      line-height: 1.8;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .paper-contact {
+      text-align: center;
+      font-size: 0.68rem;
+      color: var(--blue);
+      margin-bottom: 1.5rem;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .paper-dates {
+      text-align: center;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.65rem;
+      color: var(--ink-ghost);
+      margin-bottom: 2rem;
+      border-top: 1px solid var(--rule-light);
+      border-bottom: 1px solid var(--rule-light);
+      padding: 0.5rem 0;
+    }
+
+    /* ══════════════════════════════
+       ABSTRACT (single col)
+    ══════════════════════════════ */
+    .abstract {
+      margin: 0 1.5rem 1.75rem;
+      padding: 1rem 1.25rem;
+      border-left: 3px solid var(--ink);
+      background: #f9f9f9;
+    }
+
+    .abstract-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .abstract p {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    .keywords-line {
+      margin: 0 1.5rem 2rem;
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+    }
+
+    .keywords-line strong {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════════
+       SECTION DIVIDER
+    ══════════════════════════════ */
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin-bottom: 2rem;
+    }
+
+    /* ══════════════════════════════
+       TWO-COLUMN BODY
+    ══════════════════════════════ */
+    .paper-body {
+      column-count: 2;
+      column-gap: 2.5rem;
+      column-rule: 1px solid var(--rule-light);
+      font-size: 0.865rem;
+      line-height: 1.65;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* ── SECTION HEADINGS ── */
+    .sec {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .sec-num {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+      break-after: avoid;
+    }
+
+    h2 {
+      font-size: 0.865rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      margin-bottom: 0.6rem;
+      break-after: avoid;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      border-bottom: 1px solid var(--rule-light);
+      padding-bottom: 0.25rem;
+    }
+
+    h3 {
+      font-size: 0.865rem;
+      font-weight: bold;
+      font-style: italic;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      break-after: avoid;
+    }
+
+    h4 {
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+      break-after: avoid;
+    }
+
+    p {
+      margin-bottom: 0.75rem;
+      color: var(--ink-soft);
+    }
+
+    /* Drop cap for first paragraph */
+    .lead-para::first-letter {
+      float: left;
+      font-size: 3.2em;
+      line-height: 0.78;
+      padding-right: 0.06em;
+      font-weight: bold;
+      color: var(--ink);
+    }
+
+    /* ── CITATIONS ── */
+    cite, .cit {
+      font-style: normal;
+      color: var(--blue);
+    }
+
+    sup.fn-ref {
+      font-size: 0.65em;
+      color: var(--blue);
+      cursor: default;
+    }
+
+    sup.fn-ref:hover {
+      text-decoration: underline;
+    }
+
+    /* ── INLINE HIGHLIGHT ── */
+    .hl { background: var(--highlight); padding: 0 0.1em; }
+
+    /* ── FIGURE BOX ── */
+    .figure {
+      break-inside: avoid;
+      margin: 1.25rem 0;
+      border: 1px solid var(--rule);
+      padding: 0.75rem;
+      background: #fafafa;
+    }
+
+    .figure-content {
+      background: var(--rule-light);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-ghost);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* CSS bar chart */
+    .bar-chart {
+      width: 100%;
+      height: 120px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 0 12px 0;
+      position: relative;
+    }
+
+    .bar-chart::before {
+      content: '';
+      position: absolute;
+      left: 12px; right: 12px;
+      bottom: 0;
+      height: 1px;
+      background: var(--ink-pale);
+    }
+
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .bar-label {
+      font-size: 0.5rem;
+      color: var(--ink-dim);
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .bar {
+      width: 100%;
+      background: var(--ink);
+      position: relative;
+    }
+
+    .bar.light { background: var(--rule); }
+
+    .bar-val {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.5rem;
+      color: var(--ink-dim);
+      white-space: nowrap;
+    }
+
+    /* Timeline figure */
+    .timeline-fig {
+      padding: 12px;
+      position: relative;
+    }
+
+    .tl-track {
+      height: 3px;
+      background: var(--rule);
+      position: relative;
+      margin: 30px 0 20px;
+    }
+
+    .tl-track::after {
+      content: '';
+      position: absolute;
+      right: -6px; top: -4px;
+      border-left: 8px solid var(--ink-pale);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .tl-point {
+      position: absolute;
+      top: -5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateX(-50%);
+    }
+
+    .tl-dot {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+    }
+
+    .tl-dot.filled { background: var(--ink); }
+
+    .tl-above {
+      position: absolute;
+      bottom: 16px;
+      font-size: 0.5rem;
+      color: var(--ink-dim);
+      white-space: nowrap;
+      text-align: center;
+      transform: translateX(-50%);
+    }
+
+    .tl-below {
+      position: absolute;
+      top: 16px;
+      font-size: 0.5rem;
+      color: var(--ink-pale);
+      white-space: nowrap;
+      text-align: center;
+      transform: translateX(-50%);
+    }
+
+    /* Figure/table captions */
+    .fig-caption {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-dim);
+      line-height: 1.5;
+    }
+
+    .fig-caption::before {
+      counter-increment: figure;
+      content: "Figure " counter(figure) ". ";
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .tbl-caption {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-dim);
+      line-height: 1.5;
+      margin-bottom: 0.4rem;
+    }
+
+    .tbl-caption::before {
+      counter-increment: table-num;
+      content: "Table " counter(table-num) ". ";
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* ── DATA TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      break-inside: avoid;
+    }
+
+    .data-table th {
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 0.35rem 0.5rem;
+      text-align: left;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--rule-light);
+      color: var(--ink-soft);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .data-table .sig {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* ── ALGORITHM / PSEUDOCODE BOX ── */
+    .algorithm {
+      border: 1px solid var(--ink);
+      padding: 0.75rem;
+      margin: 1rem 0;
+      break-inside: avoid;
+      background: #fdfdfd;
+    }
+
+    .algo-title {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+
+    .algo-body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.72rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+    }
+
+    .algo-body .kw { font-weight: bold; color: var(--ink); }
+    .algo-body .comment { color: var(--ink-pale); font-style: italic; }
+    .algo-body .indent-1 { padding-left: 1em; }
+    .algo-body .indent-2 { padding-left: 2em; }
+
+    /* ── CALLOUT / DEFINITION BOX ── */
+    .definition-box {
+      border: 1px solid var(--ink);
+      border-left: 4px solid var(--ink);
+      padding: 0.75rem 0.9rem;
+      margin: 1rem 0;
+      background: #f9f9f9;
+      break-inside: avoid;
+    }
+
+    .def-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    .def-body {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    /* ── COLUMN BREAK ── */
+    .col-break { break-before: column; }
+
+    /* ── COLUMN-SPANNING ── */
+    .span-cols {
+      column-span: all;
+      margin: 1.5rem 0;
+    }
+
+    /* ══════════════════════════════
+       SIGN-UP — artifact availability
+    ══════════════════════════════ */
+    .artifact-box {
+      column-span: all;
+      border: 2px solid var(--ink);
+      padding: 1.5rem 2rem;
+      margin: 2rem 0 0;
+      background: #f7f7f7;
+    }
+
+    .artifact-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.4rem;
+    }
+
+    .artifact-body {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .artifact-text {
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    .artifact-text p { margin-bottom: 0.5rem; }
+
+    .artifact-text strong { color: var(--ink); }
+
+    .artifact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 240px;
+    }
+
+    .art-field-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .art-input {
+      width: 100%;
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      padding: 0.45rem 0.6rem;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.82rem;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .art-input:focus { border-color: var(--ink); }
+    .art-input::placeholder { color: var(--ink-ghost); font-style: italic; }
+
+    .art-btn {
+      padding: 0.5rem 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      cursor: pointer;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .art-btn:hover { background: #222; }
+
+    /* ══════════════════════════════
+       SINGLE-COL SECTIONS
+    ══════════════════════════════ */
+    .single-col {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-top: 2rem;
+    }
+
+    /* ── ACKNOWLEDGEMENTS ── */
+    .acknowledgements {
+      border-top: 1px solid var(--rule);
+      padding-top: 1rem;
+      margin-top: 2rem;
+    }
+
+    .ack-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .ack-text {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--ink-dim);
+    }
+
+    /* ── FOOTNOTES ── */
+    .footnotes {
+      border-top: 2px solid var(--ink);
+      padding-top: 0.75rem;
+      margin-top: 1.5rem;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: var(--ink-dim);
+      column-count: 2;
+      column-gap: 2.5rem;
+    }
+
+    .fn {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      break-inside: avoid;
+    }
+
+    .fn-num {
+      flex-shrink: 0;
+      color: var(--blue);
+      font-weight: bold;
+    }
+
+    /* ── REFERENCES ── */
+    .references {
+      border-top: 2px solid var(--ink);
+      padding-top: 1rem;
+      margin-top: 2rem;
+    }
+
+    .ref-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .ref-list {
+      columns: 2;
+      column-gap: 2.5rem;
+      font-size: 0.75rem;
+      line-height: 1.55;
+      color: var(--ink-dim);
+    }
+
+    .ref-item {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+      break-inside: avoid;
+    }
+
+    .ref-num {
+      flex-shrink: 0;
+      color: var(--ink-pale);
+      font-weight: bold;
+      min-width: 1.5em;
+    }
+
+    .ref-text a {
+      color: var(--blue);
+    }
+
+    /* ══════════════════════════════
+       PAGE FOOTER
+    ══════════════════════════════ */
+    .paper-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--rule-light);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      color: var(--ink-ghost);
+    }
+
+    /* ══════════════════════════════
+       SITE FOOTER BAR
+    ══════════════════════════════ */
+    .site-footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 1rem;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ══════════════════════════════
+       PRINT-STYLE LINE NUMBERS (decorative)
+    ══════════════════════════════ */
+    @media (min-width: 1100px) {
+      .paper {
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- JOURNAL TOP BAR -->
+  <div class="journal-bar">
+    <div class="journal-bar-inner">
+      <span>Journal of Human–Computer Interaction &amp; Digital Communication Studies &nbsp;·&nbsp; ISSN 2041-8876</span>
+      <span>Volume 14 &nbsp;·&nbsp; Issue 1 &nbsp;·&nbsp; March 2026</span>
+      <span>Open Access &nbsp;·&nbsp; CC BY 4.0</span>
+    </div>
+  </div>
+
+  <!-- THE PAPER -->
+  <article class="paper">
+
+    <!-- TOP META -->
+    <div class="paper-meta-top">
+      <div class="journal-name">J. Hum.–Comput. Interact. Digit. Commun. Stud.</div>
+      <div class="paper-ids">
+        DOI: 10.1145/3491102.3517865<br>
+        Received: 14 Nov. 2025 &nbsp;·&nbsp; Accepted: 02 Feb. 2026
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <h1 class="paper-title">
+      On the Efficacy of Enforced Transmission Delay in Asynchronous<br>
+      Electronic Mail Communication: A Mixed-Methods Longitudinal Study
+    </h1>
+
+    <!-- AUTHORS -->
+    <div class="paper-authors">
+      <span class="author-name">A. Whitmore<span class="author-super">1</span></span>,&ensp;
+      <span class="author-name">P. Nakamura<span class="author-super">1,2</span></span>,&ensp;
+      <span class="author-name">C. Osei-Bonsu<span class="author-super">2</span></span>,&ensp;
+      <span class="author-name">L. Ferreira<span class="author-super">3</span></span>,&ensp;
+      <span class="author-name">M. R. Lindström<span class="author-super">1</span></span>
+    </div>
+
+    <div class="paper-affiliations">
+      <sup>1</sup>Department of Information Science, University of Edinburgh, UK &nbsp;·&nbsp;
+      <sup>2</sup>MIT Media Lab, Cambridge, MA, USA<br>
+      <sup>3</sup>Centre for Digital Wellbeing, Karolinska Institutet, Stockholm, Sweden
+    </div>
+
+    <div class="paper-contact">
+      Correspondence: a.whitmore@ed.ac.uk &nbsp;·&nbsp; Supplementary materials: slowmail.io/research
+    </div>
+
+    <div class="paper-dates">
+      Received 14 November 2025 &nbsp;|&nbsp; Revised 18 January 2026 &nbsp;|&nbsp;
+      Accepted 2 February 2026 &nbsp;|&nbsp; Published 28 March 2026
+    </div>
+
+    <!-- ABSTRACT -->
+    <div class="abstract">
+      <div class="abstract-label">Abstract</div>
+      <p>
+        The proliferation of real-time electronic mail communication has produced
+        measurable increases in workplace stress, regrettable message transmission,
+        and what this paper terms <em>immediacy bias</em> — the systematic tendency to
+        conflate speed of reply with quality of communication. The present study
+        investigates the behavioural and psychological effects of a mandatory
+        twenty-four hour transmission delay, as implemented by the Slowmail
+        correspondence platform (<em>n</em> = 12,847; 16-week longitudinal design).
+        Using a combination of ecological momentary assessment (EMA), message
+        content analysis, and semi-structured interviewing, we find that enforced
+        delay significantly reduces regret-motivated recall attempts
+        (<em>p</em> &lt; .001), improves self-reported communication satisfaction
+        (<em>d</em> = 0.74), and produces a 38.4% reduction in reactive
+        message composition. Participants further demonstrate measurable reductions
+        in digital communication anxiety (DCA-12 scale) over the sixteen-week
+        observation period. We conclude that the deliberate introduction of
+        transmission latency constitutes a viable behavioural intervention with
+        broad applications in organisational and personal digital communication
+        design.
+      </p>
+    </div>
+
+    <!-- KEYWORDS -->
+    <div class="keywords-line">
+      <strong>Keywords —</strong>
+      electronic mail; transmission delay; immediacy bias; digital wellbeing;
+      human-computer interaction; behavioural intervention; communication anxiety;
+      reactive messaging; slow technology
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- TWO-COLUMN BODY -->
+    <div class="paper-body">
+
+      <!-- ══ 1. INTRODUCTION ══ -->
+      <div class="sec">
+        <h2>1. Introduction</h2>
+
+        <p class="lead-para">
+          Electronic mail, first operationalised as a network communication
+          tool in 1971 <cite>[1]</cite>, was not conceived as an instantaneous
+          medium. Early systems introduced latency as a structural feature —
+          messages were queued, batched, and dispatched according to network
+          availability rather than user urgency <cite>[2]</cite>. The subsequent
+          decades of infrastructure improvement progressively eliminated this
+          latency, culminating in the sub-second delivery paradigm that
+          characterises contemporary email services.
+        </p>
+
+        <p>
+          This elimination of delay was framed as an unambiguous improvement.
+          We contest that framing. Drawing on established literature in
+          impulse control <cite>[3]</cite>, emotional regulation <cite>[4]</cite>,
+          and the psychology of regret <cite>[5]</cite>, the present paper proposes
+          that transmission latency — far from being an engineering deficiency —
+          may constitute a meaningful behavioural affordance.
+        </p>
+
+        <p>
+          We test this proposition through a pre-registered longitudinal study
+          of participants using Slowmail, a correspondence platform that enforces
+          a mandatory twenty-four hour hold on all outbound messages.
+          <sup class="fn-ref" title="Slowmail enforces this constraint at the infrastructure level. No user-facing override exists.">[a]</sup>
+          Our results suggest that enforced delay produces statistically and
+          clinically significant improvements across multiple indices of
+          communication quality and psychological wellbeing.
+        </p>
+
+        <h3>1.1 Scope and Contributions</h3>
+        <p>This paper makes the following contributions:</p>
+        <p>
+          <strong>(C1)</strong> We introduce and operationalise the construct of
+          <em>immediacy bias</em> in digital communication contexts.<br>
+          <strong>(C2)</strong> We present the first large-scale longitudinal study
+          (<em>n</em> = 12,847) of enforced email transmission delay.<br>
+          <strong>(C3)</strong> We provide empirical evidence that a 24-hour mandatory
+          hold reduces regret, reactivity, and communication-related anxiety.<br>
+          <strong>(C4)</strong> We offer design implications for communication platforms
+          and organisations seeking to reduce reactive digital communication.
+        </p>
+      </div>
+
+      <!-- ══ 2. RELATED WORK ══ -->
+      <div class="sec">
+        <h2>2. Related Work</h2>
+
+        <h3>2.1 Immediacy and Expectation in Digital Communication</h3>
+        <p>
+          The expectation of rapid reply in email communication has been
+          extensively documented. <cite>Dabbish &amp; Kraut [6]</cite> found that
+          email response time functions as a social signal, with delay
+          interpreted as disengagement or disrespect across organisational
+          contexts. <cite>Mazmanian et al. [7]</cite> identified an "always-on"
+          norm in mobile professional email use, in which participants reported
+          feeling compelled to respond within minutes, regardless of urgency.
+        </p>
+
+        <p>
+          This expectation produces what <cite>Kushlev &amp; Dunn [8]</cite> term
+          "email stress" — a chronic state of low-grade arousal associated
+          with inbox monitoring and response pressure. Their experimental
+          intervention (restricting email checking to three times daily)
+          produced significant reductions in self-reported stress, suggesting
+          that structural constraints on email behaviour can have measurable
+          psychological benefits.
+        </p>
+
+        <h3>2.2 Regret, Impulsivity, and the "Send" Decision</h3>
+        <p>
+          A nascent body of literature examines the send decision as a
+          locus of impulsive behaviour. <cite>Ozer et al. [9]</cite> found that
+          34.7% of surveyed professional email users reported regretting at
+          least one sent message per month. <cite>Whitmore &amp; Lindström [10]</cite>
+          further demonstrated that regretted messages are disproportionately
+          composed in states of negative affect — particularly anger, anxiety,
+          and competitive arousal — consistent with dual-process models of
+          decision-making <cite>[11]</cite>.
+        </p>
+
+        <p>
+          Critically, existing "undo send" features (offering 5–30 second
+          recall windows) have been shown to be largely ineffective as
+          behavioural interventions, as they do not interrupt the send action
+          with sufficient temporal displacement to engage reflective processing
+          <cite>[12]</cite>. The present study tests the hypothesis that a
+          substantially longer window — twenty-four hours — is required to
+          produce meaningful change in transmission behaviour.
+        </p>
+
+        <h3>2.3 Slow Technology as Design Philosophy</h3>
+        <p>
+          The concept of "slow technology" <cite>[13]</cite> proposes that
+          digital systems should be designed to promote reflection rather than
+          efficiency. <cite>Hallnäs &amp; Redström [13]</cite> argue that
+          technological slowness creates space for engagement and meaning-making
+          that speed-optimised systems structurally preclude. Slowmail may be
+          understood as an instantiation of this philosophy in the domain of
+          asynchronous communication.
+        </p>
+      </div>
+
+      <!-- ══ 3. THE SLOWMAIL SYSTEM ══ -->
+      <div class="sec">
+        <h2>3. The Slowmail System</h2>
+
+        <p>
+          Slowmail is a web-based electronic mail client that enforces a
+          mandatory 86,400-second (24-hour) hold on all outbound messages.
+          Upon composition and transmission, messages are encrypted using
+          AES-256-GCM and placed in a time-locked queue. Delivery occurs
+          automatically at T+86,400s.
+          <sup class="fn-ref" title="The hold period is implemented at the infrastructure level and cannot be shortened by user action or administrative override.">[b]</sup>
+        </p>
+
+        <div class="definition-box">
+          <div class="def-label">Definition 1 (Transmission Hold)</div>
+          <div class="def-body">
+            Let <em>t</em><sub>s</sub> denote the timestamp at which a message
+            <em>m</em> is submitted by user <em>u</em>. Slowmail guarantees
+            delivery at time <em>t</em><sub>d</sub> such that
+            <em>t</em><sub>d</sub> − <em>t</em><sub>s</sub> ≥ 86,400s,
+            with equality holding in the nominal case absent system failure.
+            No mechanism exists to reduce this interval.
+          </div>
+        </div>
+
+        <p>
+          The system additionally exposes a recall interface permitting
+          message cancellation during the hold window. This constitutes the
+          primary dependent variable of interest in the present study —
+          specifically, whether and how often users exercise recall, and
+          under what affective conditions.
+        </p>
+
+        <div class="algorithm">
+          <div class="algo-title">Algorithm 1: Transmission Hold Protocol</div>
+          <div class="algo-body">
+            <div><span class="kw">Input:</span> message <em>m</em>, sender <em>u</em>, recipients <em>R</em></div>
+            <div><span class="kw">Output:</span> delivered message or recall confirmation</div>
+            <div>&nbsp;</div>
+            <div class="indent-1">encrypt(<em>m</em>) → <em>m</em><sub>enc</sub> <span class="comment">// AES-256-GCM</span></div>
+            <div class="indent-1">queue.enqueue(<em>m</em><sub>enc</sub>, T = now + 86400s)</div>
+            <div class="indent-1"><span class="kw">while</span> T &gt; now <span class="kw">do</span></div>
+            <div class="indent-2"><span class="kw">if</span> u.recall(<em>m</em>) <span class="kw">then</span> <span class="kw">return</span> RECALLED</div>
+            <div class="indent-1"><span class="kw">end while</span></div>
+            <div class="indent-1">deliver(decrypt(<em>m</em><sub>enc</sub>), <em>R</em>)</div>
+            <div class="indent-1">notify(<em>u</em>, DELIVERED)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIGURE 1 — bar chart -->
+      <div class="figure">
+        <div class="figure-content" style="background:transparent; min-height:unset; padding:0;">
+          <div class="bar-chart">
+            <div class="bar-group">
+              <div class="bar" style="height:94px; position:relative;">
+                <span class="bar-val">3.8 msg/d</span>
+              </div>
+              <div class="bar-label">Baseline<br>(Week 0)</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar light" style="height:72px; position:relative;">
+                <span class="bar-val">2.9</span>
+              </div>
+              <div class="bar-label">Week 4</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar light" style="height:56px; position:relative;">
+                <span class="bar-val">2.3</span>
+              </div>
+              <div class="bar-label">Week 8</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar light" style="height:38px; position:relative;">
+                <span class="bar-val">1.5</span>
+              </div>
+              <div class="bar-label">Week 12</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar light" style="height:24px; position:relative;">
+                <span class="bar-val">0.9</span>
+              </div>
+              <div class="bar-label">Week 16</div>
+            </div>
+          </div>
+        </div>
+        <div class="fig-caption">Mean reactive messages per user per day across the 16-week observation period (N = 12,847). Reduction significant at <em>p</em> &lt; .001 by repeated-measures ANOVA.</div>
+      </div>
+
+      <!-- ══ 4. METHODOLOGY ══ -->
+      <div class="sec">
+        <h2>4. Methodology</h2>
+
+        <h3>4.1 Participants</h3>
+        <p>
+          Participants (<em>n</em> = 12,847; 54.3% female, 41.2% male, 4.5% non-binary or
+          not disclosed; mean age 34.6 years, <em>SD</em> = 9.2) were recruited via
+          the Slowmail beta programme. Inclusion criteria required active email
+          use (&gt;5 messages sent per day at baseline) and consent to
+          anonymised usage data collection. The study was approved by the
+          University of Edinburgh Ethics Committee (Ref. 2025/0047).
+        </p>
+
+        <h3>4.2 Measures</h3>
+        <p>
+          <strong>Primary outcome:</strong> Recall rate per user per week,
+          operationalised as the proportion of sent messages recalled
+          prior to delivery.<br>
+          <strong>Secondary outcomes:</strong> (i) self-reported communication
+          regret (adapted 8-item scale <cite>[9]</cite>); (ii) reactive message
+          rate, defined as messages sent within 90 seconds of receiving
+          a message; (iii) Digital Communication Anxiety scale
+          (DCA-12; <cite>[14]</cite>); (iv) message word count and sentiment
+          valence (automated analysis via VADER-Extended <cite>[15]</cite>).
+        </p>
+
+        <h3>4.3 Procedure</h3>
+        <p>
+          Participants completed baseline measures prior to Slowmail
+          account activation. EMA prompts were delivered three times
+          weekly throughout the 16-week study period. Message metadata
+          (send time, recall events, delivery time) was logged automatically.
+          A stratified random subsample (<em>n</em> = 240) participated in
+          semi-structured exit interviews (M = 42 min, <em>SD</em> = 11 min).
+        </p>
+      </div>
+
+      <!-- ══ 5. RESULTS ══ -->
+      <div class="sec col-break">
+        <h2>5. Results</h2>
+
+        <h3>5.1 Recall Behaviour</h3>
+        <p>
+          Across the 16-week observation period, participants recalled a
+          total of 41,203 messages (mean = 3.21 per participant). Of recalled
+          messages subsequently re-composed and re-sent, 73.4% were rated
+          by an independent blind coder as "substantially different" in
+          tone, length, or content from the original. The predominant
+          direction of revision was toward reduced negative affect
+          (<em>r</em> = .61, <em>p</em> &lt; .001).
+        </p>
+
+        <div class="figure">
+          <div class="figure-content" style="background:transparent; min-height:unset; padding:6px 0 0;">
+            <div class="timeline-fig" style="padding:0 8px;">
+              <div style="position:relative; height:70px;">
+                <div class="tl-track" style="margin:32px 0 0; position:absolute; left:0;right:0;top:0;"></div>
+
+                <div class="tl-point" style="left:0%;">
+                  <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:0.48rem;color:var(--ink-dim);white-space:nowrap;">T+0s</div>
+                  <div class="tl-dot filled"></div>
+                  <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:0.46rem;color:var(--ink-pale);white-space:nowrap;">Compose<br>&amp; send</div>
+                </div>
+
+                <div class="tl-point" style="left:35%;">
+                  <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:0.48rem;color:var(--ink-dim);white-space:nowrap;">T+30,240s (~8.4h)</div>
+                  <div class="tl-dot"></div>
+                  <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:0.46rem;color:var(--ink-pale);white-space:nowrap;">Median<br>recall point</div>
+                </div>
+
+                <div class="tl-point" style="left:70%;">
+                  <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:0.48rem;color:var(--ink-dim);white-space:nowrap;">T+86,400s</div>
+                  <div class="tl-dot filled"></div>
+                  <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:0.46rem;color:var(--ink-pale);white-space:nowrap;">Delivery<br>(if not recalled)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fig-caption">Median recall event timing relative to transmission hold window. Shaded region (0–T+86,400s) represents the cancellable window. Most recalls occur during the morning hours following an evening composition event.</div>
+        </div>
+
+        <h3>5.2 Communication Quality</h3>
+
+        <div class="tbl-caption">Comparison of key outcome measures at baseline and Week 16 (<em>n</em> = 12,847).</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Measure</th>
+              <th>Baseline</th>
+              <th>Week 16</th>
+              <th>Δ</th>
+              <th><em>p</em></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DCA-12 score</td>
+              <td>34.2</td>
+              <td>21.8</td>
+              <td class="sig">−36.3%</td>
+              <td>&lt;.001</td>
+            </tr>
+            <tr>
+              <td>Regret (8-item)</td>
+              <td>2.9/5</td>
+              <td>1.6/5</td>
+              <td class="sig">−44.8%</td>
+              <td>&lt;.001</td>
+            </tr>
+            <tr>
+              <td>Reactive msg/d</td>
+              <td>3.8</td>
+              <td>0.9</td>
+              <td class="sig">−76.3%</td>
+              <td>&lt;.001</td>
+            </tr>
+            <tr>
+              <td>Msg sentiment (VADER)</td>
+              <td>+0.12</td>
+              <td>+0.31</td>
+              <td class="sig">+158%</td>
+              <td>&lt;.001</td>
+            </tr>
+            <tr>
+              <td>Word count (mean)</td>
+              <td>147.3</td>
+              <td>203.8</td>
+              <td>+38.4%</td>
+              <td>&lt;.001</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          All five primary and secondary outcome measures demonstrated
+          significant improvement between baseline and Week 16
+          (see Table 1). Effect sizes for the DCA-12 reduction
+          (<em>d</em> = 0.82) and regret scale (<em>d</em> = 0.74) meet
+          the threshold for clinical significance established by
+          <cite>Cohen [16]</cite>.
+        </p>
+
+        <h3>5.3 Qualitative Findings</h3>
+        <p>
+          Thematic analysis of exit interview transcripts (<em>n</em> = 240)
+          identified three superordinate themes: (i) <em>temporal reframing</em>
+          — participants reported reconceptualising email as an inherently
+          asynchronous medium; (ii) <em>affective recalibration</em> — the hold
+          period was described as affording "distance" from emotionally
+          activated states; and (iii) <em>expectation normalisation</em> —
+          participants reported that their own use of Slowmail reduced
+          their expectations for rapid replies from others.
+        </p>
+
+        <p>
+          Representative participant quotation, P-0472 (week 14 interview):
+        </p>
+
+        <div class="definition-box" style="border-left-color: var(--ink-pale);">
+          <div class="def-body" style="font-style:italic;">
+            "The morning-after effect is real. I wrote something on a Tuesday
+            evening that I was absolutely certain was correct and measured.
+            Wednesday morning I read it back and it was neither. I think I
+            have recalled fourteen messages in sixteen weeks. I can name
+            at least six that would have caused serious damage."
+          </div>
+          <div style="font-size:0.68rem; color:var(--ink-pale); margin-top:0.4rem;">— Participant P-0472, Interview Week 14</div>
+        </div>
+      </div>
+
+      <!-- ══ 6. DISCUSSION ══ -->
+      <div class="sec">
+        <h2>6. Discussion</h2>
+
+        <p>
+          The present findings provide convergent quantitative and qualitative
+          evidence that enforced transmission delay constitutes an effective
+          behavioural intervention for reactive digital communication. The
+          magnitude of observed effects — particularly the 76.3% reduction in
+          reactive messaging and the 36.3% reduction in DCA-12 scores —
+          exceeds those reported in prior studies of less radical
+          interventions <cite>[8, 17]</cite>.
+        </p>
+
+        <h3>6.1 Theoretical Implications</h3>
+        <p>
+          We interpret these findings through the lens of dual-process theory
+          <cite>[11]</cite>. The twenty-four hour hold reliably engages
+          System 2 (reflective) processing by interposing a mandatory delay
+          between emotional activation and communicative action. In this
+          framing, the hold functions analogously to established
+          impulse-control interventions in clinical psychology <cite>[18]</cite>,
+          applied at the infrastructural rather than the individual level.
+        </p>
+
+        <h3>6.2 Limitations</h3>
+        <p>
+          This study is subject to several limitations. First, self-selection
+          bias is probable: participants who opt into a delayed-send email
+          service may already hold attitudes conducive to reflective
+          communication. Second, our sample skews toward professional knowledge
+          workers, limiting generalisability.
+          <sup class="fn-ref" title="Future work should examine enforced delay in emergency and high-stakes communication contexts, where delay may be contraindicated.">[c]</sup>
+          Third, long-term effects beyond 16 weeks remain uncharacterised.
+        </p>
+      </div>
+
+      <!-- ══ 7. CONCLUSION ══ -->
+      <div class="sec">
+        <h2>7. Conclusion</h2>
+        <p>
+          This paper presents evidence that a mandatory twenty-four hour
+          transmission hold produces significant and durable improvements
+          in communication quality, message sentiment, and psychological
+          wellbeing across a large and demographically diverse sample.
+          The Slowmail system demonstrates that <em>deliberate latency</em>
+          is a viable design strategy for reducing the documented harms of
+          immediacy-optimised communication infrastructure.
+        </p>
+
+        <p>
+          We encourage both researchers and practitioners to treat
+          transmission delay not as an engineering failure to be corrected,
+          but as a design affordance to be explored. The twenty-four hour
+          hold is not a bug. It is, as our data suggest, rather
+          the most important feature.
+        </p>
+      </div>
+
+      <!-- ARTIFACT / SIGN-UP -->
+      <div class="artifact-box">
+        <div class="artifact-label">Artifact Availability &amp; Open Access Participation</div>
+        <div class="artifact-body">
+          <div class="artifact-text">
+            <p>
+              The Slowmail system described in this paper is available to the
+              research community and general public free of charge at
+              <strong>slowmail.io</strong>. No API key or institutional
+              affiliation is required for access.
+            </p>
+            <p>
+              Researchers wishing to participate in ongoing longitudinal data
+              collection are invited to register below. All data are collected
+              under informed consent and handled in accordance with GDPR
+              (EU) 2016/679 and the Edinburgh University Data Protection Policy.
+              Your first transmission will be delivered exactly 24 hours
+              following account activation.
+            </p>
+            <p style="font-size:0.72rem; color:var(--ink-pale);">
+              <strong>Ethics reference:</strong> UoE/2025/0047 &nbsp;·&nbsp;
+              <strong>Pre-registration:</strong> OSF #osf.io/7xq4k &nbsp;·&nbsp;
+              <strong>Data availability:</strong> Anonymised dataset on request
+            </p>
+          </div>
+
+          <div class="artifact-form">
+            <div>
+              <div class="art-field-label">Institutional email address</div>
+              <input class="art-input" type="email" placeholder="you@institution.ac.uk">
+            </div>
+            <div>
+              <div class="art-field-label">Name (optional)</div>
+              <input class="art-input" type="text" placeholder="A. Researcher">
+            </div>
+            <button class="art-btn">Register for access →</button>
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.58rem; color:var(--ink-ghost); margin-top:0.25rem; line-height:1.5;">
+              Your first outbound message will be held for 24 hours.<br>
+              This behaviour cannot be disabled. See §3.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.paper-body -->
+
+    <!-- ACKNOWLEDGEMENTS -->
+    <div class="single-col">
+      <div class="acknowledgements">
+        <div class="ack-label">Acknowledgements</div>
+        <div class="ack-text">
+          The authors thank the 12,847 participants who contributed their
+          communication data to this study, and whose patience — enforced or
+          otherwise — made this research possible. Funding for this work was
+          provided by the Wellcome Trust Digital Futures Programme (grant no.
+          WT220341) and the MIT Media Lab Consortium. The authors declare no
+          competing interests. Author contributions: AW and PNK designed the
+          study; CO-B led data collection and EMA implementation; LF conducted
+          qualitative analysis; MRL oversaw statistical modelling. All authors
+          reviewed and approved the final manuscript.
+        </div>
+      </div>
+
+      <!-- FOOTNOTES -->
+      <div class="footnotes">
+        <div class="fn">
+          <span class="fn-num">[a]</span>
+          <span>Slowmail enforces the hold at the infrastructure level. No user-facing
+          or administrative override exists. This architectural choice is
+          documented in the system design specification (see Appendix B).</span>
+        </div>
+        <div class="fn">
+          <span class="fn-num">[b]</span>
+          <span>The 86,400-second figure represents the nominal hold duration.
+          In practice, observed delivery times ranged from T+86,397s to
+          T+86,404s due to queue processing latency (M = 86,400.8s,
+          <em>SD</em> = 1.4s).</span>
+        </div>
+        <div class="fn">
+          <span class="fn-num">[c]</span>
+          <span>Slowmail provides an opt-in Instant Mode for genuine
+          emergencies, deliberately buried in account settings. Usage
+          of Instant Mode was recorded in 0.003% of all message
+          transmission events during the study period.</span>
+        </div>
+      </div>
+
+      <!-- REFERENCES -->
+      <div class="references">
+        <div class="ref-label">References</div>
+        <div class="ref-list">
+          <div class="ref-item">
+            <span class="ref-num">[1]</span>
+            <span class="ref-text">Tomlinson, R. (1972). <em>The first network email</em>. BBN Technologies Internal Report. Cambridge, MA.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[2]</span>
+            <span class="ref-text">Hafner, K., &amp; Lyon, M. (1996). <em>Where wizards stay up late</em>. Simon &amp; Schuster.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[3]</span>
+            <span class="ref-text">Baumeister, R. F., et al. (1994). Losing control. <em>Academic Press</em>.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[4]</span>
+            <span class="ref-text">Gross, J. J. (2015). Emotion regulation. <em>Psychological Inquiry, 26</em>(1), 1–26.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[5]</span>
+            <span class="ref-text">Zeelenberg, M., &amp; Pieters, R. (2007). A theory of regret regulation. <em>J. Consumer Psychology, 17</em>(1), 3–18.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[6]</span>
+            <span class="ref-text">Dabbish, L., &amp; Kraut, R. (2006). Email overload at work. <em>Proc. CSCW '06</em>, 431–440. ACM.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[7]</span>
+            <span class="ref-text">Mazmanian, M., et al. (2013). The autonomy paradox. <em>Admin. Sci. Q., 58</em>(4), 507–542.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[8]</span>
+            <span class="ref-text">Kushlev, K., &amp; Dunn, E. W. (2015). Checking email less frequently reduces stress. <em>Computers in Human Behavior, 43</em>, 220–228.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[9]</span>
+            <span class="ref-text">Ozer, M., et al. (2022). Digital regret in professional communication. <em>J. Applied Psychology, 107</em>(3), 412–429.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[10]</span>
+            <span class="ref-text">Whitmore, A., &amp; Lindström, M. R. (2024). Affect and the send decision. <em>Proc. CHI '24</em>, Paper 847. ACM.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[11]</span>
+            <span class="ref-text">Kahneman, D. (2011). <em>Thinking, fast and slow</em>. Farrar, Straus and Giroux.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[12]</span>
+            <span class="ref-text">Park, S., et al. (2023). Short-window undo features fail to reduce email regret. <em>Proc. CHI '23</em>, Paper 391. ACM.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[13]</span>
+            <span class="ref-text">Hallnäs, L., &amp; Redström, J. (2001). Slow technology. <em>Personal Ubiquitous Comput., 5</em>(3), 157–165.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[14]</span>
+            <span class="ref-text">Ferreira, L., &amp; Osei-Bonsu, C. (2023). Development of the DCA-12 scale. <em>Cyberpsychology, 17</em>(2), 88–104.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[15]</span>
+            <span class="ref-text">Hutto, C. J., &amp; Gilbert, E. (2014). VADER: A parsimonious rule-based model. <em>Proc. ICWSM '14</em>.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[16]</span>
+            <span class="ref-text">Cohen, J. (1988). <em>Statistical power analysis</em> (2nd ed.). Lawrence Erlbaum.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[17]</span>
+            <span class="ref-text">Mark, G., et al. (2012). Email duration, batching and self-interruption. <em>Proc. CHI '12</em>, 1717–1726. ACM.</span>
+          </div>
+          <div class="ref-item">
+            <span class="ref-num">[18]</span>
+            <span class="ref-text">Linehan, M. M. (1993). <em>Cognitive-behavioural treatment of borderline personality disorder</em>. Guilford Press.</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.single-col -->
+
+    <!-- PAPER FOOTER -->
+    <div class="paper-footer">
+      <span>Journal of HCI &amp; Digital Communication Studies &nbsp;·&nbsp; Vol. 14, No. 1 (2026)</span>
+      <span>Whitmore et al. &nbsp;·&nbsp; Enforced Transmission Delay</span>
+      <span>pp. 1–18 &nbsp;·&nbsp; DOI: 10.1145/3491102.3517865</span>
+    </div>
+
+  </article>
+
+  <!-- SITE FOOTER -->
+  <div class="site-footer">
+    © 2026 Slowmail &nbsp;·&nbsp; slowmail.io &nbsp;·&nbsp;
+    This paper is distributed under Creative Commons CC BY 4.0 &nbsp;·&nbsp;
+    All emails held for exactly 86,400 seconds &nbsp;·&nbsp;
+    This constraint is architectural and cannot be overridden
+  </div>
+
+</body>
+</html>

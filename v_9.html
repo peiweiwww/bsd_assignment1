@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slowmail Air — Fly Your Words</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #0a1628;
+    --navy2:   #102040;
+    --navy3:   #162a50;
+    --blue:    #1e4db7;
+    --blue2:   #2563eb;
+    --sky:     #38bdf8;
+    --gold:    #e8b84b;
+    --gold2:   #f5d07a;
+    --cream:   #fdf8f0;
+    --paper:   #f5f0e6;
+    --border:  #d4c9b0;
+    --text:    #1a1a2e;
+    --text2:   #4a5568;
+    --muted:   #8a9ab0;
+    --white:   #ffffff;
+    --green:   #10b981;
+    --amber:   #f59e0b;
+    --red:     #ef4444;
+    --stripe1: #1e4db7;
+    --stripe2: #c8102e;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── TOP UTILITY BAR ── */
+  .utility-bar {
+    background: var(--navy);
+    color: rgba(255,255,255,0.65);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 40px;
+  }
+
+  .utility-bar a { color: rgba(255,255,255,0.65); text-decoration: none; margin-left: 16px; }
+  .utility-bar a:hover { color: #fff; }
+
+  .util-left { display: flex; align-items: center; gap: 4px; }
+  .util-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 4px; }
+
+  /* ── MAIN NAV ── */
+  nav {
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-bottom: 3px solid var(--blue);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* CSS airplane logo */
+  .plane-icon {
+    width: 32px;
+    height: 32px;
+    position: relative;
+  }
+
+  .plane-icon::before {
+    content: '✈';
+    font-size: 1.6rem;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .logo-name {
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .logo-tagline {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding-bottom: 4px;
+  }
+
+  .nav-links a:hover { color: #fff; }
+  .nav-links a.active { color: #fff; border-bottom: 2px solid var(--gold); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-login {
+    color: rgba(255,255,255,0.75);
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: #fff;
+  }
+
+  .nav-cta {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background:
+      linear-gradient(to bottom, rgba(10,22,40,0.82) 0%, rgba(10,22,40,0.6) 50%, rgba(10,22,40,0.85) 100%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255,255,255,0.015) 3px,
+        rgba(255,255,255,0.015) 4px
+      ),
+      linear-gradient(160deg, #0a1628 0%, #102a50 30%, #1a4080 60%, #0a2040 100%);
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Cloud shapes */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50px;
+    pointer-events: none;
+  }
+
+  .cloud-1 { width: 300px; height: 60px; top: 60px; left: -60px; }
+  .cloud-2 { width: 200px; height: 40px; top: 100px; right: 100px; }
+  .cloud-3 { width: 400px; height: 70px; bottom: 120px; left: 200px; opacity: 0.5; }
+
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+
+  .cloud-1::before { width: 100px; height: 80px; top: -30px; left: 60px; }
+  .cloud-1::after  { width: 80px;  height: 60px; top: -20px; left: 140px; }
+  .cloud-2::before { width: 80px;  height: 60px; top: -25px; left: 40px; }
+  .cloud-2::after  { width: 60px;  height: 50px; top: -15px; left: 100px; }
+  .cloud-3::before { width: 120px; height: 90px; top: -35px; left: 80px; }
+  .cloud-3::after  { width: 90px;  height: 70px; top: -25px; left: 180px; }
+
+  /* Route line in hero */
+  .hero-route {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 18px;
+  }
+
+  .route-city {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .route-line {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 0;
+    min-width: 200px;
+  }
+
+  .route-dash {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+    border-top: 1px dashed rgba(255,255,255,0.4);
+  }
+
+  .route-plane {
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin: 0 10px;
+    display: block;
+    filter: drop-shadow(0 0 8px rgba(232,184,75,0.4));
+  }
+
+  .hero-title {
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  /* ── BOOKING FORM ── */
+  .booking-form {
+    background: rgba(255,255,255,0.97);
+    border-radius: 12px 12px 0 0;
+    padding: 28px 32px 32px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 -4px 40px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .form-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .form-tab {
+    padding: 8px 20px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    letter-spacing: 0.04em;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: inherit;
+  }
+
+  .form-tab.active {
+    color: var(--blue2);
+    border-bottom-color: var(--blue2);
+  }
+
+  .form-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+
+  .field-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+
+  .field-input {
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+  }
+
+  .field-input:focus { border-color: var(--blue2); }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .search-btn {
+    background: var(--blue2);
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+  }
+
+  .search-btn::before { content: '✈'; font-size: 1rem; }
+
+  /* ── FLIGHT STATUS BOARD ── */
+  .status-section {
+    background: var(--navy);
+    padding: 0;
+  }
+
+  .status-header {
+    background: var(--navy2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .status-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .status-live {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: blink-dot 1.4s ease-in-out infinite;
+  }
+
+  @keyframes blink-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Departure board rows */
+  .board-cols {
+    display: grid;
+    grid-template-columns: 90px 80px 1fr 1fr 1fr 1fr 140px;
+    gap: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 10px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .board-row {
+    display: grid;
+    grid-template-columns: 90px 80px 1fr 1fr 1fr 1fr 140px;
+    gap: 0;
+    padding: 14px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .board-row:hover { background: rgba(255,255,255,0.03); }
+
+  .board-row.highlighted { background: rgba(30,77,183,0.2); }
+
+  .board-time {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .board-flight {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+
+  .board-destination {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .board-destination small {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  .board-gate {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .board-duration {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .board-type {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .status-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pill-transit { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+  .pill-transit::before { background: var(--amber); }
+
+  .pill-departed { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .pill-departed::before { background: var(--green); }
+
+  .pill-boarding { background: rgba(30,77,183,0.2); color: #93c5fd; border: 1px solid rgba(30,77,183,0.4); }
+  .pill-boarding::before { background: #93c5fd; animation: blink-dot 1s infinite; }
+
+  .pill-delayed { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+  .pill-delayed::before { background: #fca5a5; }
+
+  /* ── BOARDING PASS ── */
+  .boarding-section {
+    background: var(--paper);
+    padding: 80px 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .boarding-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .boarding-text {}
+
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue2);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--blue2);
+  }
+
+  .boarding-text h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    line-height: 1.1;
+    margin-bottom: 18px;
+  }
+
+  .boarding-text p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+
+  /* CSS Boarding Pass */
+  .boarding-pass {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(10,22,40,0.14), 0 4px 16px rgba(10,22,40,0.08);
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+  }
+
+  /* Airline stripe at top */
+  .bp-stripe {
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--stripe1) 0px,
+      var(--stripe1) 20px,
+      var(--white) 20px,
+      var(--white) 24px,
+      var(--stripe2) 24px,
+      var(--stripe2) 44px,
+      var(--white) 44px,
+      var(--white) 48px
+    );
+  }
+
+  .bp-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bp-airline {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-class {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-main {
+    padding: 20px 24px;
+  }
+
+  .bp-route-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .bp-city {
+    text-align: center;
+  }
+
+  .bp-iata {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    line-height: 1;
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .bp-city-name {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-top: 3px;
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-flight-path {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 0;
+    position: relative;
+  }
+
+  .bp-path-line {
+    flex: 1;
+    height: 1px;
+    border-top: 1.5px dashed #d1d5db;
+  }
+
+  .bp-path-plane {
+    font-size: 1.2rem;
+    color: var(--navy);
+    margin: 0 6px;
+    transform: rotate(0deg);
+  }
+
+  .bp-duration-badge {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding-top: 0;
+    margin-bottom: 0;
+  }
+
+  .bp-field {}
+
+  .bp-field-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-field-val {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Tear line */
+  .bp-tear {
+    display: flex;
+    align-items: center;
+    margin: 0 -1px;
+    position: relative;
+  }
+
+  .bp-tear-circle-left {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    margin-left: -12px;
+    box-shadow: inset 2px 0 4px rgba(0,0,0,0.06);
+  }
+
+  .bp-tear-line {
+    flex: 1;
+    border-top: 2px dashed #d1d5db;
+    margin: 0 4px;
+  }
+
+  .bp-tear-circle-right {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    margin-right: -12px;
+    box-shadow: inset -2px 0 4px rgba(0,0,0,0.06);
+  }
+
+  /* Stub section */
+  .bp-stub {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bp-stub-info {}
+
+  .bp-stub-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  .bp-stub-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: -apple-system, Arial, sans-serif;
+  }
+
+  /* CSS barcode */
+  .bp-barcode {
+    display: flex;
+    align-items: stretch;
+    gap: 1.5px;
+    height: 44px;
+  }
+
+  .bar {
+    width: 2px;
+    background: var(--navy);
+    border-radius: 1px;
+  }
+
+  .bar.t { width: 3px; }
+  .bar.w { width: 4px; }
+  .bar.g { width: 8px; background: transparent; }
+
+  /* ── DESTINATIONS ── */
+  .destinations {
+    padding: 80px 40px;
+    background: var(--cream);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .dest-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .dest-header h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+
+  .dest-header p {
+    font-size: 0.82rem;
+    color: var(--text2);
+    max-width: 300px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  .dest-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+  }
+
+  .dest-card {
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 200px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .dest-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 48px rgba(10,22,40,0.2);
+  }
+
+  .dest-card.large { grid-row: span 2; min-height: 420px; }
+
+  /* CSS sky/landscape backgrounds for each destination */
+  .dc-paris {
+    background:
+      linear-gradient(to top, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.3) 50%, transparent 100%),
+      linear-gradient(160deg, #1a2a4a 0%, #2a3a6a 40%, #3a5a9a 70%, #6a8ac0 100%);
+  }
+
+  /* Eiffel tower silhouette */
+  .dc-paris::before {
+    content: '';
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 80px;
+    background: rgba(255,255,255,0.15);
+    box-shadow:
+      -20px 20px 0 rgba(255,255,255,0.1),
+       20px 20px 0 rgba(255,255,255,0.1),
+      -12px 40px 0 rgba(255,255,255,0.1),
+       12px 40px 0 rgba(255,255,255,0.1),
+      -6px 60px 0 rgba(255,255,255,0.1),
+       6px 60px 0 rgba(255,255,255,0.1),
+       0px -30px 0 1px rgba(255,255,255,0.2);
+  }
+
+  .dc-tokyo {
+    background:
+      linear-gradient(to top, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.3) 50%, transparent 100%),
+      linear-gradient(160deg, #1a0a2e 0%, #2a0a3e 40%, #4a1a6e 70%, #8a3aae 100%);
+  }
+
+  .dc-nyc {
+    background:
+      linear-gradient(to top, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.3) 50%, transparent 100%),
+      linear-gradient(160deg, #0a1a2a 0%, #1a3a5a 40%, #2a5a8a 70%, #4a8aaa 100%);
+  }
+
+  /* Skyline silhouette for NYC */
+  .dc-nyc::before {
+    content: '';
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: rgba(255,255,255,0.07);
+    -webkit-mask-image: linear-gradient(transparent, transparent);
+    box-shadow:
+      20px -10px 0 rgba(255,255,255,0.08),
+      40px -20px 0 rgba(255,255,255,0.08),
+      60px -8px 0 rgba(255,255,255,0.08),
+      80px -30px 0 rgba(255,255,255,0.08),
+      100px -15px 0 rgba(255,255,255,0.08);
+  }
+
+  .dc-london {
+    background:
+      linear-gradient(to top, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.3) 50%, transparent 100%),
+      linear-gradient(160deg, #0f1f0f 0%, #1a2f1a 40%, #2a4a2a 70%, #4a6a4a 100%);
+  }
+
+  .dest-card-body {
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .dest-iata {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold2);
+    margin-bottom: 3px;
+  }
+
+  .dest-city {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
+  }
+
+  .dest-card.large .dest-city { font-size: 2rem; }
+
+  .dest-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .dest-from {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .dest-price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gold2);
+  }
+
+  .dest-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* ── WHY SECTION ── */
+  .why-section {
+    background: var(--navy);
+    padding: 80px 40px;
+    color: #fff;
+  }
+
+  .why-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+
+  .why-card {
+    background: rgba(255,255,255,0.04);
+    padding: 40px 36px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+
+  .why-card:last-child { border-right: none; }
+
+  .why-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.9;
+  }
+
+  .why-number {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .why-card h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .why-card p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* ── SIGN UP / CHECK-IN SECTION ── */
+  .checkin-section {
+    background: var(--paper);
+    padding: 80px 40px;
+    border-top: 3px solid var(--navy);
+  }
+
+  .checkin-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .checkin-inner .section-label { justify-content: center; }
+
+  .checkin-inner h2 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  .checkin-inner p {
+    font-size: 0.95rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .checkin-form {
+    display: flex;
+    gap: 10px;
+    max-width: 480px;
+    margin: 0 auto 14px;
+  }
+
+  .checkin-form input {
+    flex: 1;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    padding: 13px 18px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+  }
+
+  .checkin-form input:focus { border-color: var(--blue2); }
+
+  .checkin-form button {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 13px 26px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .checkin-notice {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* Guarantee badges */
+  .guarantee-row {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .guarantee {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    font-weight: 600;
+  }
+
+  .guarantee-icon { font-size: 1rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 24px;
+    border-top: 3px solid var(--blue);
+  }
+
+  .footer-left {}
+
+  .footer-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .footer-logo-name {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-logo-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--navy);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .footer-copy {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover { color: rgba(255,255,255,0.75); }
+</style>
+</head>
+<body>
+
+<!-- UTILITY BAR -->
+<div class="utility-bar">
+  <div class="util-left">
+    <div class="util-dot"></div>
+    All systems operational · Messages departing on schedule
+  </div>
+  <div>
+    <a href="#">EN</a>
+    <a href="#">Help</a>
+    <a href="#">My Flights</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="plane-icon"></div>
+    <div class="logo-text">
+      <span class="logo-name">Slowmail Air</span>
+      <span class="logo-tagline">Every message, 24h flight time</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Book a Message</a></li>
+    <li><a href="#">My Inbox</a></li>
+    <li><a href="#">Departures</a></li>
+    <li><a href="#">About the Route</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-login">Log In</button>
+    <button class="nav-cta">Join Now</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <p class="hero-title">Slowmail Air — Intercontinental Message Service</p>
+
+  <div class="hero-route">
+    <div class="route-city">YOU</div>
+    <div class="route-line">
+      <div class="route-dash"></div>
+      <span class="route-plane">✈</span>
+      <div class="route-dash"></div>
+    </div>
+    <div class="route-city">THEM</div>
+  </div>
+
+  <p class="hero-sub">Flight duration: exactly 24 hours &nbsp;·&nbsp; Departs immediately &nbsp;·&nbsp; Arrives tomorrow</p>
+
+  <!-- Booking Form -->
+  <div class="booking-form">
+    <div class="form-tabs">
+      <button class="form-tab active">✉ Send a Message</button>
+      <button class="form-tab">📬 Manage Drafts</button>
+      <button class="form-tab">✈ Track Delivery</button>
+    </div>
+    <div class="form-fields">
+      <div class="field-group">
+        <label class="field-label">✈ From (You)</label>
+        <input class="field-input" type="text" placeholder="your@email.com">
+      </div>
+      <div class="field-group">
+        <label class="field-label">📍 To (Recipient)</label>
+        <input class="field-input" type="text" placeholder="them@email.com">
+      </div>
+      <div class="field-group">
+        <label class="field-label">📅 Departure / Arrival</label>
+        <div class="field-row">
+          <input class="field-input" type="text" value="Today, Now" readonly>
+          <input class="field-input" type="text" value="+24 Hours" readonly style="background:#f9f9f9;color:#6b7280;">
+        </div>
+      </div>
+      <div>
+        <button class="search-btn">Send Flight</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEPARTURES BOARD -->
+<div class="status-section">
+  <div class="status-header">
+    <span class="status-title">✈ Departures — Outbound Messages</span>
+    <span class="status-live"><span class="live-dot"></span>Live Feed</span>
+  </div>
+  <div class="board-cols">
+    <span>Departs</span>
+    <span>Flight</span>
+    <span>Destination</span>
+    <span>Gate</span>
+    <span>Duration</span>
+    <span>Class</span>
+    <span>Status</span>
+  </div>
+
+  <div class="board-row highlighted">
+    <span class="board-time">08:42</span>
+    <span class="board-flight">SML 001</span>
+    <div class="board-destination">
+      Alex Morrison
+      <small>alex@studio.co</small>
+    </div>
+    <span class="board-gate">Gate A1</span>
+    <span class="board-duration">24h 00m</span>
+    <span class="board-type">Personal</span>
+    <span class="status-pill pill-boarding">Boarding</span>
+  </div>
+
+  <div class="board-row">
+    <span class="board-time">07:15</span>
+    <span class="board-flight">SML 088</span>
+    <div class="board-destination">
+      Marketing Team
+      <small>team@co.com</small>
+    </div>
+    <span class="board-gate">Gate B3</span>
+    <span class="board-duration">24h 00m</span>
+    <span class="board-type">Work</span>
+    <span class="status-pill pill-transit">In Transit</span>
+  </div>
+
+  <div class="board-row">
+    <span class="board-time">06:03</span>
+    <span class="board-flight">SML 212</span>
+    <div class="board-destination">
+      Mum
+      <small>mum@home.net</small>
+    </div>
+    <span class="board-gate">Gate C7</span>
+    <span class="board-duration">24h 00m</span>
+    <span class="board-type">Family</span>
+    <span class="status-pill pill-transit">In Transit</span>
+  </div>
+
+  <div class="board-row">
+    <span class="board-time">Yesterday</span>
+    <span class="board-flight">SML 304</span>
+    <div class="board-destination">
+      Dr. Patel
+      <small>appt@clinic.com</small>
+    </div>
+    <span class="board-gate">Gate A2</span>
+    <span class="board-duration">24h 00m</span>
+    <span class="board-type">Health</span>
+    <span class="status-pill pill-departed">Arrived</span>
+  </div>
+
+  <div class="board-row">
+    <span class="board-time">Scheduled</span>
+    <span class="board-flight">SML 419</span>
+    <div class="board-destination">
+      Old Friend (Draft)
+      <small>jess@somewhere.net</small>
+    </div>
+    <span class="board-gate">Gate —</span>
+    <span class="board-duration">24h 00m</span>
+    <span class="board-type">Personal</span>
+    <span class="status-pill pill-delayed">Drafting</span>
+  </div>
+</div>
+
+<!-- BOARDING PASS -->
+<div class="boarding-section">
+  <div class="boarding-inner">
+    <div class="boarding-text">
+      <div class="section-label">Your Boarding Pass</div>
+      <h2>Every message gets a flight number. Every flight takes 24 hours.</h2>
+      <p>
+        When you send with Slowmail Air, your words don't teleport. They <em>travel.</em>
+        They cross the full 24-hour timezone of intention. They arrive tomorrow — which means
+        you wrote them today, and still meant them then.
+      </p>
+      <p>
+        There are no refunds on a message once it's boarded. No last-minute gate changes.
+        Just the slow, certain arc of something said with care, landing exactly when it was
+        always going to land.
+      </p>
+    </div>
+
+    <!-- CSS Boarding Pass -->
+    <div class="boarding-pass">
+      <div class="bp-stripe"></div>
+      <div class="bp-header">
+        <div>
+          <div class="bp-airline">✈ Slowmail Air</div>
+          <div class="bp-class">Business Class · Seat 24A</div>
+        </div>
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);text-align:right;font-family:-apple-system,Arial,sans-serif;letter-spacing:0.06em;">BOARDING PASS<br>SML 001</div>
+      </div>
+
+      <div class="bp-main">
+        <div class="bp-route-row">
+          <div class="bp-city">
+            <div class="bp-iata">YOU</div>
+            <div class="bp-city-name">Sender</div>
+          </div>
+          <div class="bp-flight-path">
+            <div class="bp-duration-badge">24h Flight</div>
+            <div class="bp-path-line"></div>
+            <div class="bp-path-plane">✈</div>
+            <div class="bp-path-line"></div>
+          </div>
+          <div class="bp-city">
+            <div class="bp-iata">THEM</div>
+            <div class="bp-city-name">Recipient</div>
+          </div>
+        </div>
+
+        <div class="bp-details">
+          <div class="bp-field">
+            <div class="bp-field-label">Passenger</div>
+            <div class="bp-field-val">Your Message</div>
+          </div>
+          <div class="bp-field">
+            <div class="bp-field-label">Departure</div>
+            <div class="bp-field-val">Now</div>
+          </div>
+          <div class="bp-field">
+            <div class="bp-field-label">Arrival</div>
+            <div class="bp-field-val">+24:00:00</div>
+          </div>
+          <div class="bp-field">
+            <div class="bp-field-label">Flight</div>
+            <div class="bp-field-val">SML 001</div>
+          </div>
+          <div class="bp-field">
+            <div class="bp-field-label">Gate</div>
+            <div class="bp-field-val">A1</div>
+          </div>
+          <div class="bp-field">
+            <div class="bp-field-label">Class</div>
+            <div class="bp-field-val">Intentional</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bp-tear">
+        <div class="bp-tear-circle-left"></div>
+        <div class="bp-tear-line"></div>
+        <div class="bp-tear-circle-right"></div>
+      </div>
+
+      <div class="bp-stub">
+        <div>
+          <div class="bp-stub-label">Stub · SML 001 · Gate A1 · Seat 24A</div>
+          <div class="bp-stub-val">Alex Morrison — alex@studio.co</div>
+        </div>
+        <!-- CSS barcode -->
+        <div class="bp-barcode">
+          <div class="bar"></div><div class="bar g"></div>
+          <div class="bar t"></div><div class="bar"></div>
+          <div class="bar g"></div><div class="bar"></div>
+          <div class="bar t"></div><div class="bar"></div>
+          <div class="bar g"></div><div class="bar w"></div>
+          <div class="bar"></div><div class="bar g"></div>
+          <div class="bar t"></div><div class="bar"></div>
+          <div class="bar g"></div><div class="bar"></div>
+          <div class="bar w"></div><div class="bar"></div>
+          <div class="bar g"></div><div class="bar t"></div>
+          <div class="bar"></div><div class="bar g"></div>
+          <div class="bar"></div><div class="bar t"></div>
+          <div class="bar g"></div><div class="bar w"></div>
+          <div class="bar"></div><div class="bar g"></div>
+          <div class="bar t"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESTINATIONS -->
+<div class="destinations">
+  <div class="dest-header">
+    <div>
+      <div class="section-label">Popular Routes</div>
+      <h2>Where will your<br>words travel today?</h2>
+    </div>
+    <p>Send to any inbox in the world. All messages arrive exactly 24 hours after departure, regardless of destination.</p>
+  </div>
+
+  <div class="dest-grid">
+    <div class="dest-card dc-paris large">
+      <div class="dest-badge">Most Sent</div>
+      <div class="dest-card-body">
+        <div class="dest-iata">CDG · Paris</div>
+        <div class="dest-city">Long-distance Love Letters</div>
+        <div class="dest-meta">
+          <span class="dest-from">Avg. 847 words · 24h delivery</span>
+          <span class="dest-price">✈ Free</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dest-card dc-tokyo">
+      <div class="dest-card-body">
+        <div class="dest-iata">NRT · Tokyo</div>
+        <div class="dest-city">Apologies</div>
+        <div class="dest-meta">
+          <span class="dest-from">Best written overnight</span>
+          <span class="dest-price">✈ Free</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dest-card dc-nyc">
+      <div class="dest-card-body">
+        <div class="dest-iata">JFK · New York</div>
+        <div class="dest-city">Work Emails</div>
+        <div class="dest-meta">
+          <span class="dest-from">Arrives after the meeting</span>
+          <span class="dest-price">✈ Free</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dest-card dc-london">
+      <div class="dest-card-body">
+        <div class="dest-iata">LHR · London</div>
+        <div class="dest-city">Old Friends</div>
+        <div class="dest-meta">
+          <span class="dest-from">Worth the wait</span>
+          <span class="dest-price">✈ Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY SLOWMAIL AIR -->
+<div class="why-section">
+  <div class="why-inner">
+    <div class="why-card">
+      <span class="why-number">01</span>
+      <span class="why-icon">✍️</span>
+      <h3>Write at the gate</h3>
+      <p>Compose your message like you'd pack a bag — carefully, knowing you can't change your mind once you've checked in. The draft window stays open until you hit Send.</p>
+    </div>
+    <div class="why-card">
+      <span class="why-number">02</span>
+      <span class="why-icon">✈</span>
+      <h3>24-hour flight time</h3>
+      <p>Every message spends exactly 24 hours in transit. No express lanes, no priority boarding. Your words cross the full day's distance before arriving. That's the fare we charge.</p>
+    </div>
+    <div class="why-card">
+      <span class="why-number">03</span>
+      <span class="why-icon">📬</span>
+      <h3>Land with weight</h3>
+      <p>Messages that travel further feel heavier when they arrive. Your recipient knows it took a day. That changes everything about how they read it — and how you wrote it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHECK IN / SIGN UP -->
+<div class="checkin-section">
+  <div class="checkin-inner">
+    <div class="section-label">Online Check-In</div>
+    <h2>Ready to board?</h2>
+    <p>Open your free Slowmail Air account. Your first flight departs the moment you sign up — arriving at its destination in exactly 24 hours.</p>
+    <form class="checkin-form" onsubmit="return false;">
+      <input type="email" placeholder="your@email.com">
+      <button type="submit">Check In ✈</button>
+    </form>
+    <p class="checkin-notice">Free forever · No credit card · First message departs immediately</p>
+
+    <div class="guarantee-row">
+      <div class="guarantee">
+        <span class="guarantee-icon">🕐</span>
+        Exactly 24h, every time
+      </div>
+      <div class="guarantee">
+        <span class="guarantee-icon">🔒</span>
+        End-to-end encrypted
+      </div>
+      <div class="guarantee">
+        <span class="guarantee-icon">🌍</span>
+        Any inbox, worldwide
+      </div>
+      <div class="guarantee">
+        <span class="guarantee-icon">✉</span>
+        No ads, ever
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo-row">
+      <span class="footer-logo-name">✈ Slowmail Air</span>
+      <span class="footer-logo-badge">Est. 2024</span>
+    </div>
+    <div class="footer-copy">© 2024 Slowmail Air · All messages delayed 24 hours by design · IATA code: SML</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms of Carriage</a></li>
+    <li><a href="#">Press</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>

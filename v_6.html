@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slowmail — Department of Considered Communication</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #0b0c0c;
+    --white:   #ffffff;
+    --grey:    #505a5f;
+    --grey2:   #b1b4b6;
+    --grey3:   #f3f2f1;
+    --grey4:   #dee0e2;
+    --blue:    #1d70b8;
+    --blue2:   #003078;
+    --yellow:  #ffdd00;
+    --green:   #00703c;
+    --red:     #d4351c;
+    --purple:  #4c2c92;
+    --orange:  #f47738;
+    --link:    #1d70b8;
+    --link-vis:#4c2c92;
+  }
+
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    background: var(--white);
+    color: var(--black);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--link);
+    text-decoration: underline;
+  }
+
+  a:visited { color: var(--link-vis); }
+  a:hover { color: var(--black); text-decoration: none; }
+
+  /* ── COOKIE / PHASE BANNER ── */
+  .phase-banner {
+    background: var(--grey3);
+    border-bottom: 1px solid var(--grey4);
+    padding: 10px 0;
+  }
+
+  .phase-banner .inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .phase-tag {
+    background: var(--black);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    flex-shrink: 0;
+  }
+
+  .phase-text {
+    font-size: 0.82rem;
+    color: var(--black);
+  }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    background: var(--black);
+    padding: 10px 0;
+    border-bottom: 10px solid var(--yellow);
+  }
+
+  .top-nav .inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* CSS Crown / seal */
+  .gov-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .crown {
+    width: 36px;
+    height: 36px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* Crown shape: base bar + three points */
+  .crown::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: var(--yellow);
+    border-radius: 1px;
+  }
+
+  .crown::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 16px solid var(--yellow);
+    filter:
+      drop-shadow(-9px 0 0 var(--yellow))
+      drop-shadow(9px 0 0 var(--yellow));
+  }
+
+  .gov-name {
+    color: var(--white);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .gov-name small {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--grey2);
+    letter-spacing: 0.02em;
+    margin-top: 1px;
+  }
+
+  .top-nav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .top-nav-links a {
+    color: var(--white);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .top-nav-links a:hover { text-decoration: underline; }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb-bar {
+    border-bottom: 1px solid var(--grey4);
+    padding: 12px 0;
+  }
+
+  .breadcrumb-bar .inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+  }
+
+  .breadcrumb li::after {
+    content: '›';
+    color: var(--grey2);
+    font-size: 1rem;
+  }
+
+  .breadcrumb li:last-child::after { display: none; }
+
+  .breadcrumb a { color: var(--link); font-size: 0.82rem; }
+
+  .breadcrumb li:last-child a {
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── IMPORTANT NOTICE ── */
+  .notice-bar {
+    background: var(--yellow);
+    border-left: 6px solid var(--black);
+    padding: 14px 30px;
+  }
+
+  .notice-bar .inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .notice-bar p {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.4;
+  }
+
+  .notice-bar p span {
+    font-weight: 400;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 30px 60px;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .dept-label {
+    font-size: 0.78rem;
+    color: var(--grey);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dept-tag {
+    background: var(--black);
+    color: var(--white);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+  }
+
+  h1.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    border-bottom: none;
+  }
+
+  .page-intro {
+    font-size: 1.05rem;
+    color: var(--black);
+    line-height: 1.6;
+    max-width: 580px;
+    margin-bottom: 16px;
+  }
+
+  .page-meta {
+    font-size: 0.78rem;
+    color: var(--grey);
+    border-top: 1px solid var(--grey4);
+    padding-top: 10px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .page-meta strong { color: var(--black); }
+
+  /* ── CONTENT SECTIONS ── */
+  .content section {
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--grey4);
+  }
+
+  .content section:last-child {
+    border-bottom: none;
+  }
+
+  h2.section-heading {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--black);
+  }
+
+  h3.sub-heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  .content p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--black);
+    margin-bottom: 12px;
+    max-width: 640px;
+  }
+
+  .content ul, .content ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+    max-width: 620px;
+  }
+
+  .content li {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin-bottom: 4px;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 6px solid;
+    padding: 14px 18px;
+    margin: 20px 0;
+    max-width: 640px;
+  }
+
+  .callout-blue {
+    border-color: var(--blue);
+    background: #e8f0fc;
+  }
+
+  .callout-red {
+    border-color: var(--red);
+    background: #fce4e0;
+  }
+
+  .callout-green {
+    border-color: var(--green);
+    background: #e3f4eb;
+  }
+
+  .callout-yellow {
+    border-color: var(--orange);
+    background: #fef4e8;
+  }
+
+  .callout-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .callout-blue .callout-title  { color: var(--blue2); }
+  .callout-red .callout-title   { color: var(--red); }
+  .callout-green .callout-title { color: var(--green); }
+  .callout-yellow .callout-title{ color: #b35b00; }
+
+  .callout p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ── POLICY TABLE ── */
+  .policy-table {
+    width: 100%;
+    max-width: 640px;
+    border-collapse: collapse;
+    margin: 16px 0 20px;
+    font-size: 0.88rem;
+  }
+
+  .policy-table th {
+    background: var(--black);
+    color: var(--white);
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+  }
+
+  .policy-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--grey4);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .policy-table tr:nth-child(even) td {
+    background: var(--grey3);
+  }
+
+  .policy-table tr:last-child td {
+    border-bottom: 2px solid var(--black);
+  }
+
+  .td-label {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Status tags in table */
+  .status-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  .tag-mandatory { background: var(--red); color: #fff; }
+  .tag-standard  { background: var(--blue); color: #fff; }
+  .tag-optional  { background: var(--grey); color: #fff; }
+
+  /* ── FORM SECTION ── */
+  .form-section {
+    background: var(--grey3);
+    border: 1px solid var(--grey4);
+    padding: 28px;
+    max-width: 640px;
+    margin: 20px 0;
+  }
+
+  .form-section h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--black);
+  }
+
+  .form-row {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .form-hint {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--grey);
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    display: block;
+    width: 100%;
+    border: 2px solid var(--black);
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    border-radius: 0;
+    max-width: 360px;
+  }
+
+  .form-input:focus {
+    outline: 3px solid var(--yellow);
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 2px var(--black);
+  }
+
+  .form-input.wide { max-width: 100%; }
+
+  .form-select {
+    display: block;
+    border: 2px solid var(--black);
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    border-radius: 0;
+    max-width: 360px;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%230b0c0c'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .form-select:focus {
+    outline: 3px solid var(--yellow);
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 2px var(--black);
+  }
+
+  /* Checkbox / radio groups */
+  .radios { margin-top: 6px; }
+
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .radio-item input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--black);
+    cursor: pointer;
+  }
+
+  .radio-item span {
+    font-size: 0.92rem;
+    color: var(--black);
+  }
+
+  .form-submit {
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .form-submit:hover { background: #005a30; }
+  .form-submit:focus { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+  .form-submit::after { content: '›'; font-size: 1.2rem; font-weight: 400; }
+
+  .form-legal {
+    font-size: 0.78rem;
+    color: var(--grey);
+    margin-top: 14px;
+    line-height: 1.5;
+    max-width: 480px;
+  }
+
+  /* ── STEPS / NUMBERED LIST ── */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    max-width: 620px;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--grey4);
+    align-items: flex-start;
+  }
+
+  .steps li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    background: var(--black);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-num::before { content: counter(step); }
+
+  .step-body h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .step-body p {
+    font-size: 0.88rem;
+    color: var(--grey);
+    line-height: 1.55;
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ── DOCUMENT/REFERENCE CARD ── */
+  .reference-card {
+    border: 1px solid var(--grey4);
+    padding: 16px;
+    max-width: 640px;
+    margin: 14px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--white);
+  }
+
+  .ref-icon {
+    width: 40px;
+    height: 48px;
+    background: var(--grey3);
+    border: 1px solid var(--grey4);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    position: relative;
+  }
+
+  /* dog-ear corner on doc icon */
+  .ref-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--grey4);
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+  }
+
+  .ref-body {}
+
+  .ref-type {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 3px;
+  }
+
+  .ref-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--link);
+    text-decoration: underline;
+    margin-bottom: 3px;
+    cursor: pointer;
+  }
+
+  .ref-meta {
+    font-size: 0.75rem;
+    color: var(--grey);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {}
+
+  .sidebar-box {
+    border: 1px solid var(--grey4);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-box-header {
+    background: var(--black);
+    color: var(--white);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+  }
+
+  .sidebar-box-body {
+    padding: 14px;
+    background: var(--grey3);
+  }
+
+  .sidebar-box-body p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--black);
+    margin-bottom: 10px;
+  }
+
+  .sidebar-box-body p:last-child { margin-bottom: 0; }
+
+  .sidebar-links { list-style: none; padding: 0; }
+
+  .sidebar-links li {
+    border-bottom: 1px solid var(--grey4);
+    padding: 8px 0;
+  }
+
+  .sidebar-links li:first-child { padding-top: 0; }
+  .sidebar-links li:last-child  { border-bottom: none; padding-bottom: 0; }
+
+  .sidebar-links a {
+    font-size: 0.85rem;
+    color: var(--link);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: underline;
+  }
+
+  .sidebar-links a::after { content: '›'; font-size: 1.1rem; color: var(--grey2); text-decoration: none; }
+
+  /* Statistics */
+  .sidebar-stats { list-style: none; padding: 0; }
+
+  .sidebar-stats li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--grey4);
+    font-size: 0.82rem;
+  }
+
+  .sidebar-stats li:last-child { border-bottom: none; }
+
+  .stat-val {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--black);
+    display: block;
+    line-height: 1.2;
+  }
+
+  .stat-lbl {
+    font-size: 0.75rem;
+    color: var(--grey);
+  }
+
+  /* Contact box */
+  .contact-box {
+    background: var(--blue2);
+    color: var(--white);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .contact-box h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 6px;
+  }
+
+  .contact-box p {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+
+  .contact-box p:last-child { margin-bottom: 0; }
+
+  .contact-box strong { opacity: 1; }
+
+  /* ── FEEDBACK BANNER ── */
+  .feedback-banner {
+    background: var(--grey3);
+    border-top: 1px solid var(--grey4);
+    padding: 18px 0;
+  }
+
+  .feedback-banner .inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .feedback-banner p {
+    font-size: 0.88rem;
+    color: var(--black);
+    flex: 1;
+  }
+
+  .feedback-btns {
+    display: flex;
+    gap: 10px;
+  }
+
+  .fb-btn {
+    border: 1px solid var(--grey2);
+    background: var(--white);
+    color: var(--black);
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 0;
+  }
+
+  .fb-btn:hover { background: var(--grey3); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black);
+    border-top: 6px solid var(--yellow);
+    padding: 36px 0 24px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .footer-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    margin-bottom: 20px;
+  }
+
+  .footer-col h4 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .footer-col ul { list-style: none; padding: 0; }
+
+  .footer-col ul li { margin-bottom: 7px; }
+
+  .footer-col ul a {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    text-decoration: underline;
+  }
+
+  .footer-col ul a:hover { color: #fff; }
+
+  .footer-bottom {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-legal {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    max-width: 560px;
+  }
+
+  .ogl-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .ogl-icon {
+    width: 36px;
+    height: 20px;
+    background: var(--yellow);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.58rem;
+    font-weight: 900;
+    color: var(--black);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  /* ── PRINT FOCUS STYLE ── */
+  :focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 2px;
+  }
+
+  /* ── RESPONSIVE TWEAK ── */
+  @media (max-width: 760px) {
+    .main-wrap { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PHASE BANNER -->
+<div class="phase-banner">
+  <div class="inner">
+    <span class="phase-tag">Beta</span>
+    <span class="phase-text">
+      This is a new government service — your <a href="#">feedback</a> will help us improve it.
+    </span>
+  </div>
+</div>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <div class="inner">
+    <div class="gov-logo">
+      <div class="crown"></div>
+      <div class="gov-name">
+        Department of Considered Communication
+        <small>An Executive Agency of the Ministry of Digital Infrastructure</small>
+      </div>
+    </div>
+    <ul class="top-nav-links">
+      <li><a href="#">Search</a></li>
+      <li><a href="#">Sign In</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="inner">
+    <ol class="breadcrumb">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Digital Communication Services</a></li>
+      <li><a href="#">Electronic Mail</a></li>
+      <li><a href="#">Slowmail — Mandatory Delay Service</a></li>
+    </ol>
+  </div>
+</div>
+
+<!-- IMPORTANT NOTICE -->
+<div class="notice-bar">
+  <div class="inner">
+    <p>
+      Important: Mandatory Electronic Communication Delay Period (MECDP) now in effect.
+      <span>All messages sent via Slowmail are subject to a statutory 24-hour delay before delivery. This is a legal requirement under the Digital Communication (Considered Dispatch) Regulations 2024.</span>
+    </p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap">
+  <main class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="dept-label">
+        <span class="dept-tag">Official</span>
+        Department of Considered Communication
+      </div>
+      <h1 class="page-title">Slowmail: Official Delayed Electronic Message Service</h1>
+      <p class="page-intro">
+        Use Slowmail to send electronic messages subject to a mandatory 24-hour delivery delay,
+        as required under the Digital Communication (Considered Dispatch) Regulations 2024.
+        This service is free and available to all residents aged 16 and over.
+      </p>
+      <div class="page-meta">
+        <span>From: <strong>Department of Considered Communication</strong></span>
+        <span>Published: <strong>1 March 2024</strong></span>
+        <span>Last updated: <strong>28 March 2026</strong></span>
+        <span>Reference: <strong>DCC/MECDP/2024/001</strong></span>
+      </div>
+    </div>
+
+    <!-- CONTENTS -->
+    <section>
+      <h2 class="section-heading">Contents</h2>
+      <ol style="padding-left:20px;max-width:520px;">
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Overview and legal basis</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Who must use this service</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">How the 24-hour delay works</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Exemptions and special circumstances</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Register for Slowmail</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Complaints and appeals</a></li>
+        <li style="margin-bottom:6px;font-size:0.9rem;"><a href="#">Guidance documents</a></li>
+      </ol>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section>
+      <h2 class="section-heading">Overview and legal basis</h2>
+
+      <p>
+        Slowmail is the official electronic message service operated by the Department of Considered
+        Communication (DCC). All messages submitted through Slowmail are held for a statutory period
+        of <strong>24 hours (1,440 minutes)</strong> before delivery to the intended recipient.
+      </p>
+
+      <p>
+        This delay is mandated by the <em>Digital Communication (Considered Dispatch) Regulations 2024</em>
+        (SI 2024/1440), which came into force on 1 March 2024. The regulations were introduced following
+        a review by the Commission on Reactive Communication, which found that 74% of electronic messages
+        sent within 5 minutes of an emotionally significant event were subsequently regretted by the sender.
+      </p>
+
+      <div class="callout callout-blue">
+        <div class="callout-title">Statutory Authority</div>
+        <p>
+          The 24-hour delay period is set by primary legislation and cannot be waived, shortened, or
+          circumvented by any party, including the sender, recipient, or service operator. Attempts to
+          bypass the delay may constitute an offence under Section 14(3) of the Act.
+        </p>
+      </div>
+
+      <h3 class="sub-heading">Purpose of the delay</h3>
+
+      <p>
+        The Mandatory Electronic Communication Delay Period (MECDP) serves the following statutory purposes:
+      </p>
+
+      <ul>
+        <li>To allow senders adequate time to reflect on the content of their communications</li>
+        <li>To reduce the volume of reactive, impulsive, or regretted electronic messages</li>
+        <li>To promote considered and intentional communication across digital infrastructure</li>
+        <li>To align the weight of electronic messages more closely with traditional written correspondence</li>
+        <li>To reduce the burden of unnecessary correspondence on recipients</li>
+      </ul>
+    </section>
+
+    <!-- WHO MUST USE -->
+    <section>
+      <h2 class="section-heading">Who must use this service</h2>
+
+      <p>You should use Slowmail if you wish to send:</p>
+
+      <ul>
+        <li>Personal correspondence of an emotionally significant nature</li>
+        <li>Apologies, grievances, or expressions of strong feeling</li>
+        <li>Communications drafted between the hours of 22:00 and 06:00</li>
+        <li>Any message to which the sender would like a legally recognised 24-hour reflection period applied</li>
+        <li>Communications in regulated sectors including healthcare, legal, and financial services</li>
+      </ul>
+
+      <div class="callout callout-red">
+        <div class="callout-title">Important</div>
+        <p>
+          You must not use Slowmail for emergency communications. If you are in danger or need urgent
+          assistance, contact emergency services by calling 999. Slowmail is not monitored in real time
+          and cannot be used to report urgent matters.
+        </p>
+      </div>
+
+      <table class="policy-table">
+        <thead>
+          <tr>
+            <th>Message Type</th>
+            <th>Delay Period</th>
+            <th>Requirement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-label">Personal correspondence</td>
+            <td>24 hours</td>
+            <td><span class="status-tag tag-mandatory">Mandatory</span></td>
+          </tr>
+          <tr>
+            <td class="td-label">Professional / workplace</td>
+            <td>24 hours</td>
+            <td><span class="status-tag tag-standard">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="td-label">Formal complaints</td>
+            <td>24 hours</td>
+            <td><span class="status-tag tag-mandatory">Mandatory</span></td>
+          </tr>
+          <tr>
+            <td class="td-label">Transactional / administrative</td>
+            <td>24 hours</td>
+            <td><span class="status-tag tag-standard">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="td-label">Emergency communications</td>
+            <td>Not applicable</td>
+            <td><span class="status-tag tag-optional">Exempt — Do Not Use</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section>
+      <h2 class="section-heading">How the 24-hour delay works</h2>
+
+      <p>
+        The following process applies to all messages submitted through the Slowmail service.
+        The delay period begins at the moment of submission and cannot be paused or extended.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <div class="step-num"></div>
+          <div class="step-body">
+            <h4>Compose your message</h4>
+            <p>Draft your electronic communication using the Slowmail secure composition interface. Your draft is saved automatically and is visible only to you until the delay period has elapsed.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num"></div>
+          <div class="step-body">
+            <h4>Submit for dispatch</h4>
+            <p>Once satisfied with your message, select "Submit for Dispatch." The statutory 24-hour MECDP begins immediately. You will receive a confirmation reference number (e.g., SML/2024/00441).</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num"></div>
+          <div class="step-body">
+            <h4>Mandatory holding period</h4>
+            <p>Your message is held securely in the DCC's certified message repository for exactly 1,440 minutes. During this period, you may view the message but may not edit or recall it. The delay cannot be shortened under any circumstances.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num"></div>
+          <div class="step-body">
+            <h4>Automatic delivery</h4>
+            <p>Upon expiry of the delay period, your message is automatically delivered to the recipient's registered address. Delivery is confirmed and logged. You and the recipient both receive a statutory delivery notification.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="callout callout-green">
+        <div class="callout-title">Confirmation of Delay</div>
+        <p>
+          You will receive an SMS or email confirmation at submission, at the 12-hour midpoint,
+          and upon delivery. Each notification will include your reference number and the precise
+          scheduled delivery time (to the nearest minute).
+        </p>
+      </div>
+    </section>
+
+    <!-- EXEMPTIONS -->
+    <section>
+      <h2 class="section-heading">Exemptions and special circumstances</h2>
+
+      <p>
+        No exemptions to the 24-hour MECDP are currently available. The Department reviewed
+        27 proposed categories of exemption during the 2023 consultation period. All 27 were
+        rejected on the grounds that the purposes of the delay are best served by universal application.
+      </p>
+
+      <div class="callout callout-yellow">
+        <div class="callout-title">Frequently Requested Exemptions (All Rejected)</div>
+        <p>
+          Requests for exemption on the grounds of "urgency," "time sensitivity," "special relationship
+          with the recipient," "it was just a quick question," or "I already know what I want to say"
+          have been considered and declined. The delay applies regardless.
+        </p>
+      </div>
+
+      <h3 class="sub-heading">Pending review</h3>
+      <p>
+        The DCC is currently reviewing whether a 23-hour, 59-minute variant may be introduced for
+        messages containing fewer than 10 words. This review is expected to conclude no earlier than
+        Q4 2026. No interim arrangements are in place.
+      </p>
+    </section>
+
+    <!-- REGISTRATION FORM -->
+    <section>
+      <h2 class="section-heading">Register for Slowmail</h2>
+
+      <p>
+        To use the Slowmail service, you must first register. Registration is free and takes
+        approximately 3 minutes. You will need a valid email address and to confirm your agreement
+        with the Conditions of Participation.
+      </p>
+
+      <div class="form-section">
+        <h3>Slowmail Registration Form — Form DCC/SML/01</h3>
+
+        <div class="form-row">
+          <label class="form-label" for="full-name">Full name</label>
+          <span class="form-hint">As it appears on your official identification</span>
+          <input class="form-input" type="text" id="full-name" name="full-name" autocomplete="name">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="email">Email address</label>
+          <span class="form-hint">We will send your confirmation and delivery notifications to this address</span>
+          <input class="form-input" type="email" id="email" name="email" autocomplete="email">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="purpose">Primary purpose of use</label>
+          <span class="form-hint">Select the category that best describes your intended use</span>
+          <select class="form-select" id="purpose" name="purpose">
+            <option value="">Please select</option>
+            <option>Personal correspondence</option>
+            <option>Professional communication</option>
+            <option>Formal complaints</option>
+            <option>Family communication</option>
+            <option>Other regulated correspondence</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <span class="form-label">I confirm that I understand and accept:</span>
+          <div class="radios">
+            <label class="radio-item">
+              <input type="radio" name="confirm" value="yes">
+              <span>Yes — I understand that all messages will be delayed by exactly 24 hours and that this delay cannot be shortened, waived, or appealed.</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="confirm" value="no">
+              <span>No — I do not accept the mandatory delay condition (you will not be able to register).</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="form-submit">Submit registration</button>
+
+        <p class="form-legal">
+          By submitting this form you agree to the
+          <a href="#">Conditions of Participation</a>,
+          the <a href="#">Slowmail Privacy Notice</a>, and the
+          <a href="#">Digital Communication (Considered Dispatch) Regulations 2024</a>.
+          Your personal data will be processed in accordance with the UK GDPR and the Data Protection Act 2018.
+          Reference: DCC/PN/2024/001.
+        </p>
+      </div>
+    </section>
+
+    <!-- GUIDANCE DOCUMENTS -->
+    <section>
+      <h2 class="section-heading">Guidance documents</h2>
+      <p>The following official documents provide further information about the Slowmail service and the regulatory framework.</p>
+
+      <div class="reference-card">
+        <div class="ref-icon">📄</div>
+        <div class="ref-body">
+          <div class="ref-type">Guidance · PDF · 247 KB</div>
+          <div class="ref-title">A plain English guide to the Mandatory Electronic Communication Delay Period</div>
+          <div class="ref-meta">Updated 1 March 2024 · Ref: DCC/MECDP/GUIDE/01</div>
+        </div>
+      </div>
+
+      <div class="reference-card">
+        <div class="ref-icon">📄</div>
+        <div class="ref-body">
+          <div class="ref-type">Policy · PDF · 1.2 MB</div>
+          <div class="ref-title">Digital Communication (Considered Dispatch) Regulations 2024 — Full Text</div>
+          <div class="ref-meta">Published 1 January 2024 · SI 2024/1440</div>
+        </div>
+      </div>
+
+      <div class="reference-card">
+        <div class="ref-icon">📄</div>
+        <div class="ref-body">
+          <div class="ref-type">Research · PDF · 3.8 MB</div>
+          <div class="ref-title">Commission on Reactive Communication: Final Report and Recommendations</div>
+          <div class="ref-meta">Published November 2023 · Ref: CRC/2023/FINAL</div>
+        </div>
+      </div>
+
+      <div class="reference-card">
+        <div class="ref-icon">📄</div>
+        <div class="ref-body">
+          <div class="ref-type">Form · PDF · 84 KB</div>
+          <div class="ref-title">Form DCC/SML/02 — Application for Retrospective Message Recall (Note: always denied)</div>
+          <div class="ref-meta">Updated 1 March 2024 · Ref: DCC/SML/02</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPLAINTS -->
+    <section>
+      <h2 class="section-heading">Complaints and appeals</h2>
+      <p>
+        If you are dissatisfied with the Slowmail service, you may submit a formal complaint
+        using <a href="#">Form DCC/COM/01</a>. Complaints will be acknowledged within 5 working days
+        and a full response provided within 20 working days.
+      </p>
+      <p>
+        Please note: <strong>complaints regarding the 24-hour delay itself will not be upheld.</strong>
+        The delay is a statutory requirement and is not within the discretion of the Department to alter.
+        Complaints of this nature will be closed upon receipt with a standard explanatory response.
+      </p>
+      <p>
+        If you remain dissatisfied following our final response, you may refer your complaint to the
+        <a href="#">Parliamentary and Health Service Ombudsman</a>, though the Department notes that
+        challenges to primary legislation must be directed to Parliament rather than to the Ombudsman.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="contact-box">
+      <h4>Contact the Department</h4>
+      <p><strong>Telephone:</strong><br>0300 200 1440<br><small>(Mon–Fri, 09:00–17:00)</small></p>
+      <p><strong>Post:</strong><br>DCC Slowmail Team<br>1 Whitehall Place<br>London SW1A 2AA</p>
+      <p><strong>Email:</strong><br><a href="#" style="color:#93c5fd;">slowmail@dcc.gov.uk</a><br><small>(Responses delayed 24h)</small></p>
+    </div>
+
+    <div class="sidebar-box">
+      <div class="sidebar-box-header">Related Services</div>
+      <div class="sidebar-box-body">
+        <ul class="sidebar-links">
+          <li><a href="#">Track a message</a></li>
+          <li><a href="#">Manage your Slowmail account</a></li>
+          <li><a href="#">View sent messages</a></li>
+          <li><a href="#">Submit a complaint</a></li>
+          <li><a href="#">Apply for accessibility support</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar-box">
+      <div class="sidebar-box-header">Service Statistics</div>
+      <div class="sidebar-box-body">
+        <ul class="sidebar-stats">
+          <li>
+            <span class="stat-val">2,441,882</span>
+            <span class="stat-lbl">Registered users (2024)</span>
+          </li>
+          <li>
+            <span class="stat-val">74%</span>
+            <span class="stat-lbl">Of users report sending fewer regretted messages</span>
+          </li>
+          <li>
+            <span class="stat-val">24h 00m</span>
+            <span class="stat-lbl">Average delay (minimum and maximum)</span>
+          </li>
+          <li>
+            <span class="stat-val">0</span>
+            <span class="stat-lbl">Exemptions granted since launch</span>
+          </li>
+          <li>
+            <span class="stat-val">4.7/5</span>
+            <span class="stat-lbl">User satisfaction score</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar-box">
+      <div class="sidebar-box-header">Accessibility</div>
+      <div class="sidebar-box-body">
+        <p>If you need this page in a different format, such as accessible PDF, large print, Easy Read, audio recording or braille, <a href="#">contact us</a>.</p>
+        <p>Last tested for accessibility: 1 March 2024. <a href="#">Accessibility statement</a>.</p>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FEEDBACK BANNER -->
+<div class="feedback-banner">
+  <div class="inner">
+    <p>Is this page useful?</p>
+    <div class="feedback-btns">
+      <button class="fb-btn">Yes</button>
+      <button class="fb-btn">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Register for Slowmail</a></li>
+          <li><a href="#">Send a message</a></li>
+          <li><a href="#">Track delivery</a></li>
+          <li><a href="#">Manage account</a></li>
+          <li><a href="#">Submit complaint</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Guidance</h4>
+        <ul>
+          <li><a href="#">Policy overview</a></li>
+          <li><a href="#">Regulations 2024</a></li>
+          <li><a href="#">Exemptions (none)</a></li>
+          <li><a href="#">Research reports</a></li>
+          <li><a href="#">Press releases</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Departments</h4>
+        <ul>
+          <li><a href="#">DCC homepage</a></li>
+          <li><a href="#">Ministry of Digital Infrastructure</a></li>
+          <li><a href="#">Commission on Reactive Comm.</a></li>
+          <li><a href="#">Office of Message Standards</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help &amp; Legal</h4>
+        <ul>
+          <li><a href="#">Accessibility statement</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Privacy notice</a></li>
+          <li><a href="#">Terms of use</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        © Crown copyright 2024 &nbsp;·&nbsp;
+        Department of Considered Communication, an Executive Agency of the Ministry of Digital Infrastructure.
+        All content is available under the
+        <a href="#" style="color:rgba(255,255,255,0.5);">Open Government Licence v3.0</a>,
+        except where otherwise stated.
+        Slowmail is a registered service of His Majesty's Government. Reference: DCC/MECDP/2024/001.
+      </div>
+      <div class="ogl-badge">
+        <div class="ogl-icon">OGL</div>
+        Open Government Licence
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — Airmail Special Delivery</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --cream:    #f5edd6;
+      --paper:    #ede0c0;
+      --tan:      #d4b896;
+      --red:      #c0392b;
+      --red-dark: #922b21;
+      --red-pale: #f1948a;
+      --blue:     #1a4f7a;
+      --blue-mid: #2471a3;
+      --yellow:   #f0c040;
+      --brown:    #7b5e3a;
+      --ink:      #2c1e0f;
+      --ink-dim:  #7a5c3a;
+    }
+
+    /* ── PAGE SHELL ── */
+    body {
+      background-color: #b89a72;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 6px,
+          rgba(0,0,0,0.04) 6px,
+          rgba(0,0,0,0.04) 12px
+        );
+      min-height: 100vh;
+      padding: 3rem 1.5rem 4rem;
+      font-family: Georgia, 'Times New Roman', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    /* ── AIRMAIL STRIPE BORDER MIXIN ── */
+    /* Applied via a wrapper that shows the diagonal red/blue stripes */
+    .airmail-frame {
+      position: relative;
+      background: var(--cream);
+      max-width: 860px;
+      width: 100%;
+      padding: 18px;              /* stripe width */
+      box-shadow: 0 6px 32px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* The stripe border is a repeating diagonal pattern */
+    .airmail-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--red)      0px,
+        var(--red)      10px,
+        var(--blue)     10px,
+        var(--blue)     20px,
+        var(--cream)    20px,
+        var(--cream)    30px,
+        var(--red)      30px,
+        var(--red)      40px,
+        var(--blue)     40px,
+        var(--blue)     50px,
+        var(--cream)    50px,
+        var(--cream)    60px
+      );
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .airmail-inner {
+      position: relative;
+      z-index: 1;
+      background: var(--cream);
+      height: 100%;
+      width: 100%;
+    }
+
+    /* ══════════════════════════════════
+       CARD 1 — HERO / FRONT OF POSTCARD
+    ══════════════════════════════════ */
+    .card-front {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      min-height: 460px;
+    }
+
+    /* LEFT — message side */
+    .message-side {
+      padding: 2.5rem 2.5rem 2rem;
+      border-right: 2px dashed var(--tan);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .airmail-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      align-self: flex-start;
+    }
+
+    .airmail-label::before,
+    .airmail-label::after {
+      content: '✈';
+      font-size: 0.65rem;
+    }
+
+    .card-greeting {
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 1.5rem;
+      color: var(--ink-dim);
+      line-height: 1;
+    }
+
+    .card-headline {
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
+      color: var(--ink);
+      line-height: 1.05;
+    }
+
+    .card-headline .colored {
+      color: var(--red);
+    }
+
+    .card-body {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--brown);
+      max-width: 380px;
+      font-style: italic;
+    }
+
+    .card-body strong {
+      color: var(--ink);
+      font-style: normal;
+    }
+
+    /* Ruled lines under body text */
+    .ruled-note {
+      border-top: 1px solid var(--tan);
+      padding-top: 1rem;
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 1.1rem;
+      color: var(--blue-mid);
+      line-height: 2;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 31px,
+        var(--tan) 31px,
+        var(--tan) 32px
+      );
+      background-position: 0 32px;
+      padding-bottom: 0.25rem;
+      min-height: 96px;
+    }
+
+    /* RIGHT — stamp & address side */
+    .stamp-side {
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: flex-end;
+    }
+
+    /* STAMP */
+    .stamp {
+      width: 110px;
+      height: 130px;
+      background: var(--yellow);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      /* Perforated edge via radial-gradient mask */
+      -webkit-mask-image: radial-gradient(
+        circle at 0 0, transparent 6px, white 6px
+      ),
+      radial-gradient(circle at 100% 0, transparent 6px, white 6px),
+      radial-gradient(circle at 0 100%, transparent 6px, white 6px),
+      radial-gradient(circle at 100% 100%, transparent 6px, white 6px);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      border: 3px dashed rgba(0,0,0,0.15);
+      padding: 0.5rem;
+    }
+
+    /* True perforated look via outline */
+    .stamp-outer {
+      position: relative;
+      filter: drop-shadow(2px 3px 6px rgba(0,0,0,0.3));
+    }
+
+    .stamp-outer::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0, transparent 6px,
+        var(--cream) 6px, var(--cream) 10px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        transparent 0, transparent 6px,
+        var(--cream) 6px, var(--cream) 10px
+      );
+      z-index: -1;
+    }
+
+    .stamp-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stamp-value {
+      font-family: Georgia, serif;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--red-dark);
+      letter-spacing: 0.05em;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .stamp-country {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red-dark);
+    }
+
+    /* POSTMARK */
+    .postmark {
+      width: 100px;
+      height: 100px;
+      border: 3px solid var(--red-dark);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(-18deg);
+      opacity: 0.75;
+      gap: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .postmark::before,
+    .postmark::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 3px;
+      background: var(--red-dark);
+    }
+    .postmark::before { top: 30%; }
+    .postmark::after  { top: 65%; }
+
+    .postmark-city {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--red-dark);
+      z-index: 1;
+      background: transparent;
+    }
+
+    .postmark-date {
+      font-family: Georgia, serif;
+      font-size: 0.55rem;
+      color: var(--red-dark);
+      z-index: 1;
+      font-style: italic;
+    }
+
+    /* ADDRESS LINES */
+    .address-block {
+      width: 100%;
+      margin-top: auto;
+      border-top: 1px solid var(--tan);
+      padding-top: 1rem;
+    }
+
+    .address-label {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 0.6rem;
+    }
+
+    .address-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .address-line {
+      height: 1px;
+      background: var(--tan);
+      width: 100%;
+    }
+
+    .address-line:last-child { width: 60%; }
+
+    /* ══════════════════════════════════
+       CARD 2 — HOW IT WORKS
+    ══════════════════════════════════ */
+    .card-how {
+      padding: 2.75rem 3rem;
+    }
+
+    .section-stamp {
+      display: inline-block;
+      border: 3px solid var(--red);
+      color: var(--red);
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .how-headline {
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 2.5rem;
+      color: var(--ink);
+      margin-bottom: 2.25rem;
+    }
+
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 1.25rem;
+      border-left: 3px solid var(--yellow);
+    }
+
+    .step-num {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+    }
+
+    .step h3 {
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 1.6rem;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .step p {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--brown);
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════════
+       CARD 3 — SIGN-UP / ENVELOPE
+    ══════════════════════════════════ */
+    .card-signup {
+      background: var(--paper);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Envelope flap at top */
+    .envelope-flap {
+      height: 0;
+      width: 0;
+      border-left: 430px solid transparent;
+      border-right: 430px solid transparent;
+      border-top: 120px solid var(--tan);
+      position: relative;
+    }
+
+    .envelope-flap::before {
+      content: '✉';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.5rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .envelope-body {
+      padding: 3rem 3.5rem 2.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .envelope-copy h2 {
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 2.8rem;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .envelope-copy p {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--brown);
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+
+    .envelope-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .form-label {
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 0.1rem;
+    }
+
+    .envelope-form input[type="email"] {
+      padding: 0.85rem 1rem;
+      border: 2px solid var(--tan);
+      border-bottom: 3px solid var(--brown);
+      background: var(--cream);
+      font-family: 'Brush Script MT', 'Comic Sans MS', 'Bradley Hand ITC', cursive;
+      font-size: 1.1rem;
+      color: var(--ink);
+      outline: none;
+      width: 100%;
+    }
+
+    .envelope-form input[type="email"]::placeholder {
+      color: var(--tan);
+    }
+
+    .envelope-form input[type="email"]:focus {
+      border-color: var(--red);
+      background: #fff;
+    }
+
+    .send-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.5rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .send-btn:hover {
+      background: var(--red-dark);
+    }
+
+    .send-btn::after {
+      content: '✈';
+      font-size: 0.85rem;
+    }
+
+    .disclaimer {
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--ink-dim);
+      text-align: center;
+      margin-top: 0.25rem;
+    }
+
+    /* ── PAGE FOOTER ── */
+    .page-footer {
+      text-align: center;
+      font-family: 'Arial Narrow', Arial, sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── DECORATIVE TAPE STRIP ── */
+    .tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 28px;
+      background: rgba(240,192,64,0.55);
+      border-left: 1px solid rgba(0,0,0,0.08);
+      border-right: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .airmail-frame {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ -->
+  <!--  CARD 1 — HERO                 -->
+  <!-- ═══════════════════════════════ -->
+  <div class="airmail-frame" style="margin-top: 1rem;">
+    <div class="tape"></div>
+    <div class="airmail-inner">
+      <div class="card-front">
+
+        <!-- Message side -->
+        <div class="message-side">
+          <span class="airmail-label">Par Avion &nbsp;·&nbsp; Air Mail</span>
+
+          <p class="card-greeting">Dearest friend,</p>
+
+          <h1 class="card-headline">
+            Your letter<br>
+            arrives <span class="colored">tomorrow.</span>
+          </h1>
+
+          <p class="card-body">
+            We built Slowmail the old-fashioned way — <strong>with patience baked right in.</strong>
+            Every message you write is held for exactly 24 hours before delivery.
+            Like a letter dropped in the post. Like words that had time to mean something.
+          </p>
+
+          <div class="ruled-note">
+            Write it today. Let it rest. Send it tomorrow.
+          </div>
+        </div>
+
+        <!-- Stamp & address side -->
+        <div class="stamp-side">
+
+          <div class="stamp-outer">
+            <div class="stamp">
+              <div class="stamp-icon">✉</div>
+              <div class="stamp-value">24 HRS<br>DELIVERY</div>
+              <div class="stamp-country">Slowmail</div>
+            </div>
+          </div>
+
+          <div class="postmark">
+            <span class="postmark-city">Slowmail</span>
+            <span class="postmark-date">24 Hours</span>
+            <span class="postmark-city">Post Co.</span>
+          </div>
+
+          <div class="address-block">
+            <p class="address-label">Deliver To</p>
+            <div class="address-lines">
+              <div class="address-line"></div>
+              <div class="address-line"></div>
+              <div class="address-line"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!--  CARD 2 — HOW IT WORKS         -->
+  <!-- ═══════════════════════════════ -->
+  <div class="airmail-frame">
+    <div class="tape" style="left:30%; background: rgba(192,57,43,0.3);"></div>
+    <div class="airmail-inner">
+      <div class="card-how">
+
+        <div class="section-stamp">Special Delivery Instructions</div>
+
+        <h2 class="how-headline">How the post works</h2>
+
+        <div class="steps-row">
+          <div class="step">
+            <p class="step-num">Step I</p>
+            <h3>Compose</h3>
+            <p>Sit down. Write your letter as you always have. There's no hurry — the delay starts only after you send.</p>
+          </div>
+          <div class="step">
+            <p class="step-num">Step II</p>
+            <h3>Rest</h3>
+            <p>We hold your message in our post office for twenty-four hours. Sleep on it. Wake up knowing you meant it.</p>
+          </div>
+          <div class="step">
+            <p class="step-num">Step III</p>
+            <h3>Deliver</h3>
+            <p>Tomorrow, your words arrive — exactly as written. Unhurried, unchanged, delivered with care.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ -->
+  <!--  CARD 3 — SIGN UP              -->
+  <!-- ═══════════════════════════════ -->
+  <div class="airmail-frame" style="padding: 18px 18px 18px;">
+    <div class="airmail-inner card-signup">
+
+      <div class="envelope-flap"></div>
+
+      <div class="envelope-body">
+        <div class="envelope-copy">
+          <h2>Send your<br>first slow<br>letter.</h2>
+          <p>Join the unhurried few who believe a message worth sending is worth waiting for.</p>
+          <p><em>No credit card. No instant replies. No regrets.</em></p>
+        </div>
+
+        <div class="envelope-form">
+          <label class="form-label" for="email">Your address</label>
+          <input type="email" id="email" placeholder="you@example.com">
+          <button class="send-btn">Post my first letter</button>
+          <p class="disclaimer">It will arrive tomorrow. That's a promise.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PAGE FOOTER ── -->
+  <p class="page-footer">&copy; 2024 Slowmail Post Co. &nbsp;·&nbsp; Est. with patience &nbsp;·&nbsp; Every email: +24 hours</p>
+
+</body>
+</html>

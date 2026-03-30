@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLOWMAIL // SYS:v9.0 // DELAYED TRANSMISSION PROTOCOL</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black:      #030507;
+      --deep:       #080d10;
+      --panel:      #0a1015;
+      --green:      #00ff41;
+      --green-dim:  #00aa2c;
+      --green-pale: #003311;
+      --purple:     #b026ff;
+      --purple-dim: #6600aa;
+      --cyan:       #00d4ff;
+      --red:        #ff003c;
+      --amber:      #ffaa00;
+      --white:      #e0ffe8;
+      --grey:       #1a2a1a;
+      --border:     #0d2a0d;
+
+      --glow-g: 0 0 8px #00ff41, 0 0 20px rgba(0,255,65,0.4);
+      --glow-p: 0 0 8px #b026ff, 0 0 20px rgba(176,38,255,0.4);
+      --glow-c: 0 0 8px #00d4ff, 0 0 20px rgba(0,212,255,0.35);
+    }
+
+    /* ── BASE ── */
+    html { font-size: 15px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--black);
+      color: var(--green);
+      font-family: 'Courier New', Courier, 'Lucida Console', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.18) 3px,
+        rgba(0, 0, 0, 0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── VIGNETTE ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 55%,
+        rgba(0,0,0,0.65) 100%
+      );
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ── CURSOR BLINK ── */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .cursor::after {
+      content: '█';
+      animation: blink 1s step-end infinite;
+      color: var(--green);
+    }
+
+    /* ── GLITCH KEYFRAMES ── */
+    @keyframes glitch-1 {
+      0%, 90%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+        opacity: 0;
+      }
+      91% {
+        clip-path: inset(15% 0 55% 0);
+        transform: translate(-6px, 2px);
+        opacity: 1;
+      }
+      93% {
+        clip-path: inset(60% 0 10% 0);
+        transform: translate(6px, -3px);
+        opacity: 1;
+      }
+      95% {
+        clip-path: inset(30% 0 40% 0);
+        transform: translate(-4px, 1px);
+        opacity: 1;
+      }
+      97% {
+        clip-path: inset(80% 0 2% 0);
+        transform: translate(5px, -2px);
+        opacity: 1;
+      }
+    }
+
+    @keyframes glitch-2 {
+      0%, 88%, 100% {
+        clip-path: inset(0 0 100% 0);
+        transform: translate(0);
+        opacity: 0;
+      }
+      89% {
+        clip-path: inset(40% 0 30% 0);
+        transform: translate(8px, 1px);
+        opacity: 1;
+      }
+      91% {
+        clip-path: inset(5% 0 75% 0);
+        transform: translate(-8px, 3px);
+        opacity: 1;
+      }
+      93% {
+        clip-path: inset(70% 0 8% 0);
+        transform: translate(4px, -4px);
+        opacity: 1;
+      }
+    }
+
+    @keyframes flicker {
+      0%, 97%, 100% { opacity: 1; }
+      98%           { opacity: 0.6; }
+      99%           { opacity: 1; }
+      99.5%         { opacity: 0.4; }
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--green-dim); box-shadow: 0 0 6px rgba(0,255,65,0.15); }
+      50%      { border-color: var(--green);     box-shadow: var(--glow-g); }
+    }
+
+    @keyframes scroll-up {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+
+    @keyframes neon-throb {
+      0%, 100% { text-shadow: 0 0 6px var(--green), 0 0 12px rgba(0,255,65,0.3); }
+      50%      { text-shadow: 0 0 12px var(--green), 0 0 30px rgba(0,255,65,0.6), 0 0 60px rgba(0,255,65,0.2); }
+    }
+
+    @keyframes bar-fill {
+      from { width: 0%; }
+      to   { width: var(--fill, 75%); }
+    }
+
+    /* ════════════════════════════════
+       TOP SYSTEM BAR
+    ════════════════════════════════ */
+    .sys-bar {
+      background: var(--deep);
+      border-bottom: 1px solid var(--border);
+      padding: 0.45rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      animation: flicker 8s infinite;
+    }
+
+    .sys-bar-left { display: flex; gap: 2rem; }
+    .sys-bar-right { display: flex; gap: 2rem; }
+
+    .sys-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--green-dim);
+    }
+
+    .sys-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: var(--glow-g);
+      animation: blink 2.5s step-end infinite;
+    }
+
+    .sys-dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation-delay: 0.8s; }
+    .sys-dot.red   { background: var(--red);   box-shadow: 0 0 6px var(--red);   animation-delay: 1.5s; }
+
+    /* ════════════════════════════════
+       HEADER / NAV
+    ════════════════════════════════ */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--deep);
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .logo-mark {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--green);
+      animation: neon-throb 3s ease-in-out infinite;
+    }
+
+    .logo-sub {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--green-dim);
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+      padding: 0.4rem 0.9rem;
+      border: 1px solid transparent;
+    }
+
+    nav a:hover {
+      color: var(--green);
+      border-color: var(--green-dim);
+      background: var(--green-pale);
+      text-shadow: var(--glow-g);
+    }
+
+    .nav-cta {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      text-shadow: none;
+      box-shadow: var(--glow-g);
+    }
+
+    .nav-cta:hover { background: var(--green-dim); }
+
+    /* ════════════════════════════════
+       BOOT SEQUENCE STRIP
+    ════════════════════════════════ */
+    .boot-strip {
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 2rem;
+      overflow: hidden;
+      height: 36px;
+    }
+
+    .boot-inner {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: scroll-up 0s; /* static — decorative */
+    }
+
+    .boot-line {
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: var(--green-dim);
+    }
+
+    .boot-line .ok  { color: var(--green); }
+    .boot-line .warn{ color: var(--amber); }
+    .boot-line .err { color: var(--red); }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    .hero {
+      padding: 5rem 2rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Background grid lines */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    /* GLITCH HEADLINE */
+    .glitch-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+
+    .glitch-text {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--green);
+      line-height: 1;
+      text-shadow: 0 0 10px var(--green), 0 0 30px rgba(0,255,65,0.3);
+      position: relative;
+      display: block;
+    }
+
+    /* Glitch layer 1 — red channel offset */
+    .glitch-text::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      color: var(--red);
+      text-shadow: none;
+      animation: glitch-1 6s linear infinite;
+      opacity: 0;
+    }
+
+    /* Glitch layer 2 — cyan channel offset */
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      color: var(--cyan);
+      text-shadow: none;
+      animation: glitch-2 6s linear infinite;
+      opacity: 0;
+    }
+
+    .hero-sub-head {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-shadow: var(--glow-p);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-body {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--green-dim);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-body .hl { color: var(--green); }
+    .hero-body .hl-p { color: var(--purple); text-shadow: var(--glow-p); }
+    .hero-body .hl-c { color: var(--cyan); }
+
+    /* CTA group */
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-primary {
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.8rem 1.75rem;
+      cursor: pointer;
+      box-shadow: var(--glow-g);
+    }
+
+    .btn-primary:hover { background: #00cc33; }
+
+    .btn-ghost {
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: transparent;
+      border: 1px solid var(--purple-dim);
+      padding: 0.8rem 1.75rem;
+      cursor: pointer;
+      text-shadow: var(--glow-p);
+      box-shadow: 0 0 8px rgba(176,38,255,0.2);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--purple);
+      box-shadow: var(--glow-p);
+      background: rgba(176,38,255,0.08);
+    }
+
+    /* ── TERMINAL PANEL ── */
+    .terminal {
+      background: var(--panel);
+      border: 1px solid var(--green-dim);
+      box-shadow: var(--glow-g), inset 0 0 30px rgba(0,255,65,0.03);
+      animation: pulse-border 4s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    .term-titlebar {
+      background: var(--green-pale);
+      border-bottom: 1px solid var(--green-dim);
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .term-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+
+    .term-dot-r { background: var(--red);   box-shadow: 0 0 4px var(--red); }
+    .term-dot-a { background: var(--amber); box-shadow: 0 0 4px var(--amber); }
+    .term-dot-g { background: var(--green); box-shadow: 0 0 4px var(--green); }
+
+    .term-title {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+      margin-left: 0.5rem;
+    }
+
+    .term-body {
+      padding: 1.25rem;
+      font-size: 0.72rem;
+      line-height: 2;
+      color: var(--green-dim);
+    }
+
+    .term-line { display: block; }
+
+    .term-prompt { color: var(--purple); }
+    .term-cmd    { color: var(--green); }
+    .term-out    { color: var(--green-dim); padding-left: 1rem; }
+    .term-ok     { color: var(--green); }
+    .term-warn   { color: var(--amber); }
+    .term-err    { color: var(--red); }
+    .term-cyan   { color: var(--cyan); }
+    .term-blank  { display: block; height: 0.5rem; }
+
+    .term-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-left: 1rem;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--grey);
+      border: 1px solid var(--green-pale);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: bar-fill 2s ease-out forwards;
+    }
+
+    .progress-pct {
+      font-size: 0.62rem;
+      color: var(--green);
+      min-width: 3em;
+      text-align: right;
+    }
+
+    /* ════════════════════════════════
+       SECTION HEADER
+    ════════════════════════════════ */
+    .sec-head {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sec-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-shadow: var(--glow-p);
+      white-space: nowrap;
+    }
+
+    .sec-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--purple-dim), transparent);
+    }
+
+    /* ════════════════════════════════
+       PROTOCOL SECTION — How it works
+    ════════════════════════════════ */
+    .protocol {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem;
+    }
+
+    .protocol-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .proto-card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 2rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proto-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+    }
+
+    .proto-card:nth-child(1)::before { background: var(--green); box-shadow: var(--glow-g); }
+    .proto-card:nth-child(2)::before { background: var(--purple); box-shadow: var(--glow-p); }
+    .proto-card:nth-child(3)::before { background: var(--cyan); box-shadow: var(--glow-c); }
+
+    .proto-num {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .proto-step {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding: 0.25rem 0.6rem;
+      display: inline-block;
+      border: 1px solid;
+    }
+
+    .proto-card:nth-child(1) .proto-step { color: var(--green);  border-color: var(--green-pale);  background: rgba(0,255,65,0.05); }
+    .proto-card:nth-child(2) .proto-step { color: var(--purple); border-color: var(--purple-dim);  background: rgba(176,38,255,0.05); }
+    .proto-card:nth-child(3) .proto-step { color: var(--cyan);   border-color: rgba(0,212,255,0.3);background: rgba(0,212,255,0.05); }
+
+    .proto-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .proto-card p {
+      font-size: 0.75rem;
+      line-height: 1.85;
+      color: var(--green-dim);
+    }
+
+    /* ════════════════════════════════
+       SPECS / FEATURES
+    ════════════════════════════════ */
+    .specs {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .spec-row {
+      background: var(--panel);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+    }
+
+    .spec-key {
+      padding: 1rem 1.25rem;
+      border-right: 1px solid var(--border);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .spec-key::before {
+      content: '//';
+      color: var(--purple-dim);
+      font-size: 0.7em;
+    }
+
+    .spec-val {
+      padding: 1rem 1.25rem;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: var(--green-dim);
+      display: flex;
+      align-items: center;
+    }
+
+    .spec-val .tag {
+      display: inline-block;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--green-pale);
+      color: var(--green);
+      margin-left: 0.75rem;
+    }
+
+    /* ════════════════════════════════
+       WARNING BLOCK
+    ════════════════════════════════ */
+    .warning-block {
+      margin: 0 2rem 4rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid var(--amber);
+      background: rgba(255,170,0,0.04);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.5rem;
+      align-items: flex-start;
+      box-shadow: 0 0 20px rgba(255,170,0,0.1);
+    }
+
+    .warn-icon {
+      font-size: 1.5rem;
+      color: var(--amber);
+      text-shadow: 0 0 10px var(--amber);
+      line-height: 1;
+    }
+
+    .warn-body {}
+
+    .warn-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      text-shadow: 0 0 8px var(--amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .warn-body p {
+      font-size: 0.75rem;
+      line-height: 1.75;
+      color: rgba(255,170,0,0.6);
+    }
+
+    .warn-body p strong { color: var(--amber); }
+
+    /* ════════════════════════════════
+       TRANSMISSION / SIGN-UP
+    ════════════════════════════════ */
+    .transmission {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem;
+    }
+
+    .tx-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .tx-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .tx-inner h2 {
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      text-shadow: var(--glow-g);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .tx-inner h2 .alt { color: var(--purple); text-shadow: var(--glow-p); }
+
+    .tx-inner p {
+      font-size: 0.8rem;
+      line-height: 1.85;
+      color: var(--green-dim);
+      margin-bottom: 2rem;
+    }
+
+    /* Input group styled as terminal input */
+    .tx-form {
+      border: 1px solid var(--green-dim);
+      background: var(--panel);
+      box-shadow: var(--glow-g);
+      animation: pulse-border 4s ease-in-out infinite;
+    }
+
+    .tx-form-header {
+      background: var(--green-pale);
+      border-bottom: 1px solid var(--green-dim);
+      padding: 0.4rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tx-form-header span {
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+    }
+
+    .tx-form-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tx-field {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .tx-prompt {
+      font-size: 0.72rem;
+      color: var(--purple);
+      white-space: nowrap;
+      text-shadow: var(--glow-p);
+    }
+
+    .tx-field input[type="email"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.82rem;
+      color: var(--green);
+      letter-spacing: 0.06em;
+      caret-color: var(--green);
+    }
+
+    .tx-field input[type="email"]::placeholder {
+      color: var(--green-pale);
+      opacity: 1;
+    }
+
+    .tx-submit {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .tx-note {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--green-dim);
+    }
+
+    .tx-btn {
+      font-family: inherit;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.65rem 1.5rem;
+      cursor: pointer;
+      box-shadow: var(--glow-g);
+    }
+
+    .tx-btn:hover { background: #00cc33; }
+
+    /* ════════════════════════════════
+       STATS ROW
+    ════════════════════════════════ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .stat-cell {
+      padding: 2.5rem 1.5rem;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-val {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-cell:nth-child(1) .stat-val { color: var(--green);  text-shadow: var(--glow-g); }
+    .stat-cell:nth-child(2) .stat-val { color: var(--purple); text-shadow: var(--glow-p); }
+    .stat-cell:nth-child(3) .stat-val { color: var(--cyan);   text-shadow: var(--glow-c); }
+    .stat-cell:nth-child(4) .stat-val { color: var(--amber);  text-shadow: 0 0 8px var(--amber); }
+
+    .stat-key {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green-dim);
+    }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    footer {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col h4 {
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-shadow: var(--glow-p);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .footer-col ul li {
+      font-size: 0.68rem;
+      color: var(--green-dim);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-col ul li::before {
+      content: '> ';
+      color: var(--green-pale);
+    }
+
+    .footer-col ul li a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .footer-col ul li a:hover { color: var(--green); }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-bottom span {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--green-pale);
+    }
+
+    .footer-bottom .ver {
+      color: var(--purple);
+      text-shadow: var(--glow-p);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── SYSTEM BAR ── -->
+  <div class="sys-bar">
+    <div class="sys-bar-left">
+      <div class="sys-indicator"><div class="sys-dot"></div> SYS:ONLINE</div>
+      <div class="sys-indicator"><div class="sys-dot amber"></div> QUEUE:ACTIVE</div>
+      <div class="sys-indicator"><div class="sys-dot red"></div> INSTANT_SEND:DISABLED</div>
+    </div>
+    <div class="sys-bar-right">
+      <span style="color:var(--green-dim);">NODE_ID: 0x4A2F9C</span>
+      <span style="color:var(--green-dim);">LATENCY: +86400s</span>
+      <span style="color:var(--green-dim);">ENC: AES-256</span>
+    </div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo">
+      <span class="logo-mark">SLOWMAIL</span>
+      <span class="logo-sub">// Delayed Transmission Protocol v9.0</span>
+    </div>
+    <nav>
+      <a href="#">Protocol</a>
+      <a href="#">Specs</a>
+      <a href="#">Nodes</a>
+      <a href="#">Docs</a>
+    </nav>
+    <button class="nav-cta">[ INIT SESSION ]</button>
+  </header>
+
+  <!-- ── BOOT STRIP ── -->
+  <div class="boot-strip">
+    <div class="boot-inner">
+      <span class="boot-line"><span class="ok">[  OK  ]</span> Loaded delayed_transmission.service</span>
+      <span class="boot-line"><span class="ok">[  OK  ]</span> Encryption layer initialised &nbsp; AES-256-GCM</span>
+      <span class="boot-line"><span class="warn">[ WARN ]</span> Instant send permanently disabled by design</span>
+      <span class="boot-line"><span class="ok">[  OK  ]</span> Queue timer set: 86400s</span>
+      <span class="boot-line"><span class="ok">[  OK  ]</span> Awaiting transmission input ...</span>
+    </div>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-sub-head">// DELAYED_TRANSMISSION_PROTOCOL &nbsp;·&nbsp; EST. 2024</p>
+
+      <div class="glitch-wrap">
+        <span class="glitch-text" data-text="SLOW">SLOW</span>
+        <span class="glitch-text" data-text="MAIL" style="color:var(--purple); text-shadow: var(--glow-p); animation-delay:0.5s;">MAIL</span>
+      </div>
+
+      <p class="hero-body">
+        A <span class="hl">hardcoded 24-hour hold</span> is applied to every outbound
+        transmission. No override. No bypass. No exceptions.<br><br>
+        Your message enters the <span class="hl-p">encrypted queue</span> the moment
+        you send it. It exits exactly <span class="hl">86,400 seconds</span> later —
+        unchanged, unread by any node, and delivered to its target.<br><br>
+        This is not a bug. This is not a limitation. This is the
+        <span class="hl-c">entire architecture.</span>
+      </p>
+
+      <div class="hero-cta">
+        <button class="btn-primary">[ INITIATE PROTOCOL ]</button>
+        <button class="btn-ghost">[ READ DOCS ]</button>
+      </div>
+    </div>
+
+    <!-- TERMINAL PANEL -->
+    <div class="terminal">
+      <div class="term-titlebar">
+        <div class="term-dot term-dot-r"></div>
+        <div class="term-dot term-dot-a"></div>
+        <div class="term-dot term-dot-g"></div>
+        <span class="term-title">slowmail — transmission_log</span>
+      </div>
+      <div class="term-body">
+        <span class="term-line"><span class="term-prompt">root@slowmail</span><span class="term-cmd"> ~$</span> status --queue</span>
+        <span class="term-blank"></span>
+        <span class="term-line term-out"><span class="term-ok">✓</span> QUEUE STATUS: ACTIVE</span>
+        <span class="term-line term-out">MESSAGES HELD: <span class="term-cyan">12,847</span></span>
+        <span class="term-line term-out">ENCRYPTION: <span class="term-ok">AES-256-GCM</span></span>
+        <span class="term-line term-out">HOLD PERIOD: <span class="term-ok">86400s (24h)</span></span>
+        <span class="term-blank"></span>
+        <span class="term-line"><span class="term-prompt">root@slowmail</span><span class="term-cmd"> ~$</span> check --next-delivery</span>
+        <span class="term-blank"></span>
+        <span class="term-line term-out">OUTBOX[0]: user_7f3a &rarr; target_c9b2</span>
+        <span class="term-line term-out">QUEUED: <span class="term-cyan">2026-03-27 22:14:08</span></span>
+        <span class="term-line term-out">DELIVERS: <span class="term-ok">2026-03-28 22:14:08</span></span>
+        <span class="term-progress">
+          <div class="progress-bar"><div class="progress-fill" style="--fill:78%; width:78%;"></div></div>
+          <span class="progress-pct">78%</span>
+        </span>
+        <span class="term-blank"></span>
+        <span class="term-line"><span class="term-prompt">root@slowmail</span><span class="term-cmd"> ~$</span> override --instant<span style="color:var(--red);"> [DENIED]</span></span>
+        <span class="term-blank"></span>
+        <span class="term-line term-err">ERR: instant_send is permanently disabled.</span>
+        <span class="term-line term-err">     This constraint is architectural.</span>
+        <span class="term-line term-err">     There is no flag to bypass it.</span>
+        <span class="term-blank"></span>
+        <span class="term-line"><span class="term-prompt">root@slowmail</span><span class="term-cmd"> ~$</span> <span class="cursor"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <div style="background:var(--deep); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding: 0 2rem;">
+    <div class="stats-row">
+      <div class="stat-cell">
+        <div class="stat-val">86,400</div>
+        <div class="stat-key">Seconds per hold</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">12k+</div>
+        <div class="stat-key">Active nodes</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">100%</div>
+        <div class="stat-key">Queue compliance</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">0</div>
+        <div class="stat-key">Instant sends ever</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROTOCOL / HOW IT WORKS ── -->
+  <section class="protocol">
+    <div class="sec-head" style="margin-bottom:2.5rem;">
+      <span class="sec-tag">// TRANSMISSION_PROTOCOL</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="protocol-grid">
+      <div class="proto-card">
+        <div class="proto-num">STEP_01</div>
+        <div class="proto-step">COMPOSE</div>
+        <h3>Input<br>Transmission</h3>
+        <p>
+          Author your message through any standard interface. Attachments, recipients,
+          subject headers — all standard fields are supported. The queue is activated
+          on send, not on compose.
+        </p>
+      </div>
+      <div class="proto-card">
+        <div class="proto-num">STEP_02</div>
+        <div class="proto-step">ENCRYPTED HOLD</div>
+        <h3>Queue<br>Activation</h3>
+        <p>
+          Your transmission enters the encrypted hold. AES-256-GCM. Zero-knowledge.
+          Even our infrastructure cannot read the contents. A countdown begins: 86,400
+          seconds. The message may be recalled at any point before zero.
+        </p>
+      </div>
+      <div class="proto-card">
+        <div class="proto-num">STEP_03</div>
+        <div class="proto-step">DELIVERY</div>
+        <h3>Target<br>Reached</h3>
+        <p>
+          At T+86400, your message is released from the queue and transmitted to its
+          recipient. Unchanged. On time. A delivery receipt is issued to the sender.
+          The hold period cannot be shortened. This is by design.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SPECS ── -->
+  <section class="specs">
+    <div class="sec-head">
+      <span class="sec-tag">// SYSTEM_SPECIFICATIONS</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-row">
+        <div class="spec-key">HOLD_PERIOD</div>
+        <div class="spec-val">86,400 seconds (24h) · Hardcoded · Non-negotiable <span class="tag">CORE</span></div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">ENCRYPTION</div>
+        <div class="spec-val">AES-256-GCM at rest · TLS 1.3 in transit <span class="tag">SECURE</span></div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">RECALL_WINDOW</div>
+        <div class="spec-val">Full 24h hold period · One-click · Confirmation required</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">INSTANT_SEND</div>
+        <div class="spec-val" style="color:var(--red);">PERMANENTLY DISABLED <span class="tag" style="border-color:rgba(255,0,60,0.4);color:var(--red);">LOCKED</span></div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">DELIVERY_CONFIRM</div>
+        <div class="spec-val">Push notification on release · Timestamp logged <span class="tag">ENABLED</span></div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">PRICING</div>
+        <div class="spec-val">Free tier: 50 msg/mo · Pro tier: $12/mo unlimited</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">PLATFORM</div>
+        <div class="spec-val">Web client · API access on Pro · No mobile app yet</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-key">STACK</div>
+        <div class="spec-val">Pure HTML + CSS · No JavaScript · No frameworks <span class="tag">MINIMAL</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WARNING BLOCK ── -->
+  <div class="warning-block" style="margin:0 2rem 5rem; max-width:1100px; margin-left:auto; margin-right:auto;">
+    <div class="warn-icon">⚠</div>
+    <div class="warn-body">
+      <div class="warn-title">// ADVISORY — READ BEFORE INITIATING</div>
+      <p>
+        <strong>Slowmail does not have an emergency override.</strong> If you require
+        instant message delivery, this service is not appropriate for your use case.
+        The 24-hour hold is implemented at the infrastructure level — it cannot be
+        disabled by the user, by support staff, or by the founding team.
+        <strong>Every message. Every time. 86,400 seconds.</strong>
+        This is not a flaw in the system. It is the system.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── TRANSMISSION / SIGN-UP ── -->
+  <section class="transmission">
+    <div class="tx-inner">
+      <div class="tx-label">// INITIATE_SESSION</div>
+      <h2>Join the <span class="alt">queue.</span><br>Your first transmission<br>arrives tomorrow.</h2>
+      <p>
+        Free accounts receive 50 transmissions per month with full 24-hour hold,
+        pre-delivery recall, and encrypted queue storage. No credit card.
+        No instant sending. No exceptions.
+      </p>
+
+      <div class="tx-form">
+        <div class="tx-form-header">
+          <div class="term-dot term-dot-r"></div>
+          <div class="term-dot term-dot-a"></div>
+          <div class="term-dot term-dot-g"></div>
+          <span>slowmail — new_session</span>
+        </div>
+        <div class="tx-form-body">
+          <div class="tx-field">
+            <span class="tx-prompt">user@node:~$</span>
+            <input type="email" placeholder="enter transmission address_">
+          </div>
+          <div class="tx-submit">
+            <span class="tx-note">// delivery in T+86400s</span>
+            <button class="tx-btn">[ INIT SESSION ]</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h4>// PROTOCOL</h4>
+        <ul>
+          <li><a href="#">How it works</a></li>
+          <li><a href="#">Queue specs</a></li>
+          <li><a href="#">Encryption</a></li>
+          <li><a href="#">Recall system</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>// NETWORK</h4>
+        <ul>
+          <li><a href="#">Node status</a></li>
+          <li><a href="#">Uptime log</a></li>
+          <li><a href="#">API access</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>// LEGAL</h4>
+        <ul>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of use</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 SLOWMAIL — All transmissions delayed 86,400s by architecture</span>
+      <span class="ver">SYS:v9.0.1 // BUILD:2026.03.28</span>
+    </div>
+  </footer>
+
+</body>
+</html>
