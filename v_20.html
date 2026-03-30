@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — A calmer inbox, one day at a time</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --sage-deep:   #4a7c59;
+      --sage:        #6b9e7a;
+      --sage-mid:    #8fba9a;
+      --sage-light:  #b8d4bc;
+      --sage-pale:   #daeede;
+      --sage-ghost:  #eef6ef;
+      --warm-white:  #faf8f4;
+      --cream:       #f3ede2;
+      --blush:       #f5e6e0;
+      --blush-mid:   #e8c8bc;
+      --lav:         #e2ddf0;
+      --lav-mid:     #c8b8e8;
+      --sky:         #d4e8f4;
+      --amber-pale:  #fef3dc;
+      --amber:       #d4912a;
+      --amber-mid:   #e8c060;
+      --ink:         #2d3a2e;
+      --ink-soft:    #4a5e4c;
+      --ink-mid:     #7a8f7c;
+      --ink-pale:    #a8b8aa;
+      --ink-ghost:   #ccd8cc;
+      --shadow-sm:   0 2px 12px rgba(74,124,89,0.08);
+      --shadow-md:   0 6px 24px rgba(74,124,89,0.10);
+      --shadow-lg:   0 16px 48px rgba(74,124,89,0.12);
+      --r-sm:  12px;
+      --r-md:  20px;
+      --r-lg:  28px;
+      --r-xl:  40px;
+      --r-full: 999px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--warm-white);
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes ring-pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: var(--op-base, 0.10); }
+      50%       { transform: translate(-50%, -50%) scale(1.07); opacity: calc(var(--op-base, 0.10) * 0.45); }
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33%      { transform: translateY(-12px) rotate(1.5deg); }
+      66%      { transform: translateY(-6px) rotate(-1deg); }
+    }
+
+    @keyframes soft-pulse {
+      0%, 100% { box-shadow: var(--shadow-md); }
+      50%      { box-shadow: 0 8px 32px rgba(74,124,89,0.18); }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,244,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--sage-ghost);
+      padding: 1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-leaf {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--sage-mid), var(--sage-deep));
+      border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .logo-name {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+    }
+
+    .nav-links a:hover { color: var(--sage-deep); }
+
+    .btn-nav {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      background: var(--sage);
+      border: none;
+      padding: 0.55rem 1.4rem;
+      border-radius: var(--r-full);
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(107,158,122,0.3);
+      text-decoration: none;
+    }
+
+    .btn-nav:hover { background: var(--sage-deep); }
+
+    /* ══════════════════════════════
+       HERO — concentric rings version
+    ══════════════════════════════ */
+    .hero {
+      padding: 6rem 2.5rem 5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        180deg,
+        var(--sage-ghost) 0%,
+        var(--warm-white) 100%
+      );
+    }
+
+    /* Concentric pulsing rings — subtle, behind text */
+    .hero-rings {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid var(--sage-light);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ring-pulse var(--dur, 7s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .ring-1 {
+      width: 320px; height: 320px;
+      --op-base: 0.22;
+      --dur: 7s;
+      --delay: 0s;
+      border-color: var(--sage-light);
+    }
+
+    .ring-2 {
+      width: 560px; height: 560px;
+      --op-base: 0.13;
+      --dur: 7s;
+      --delay: 0.7s;
+      border-color: var(--sage-pale);
+    }
+
+    .ring-3 {
+      width: 820px; height: 820px;
+      --op-base: 0.07;
+      --dur: 7s;
+      --delay: 1.4s;
+      border-color: var(--sage-pale);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--sage-pale);
+      color: var(--sage-deep);
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--r-full);
+      margin-bottom: 2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-leaf { font-size: 0.85rem; }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: normal;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--sage-deep);
+    }
+
+    .hero-sub {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--ink-mid);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      border: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: var(--r-full);
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(74,124,89,0.3);
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(74,124,89,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--sage-deep);
+      background: transparent;
+      border: 1.5px solid var(--sage-light);
+      padding: 0.9rem 2.2rem;
+      border-radius: var(--r-full);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--sage-ghost);
+      border-color: var(--sage-mid);
+    }
+
+    .hero-note {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.8rem;
+      color: var(--ink-pale);
+    }
+
+    /* ══════════════════════════════
+       LOGO BAR
+    ══════════════════════════════ */
+    .logo-bar {
+      background: var(--warm-white);
+      border-top: 1px solid var(--sage-ghost);
+      border-bottom: 1px solid var(--sage-ghost);
+      padding: 2.25rem 2.5rem;
+      text-align: center;
+    }
+
+    .logo-bar-label {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+      margin-bottom: 1.4rem;
+    }
+
+    .logo-bar-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .company-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink-pale);
+      background: var(--sage-ghost);
+      border: 1px solid var(--sage-pale);
+      border-radius: var(--r-full);
+      padding: 0.45rem 1rem;
+      opacity: 0.72;
+    }
+
+    .company-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════
+       FEATURES
+    ══════════════════════════════ */
+    .features {
+      padding: 6rem 2.5rem 4rem;
+      background: var(--cream);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 540px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .section-eyebrow {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: normal;
+      line-height: 1.4;
+      color: var(--ink);
+      margin-bottom: 0.9rem;
+    }
+
+    .section-header h2 em { font-style: italic; color: var(--sage-deep); }
+
+    .section-header p {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--ink-mid);
+    }
+
+    /* 3-column feature cards */
+    .feat-cards-grid {
+      max-width: 960px;
+      margin: 0 auto 3.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feat-card {
+      background: var(--sage-ghost);
+      border: 1px solid var(--sage-pale);
+      border-radius: var(--r-lg);
+      padding: 2.25rem 2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      animation: soft-pulse 7s ease-in-out infinite;
+    }
+
+    .feat-card:nth-child(2) {
+      background: var(--blush);
+      border-color: var(--blush-mid);
+      animation-delay: 1.8s;
+    }
+
+    .feat-card:nth-child(3) {
+      background: var(--lav);
+      border-color: var(--lav-mid);
+      animation-delay: 3.6s;
+    }
+
+    .feat-icon-wrap {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .feat-card h3 {
+      font-size: 1.05rem;
+      font-weight: normal;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .feat-card p {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.84rem;
+      line-height: 1.72;
+      color: var(--ink-soft);
+      flex: 1;
+    }
+
+    .feat-tag {
+      display: inline-block;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 0.28rem 0.75rem;
+      border-radius: var(--r-full);
+      background: rgba(255,255,255,0.6);
+      align-self: flex-start;
+    }
+
+    .feat-tag-green { color: var(--sage-deep); }
+    .feat-tag-amber { color: #9a6010; }
+    .feat-tag-lav   { color: #6050a0; }
+
+    /* ══════════════════════════════
+       BROWSER MOCKUP
+    ══════════════════════════════ */
+    .mockup-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .mockup-eyebrow {
+      text-align: center;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 1.25rem;
+    }
+
+    .browser {
+      background: var(--warm-white);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-lg), 0 0 0 1px var(--sage-pale);
+      overflow: hidden;
+    }
+
+    /* Browser chrome bar */
+    .browser-chrome {
+      background: #f0ece4;
+      border-bottom: 1px solid var(--sage-pale);
+      padding: 0.7rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chrome-dots {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .chrome-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red    { background: #f5a0a0; }
+    .dot-yellow { background: #f5d480; }
+    .dot-green  { background: #a0d4a0; }
+
+    .chrome-url {
+      flex: 1;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--sage-pale);
+      border-radius: var(--r-full);
+      padding: 0.3rem 0.9rem;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.72rem;
+      color: var(--ink-mid);
+      text-align: center;
+    }
+
+    /* Browser body: sidebar + main */
+    .browser-body {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      min-height: 240px;
+    }
+
+    /* App sidebar */
+    .app-sidebar {
+      background: var(--sage-ghost);
+      border-right: 1px solid var(--sage-pale);
+      padding: 1rem 0;
+    }
+
+    .sidebar-item {
+      padding: 0.55rem 1.1rem;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink-mid);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 0 var(--r-full) var(--r-full) 0;
+      margin-right: 0.5rem;
+    }
+
+    .sidebar-item.active {
+      background: var(--warm-white);
+      color: var(--sage-deep);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-count {
+      margin-left: auto;
+      background: var(--sage-pale);
+      color: var(--sage-deep);
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: var(--r-full);
+    }
+
+    /* Main email list */
+    .app-main {
+      padding: 0;
+    }
+
+    .app-main-header {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--sage-ghost);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-main-title {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .app-main-sub {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-pale);
+    }
+
+    /* Individual email rows */
+    .email-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--sage-ghost);
+      cursor: pointer;
+    }
+
+    .email-row:last-child { border-bottom: none; }
+
+    .email-row.tint-green { background: rgba(218,238,222,0.35); }
+    .email-row.tint-amber { background: rgba(254,243,220,0.5); }
+    .email-row.tint-none  { background: transparent; }
+
+    .email-row:hover { background: var(--sage-ghost); }
+
+    .email-subject {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 0.18rem;
+    }
+
+    .email-to {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-pale);
+    }
+
+    /* Status badges on each row */
+    .email-badge {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.28rem 0.75rem;
+      border-radius: var(--r-full);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-green {
+      background: var(--sage-pale);
+      color: var(--sage-deep);
+      border: 1px solid var(--sage-light);
+    }
+
+    .badge-amber {
+      background: var(--amber-pale);
+      color: #8a6010;
+      border: 1px solid #e8d090;
+    }
+
+    .badge-delivered {
+      background: var(--sage-ghost);
+      color: var(--ink-mid);
+      border: 1px solid var(--sage-pale);
+    }
+
+    /* ── MOCKUP LEGEND ── */
+    .mockup-legend {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink-mid);
+    }
+
+    .legend-swatch {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--r-full);
+      flex-shrink: 0;
+    }
+
+    .sw-green     { background: var(--sage-pale);  color: var(--sage-deep); border: 1px solid var(--sage-light); }
+    .sw-amber     { background: var(--amber-pale);  color: #8a6010; border: 1px solid #e8d090; }
+    .sw-delivered { background: var(--sage-ghost);  color: var(--ink-mid); border: 1px solid var(--sage-pale); }
+
+    .legend-arrow {
+      color: var(--ink-ghost);
+      font-size: 0.72rem;
+    }
+
+    .legend-feature {
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════
+       STAT BAND
+    ══════════════════════════════ */
+    .stat-band {
+      background: linear-gradient(135deg, var(--sage-deep), var(--sage));
+      padding: 4rem 2.5rem;
+    }
+
+    .stat-band-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .stat-item {}
+
+    .stat-num {
+      font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+      font-weight: normal;
+      color: var(--warm-white);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-num em {
+      font-style: italic;
+      font-size: 0.55em;
+      vertical-align: middle;
+      opacity: 0.8;
+    }
+
+    .stat-desc {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.82rem;
+      color: rgba(250,248,244,0.65);
+      line-height: 1.6;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: rgba(250,248,244,0.15);
+      margin: 0 auto;
+    }
+
+    /* ══════════════════════════════
+       JOURNAL TESTIMONIALS
+    ══════════════════════════════ */
+    .journals {
+      background: var(--cream);
+      padding: 6rem 2.5rem;
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+
+    .journals-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .journal-card {
+      background: var(--warm-white);
+      border-radius: var(--r-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    /* Ruled lines behind text like a journal */
+    .journal-card::before {
+      content: '';
+      position: absolute;
+      inset: 3.5rem 1.5rem 1.5rem;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 27px,
+        var(--sage-ghost) 27px,
+        var(--sage-ghost) 28px
+      );
+      border-radius: var(--r-sm);
+      pointer-events: none;
+    }
+
+    .journal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .journal-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid var(--sage-ghost);
+    }
+
+    .journal-author .name {
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    .journal-author .since {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.72rem;
+      color: var(--ink-pale);
+    }
+
+    .journal-mood {
+      font-size: 1.1rem;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .journal-entry {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--ink-soft);
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+    }
+
+    .journal-date {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.7rem;
+      color: var(--ink-pale);
+      position: relative;
+      z-index: 1;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--sage-ghost);
+    }
+
+    /* ══════════════════════════════
+       SIGN UP
+    ══════════════════════════════ */
+    .signup {
+      background: linear-gradient(180deg, var(--sage-ghost) 0%, var(--cream) 100%);
+      padding: 6rem 2.5rem;
+    }
+
+    .signup-inner {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .signup-inner h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: normal;
+      line-height: 1.4;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .signup-inner h2 em { font-style: italic; color: var(--sage-deep); }
+
+    .signup-inner > p {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--ink-mid);
+      margin-bottom: 2.5rem;
+    }
+
+    .signup-form {
+      background: var(--warm-white);
+      border-radius: var(--r-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--sage-pale);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      animation: soft-pulse 8s ease-in-out infinite;
+    }
+
+    .field-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: left;
+    }
+
+    .field-label {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+      letter-spacing: 0.03em;
+    }
+
+    .field-input {
+      padding: 0.85rem 1.1rem;
+      border: 1.5px solid var(--sage-pale);
+      border-radius: var(--r-sm);
+      background: var(--sage-ghost);
+      font-family: Georgia, serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .field-input::placeholder {
+      color: var(--ink-ghost);
+      font-style: italic;
+    }
+
+    .field-input:focus {
+      border-color: var(--sage-mid);
+      background: var(--warm-white);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      color: var(--warm-white);
+      border: none;
+      border-radius: var(--r-full);
+      cursor: pointer;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 18px rgba(74,124,89,0.28);
+      margin-top: 0.25rem;
+    }
+
+    .btn-submit:hover {
+      box-shadow: 0 6px 24px rgba(74,124,89,0.38);
+      transform: translateY(-1px);
+    }
+
+    .signup-assurance {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink-pale);
+      line-height: 1.7;
+    }
+
+    .assurance-list {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .assurance-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.78rem;
+      color: var(--ink-mid);
+    }
+
+    .check-soft {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      color: var(--sage-deep);
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background: var(--ink);
+      padding: 3rem 2.5rem 2rem;
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+
+    .footer-top {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand .logo-name {
+      color: rgba(250,248,244,0.8);
+      font-size: 1rem;
+    }
+
+    .footer-brand p {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.8rem;
+      color: rgba(250,248,244,0.35);
+      line-height: 1.7;
+      margin-top: 0.75rem;
+      max-width: 200px;
+    }
+
+    .footer-col h4 {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250,248,244,0.4);
+      margin-bottom: 1rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-col ul li a {
+      text-decoration: none;
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.82rem;
+      color: rgba(250,248,244,0.3);
+    }
+
+    .footer-col ul li a:hover { color: rgba(250,248,244,0.65); }
+
+    .footer-bottom {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .footer-bottom span {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 0.72rem;
+      color: rgba(250,248,244,0.2);
+    }
+
+    .footer-love { color: var(--sage-mid); }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="nav-logo">
+      <div class="logo-leaf">🌿</div>
+      <span class="logo-name">Slowmail</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">How it helps</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Stories</a></li>
+    </ul>
+    <a href="#begin" class="btn-nav">Begin your calm</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+
+    <!-- Concentric pulsing rings — subtle background -->
+    <div class="hero-rings">
+      <div class="hero-ring ring-1"></div>
+      <div class="hero-ring ring-2"></div>
+      <div class="hero-ring ring-3"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-leaf">🌱</span>
+        Designed for a gentler relationship with email
+      </div>
+
+      <h1>
+        Your inbox doesn't have to<br>
+        feel like <em>an emergency.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Slowmail holds every email you send for 24 hours before it delivers —
+        giving you space to breathe, reconsider, and communicate
+        from a place of calm rather than reaction.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#begin" class="btn-primary">Start feeling better</a>
+        <a href="#features" class="btn-secondary">How it works</a>
+      </div>
+
+      <p class="hero-note">
+        Free to start &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; Your first email arrives tomorrow 🌿
+      </p>
+    </div>
+  </section>
+
+  <!-- ── LOGO BAR ── -->
+  <div class="logo-bar">
+    <div class="logo-bar-label">Trusted by thoughtful teams at</div>
+    <div class="logo-bar-logos">
+      <div class="company-pill">
+        <span class="company-dot" style="background:#6b9e7a;"></span>
+        Acorn Studio
+      </div>
+      <div class="company-pill">
+        <span class="company-dot" style="background:#9b72cf;"></span>
+        Meadow Health
+      </div>
+      <div class="company-pill">
+        <span class="company-dot" style="background:#d4912a;"></span>
+        Riverfield Co.
+      </div>
+      <div class="company-pill">
+        <span class="company-dot" style="background:#e87da8;"></span>
+        Calmly Press
+      </div>
+      <div class="company-pill">
+        <span class="company-dot" style="background:#4a9ab0;"></span>
+        Quiet Analytics
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FEATURES ── -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-eyebrow">What's included</div>
+      <h2>Everything you need,<br><em>nothing that rushes you</em></h2>
+      <p>Three features, each designed to give you more room — to think, to reconsider, and to communicate with care.</p>
+    </div>
+
+    <!-- 3-column feature cards -->
+    <div class="feat-cards-grid">
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">⏳</div>
+        <h3>The 24-hour hold</h3>
+        <p>Every message you send waits a full day before delivery. It's always on, always gentle, always giving you room to change your mind before your words reach anyone.</p>
+        <span class="feat-tag feat-tag-green">Core feature</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">↩️</div>
+        <h3>Pre-delivery recall</h3>
+        <p>Wrote something you regret? Recall it any time during the 24-hour window. No awkward follow-ups. No "please ignore my last email." Just a quiet, clean undo.</p>
+        <span class="feat-tag feat-tag-amber">Peace of mind</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon-wrap">🔔</div>
+        <h3>Gentle delivery notifications</h3>
+        <p>A soft nudge when your message has been delivered — no aggressive read receipts, no delivery pressure. Just a quiet confirmation that your words arrived safely.</p>
+        <span class="feat-tag feat-tag-lav">Mindful</span>
+      </div>
+
+    </div>
+
+    <!-- Browser Mockup — outbox queue view -->
+    <div class="mockup-wrap">
+      <div class="mockup-eyebrow">Your outbox, at a glance</div>
+
+      <div class="browser">
+
+        <!-- Chrome bar -->
+        <div class="browser-chrome">
+          <div class="chrome-dots">
+            <span class="chrome-dot dot-red"></span>
+            <span class="chrome-dot dot-yellow"></span>
+            <span class="chrome-dot dot-green"></span>
+          </div>
+          <div class="chrome-url">slowmail.app / outbox</div>
+        </div>
+
+        <!-- App body -->
+        <div class="browser-body">
+
+          <!-- Sidebar -->
+          <div class="app-sidebar">
+            <div class="sidebar-item active">
+              📤 Outbox
+              <span class="sidebar-count">3</span>
+            </div>
+            <div class="sidebar-item">📥 Inbox</div>
+            <div class="sidebar-item">✉ Sent</div>
+            <div class="sidebar-item">📝 Drafts</div>
+          </div>
+
+          <!-- Email list -->
+          <div class="app-main">
+            <div class="app-main-header">
+              <span class="app-main-title">Outbox — resting quietly</span>
+              <span class="app-main-sub">3 emails holding</span>
+            </div>
+
+            <!-- Row 1: green tint — 24h hold -->
+            <div class="email-row tint-green">
+              <div>
+                <div class="email-subject">Re: Design review notes</div>
+                <div class="email-to">To: team@acorn.co · Written 6h ago</div>
+              </div>
+              <span class="email-badge badge-green">Sending in 18h</span>
+            </div>
+
+            <!-- Row 2: amber tint — recall available -->
+            <div class="email-row tint-amber">
+              <div>
+                <div class="email-subject">Hi — hope you're well</div>
+                <div class="email-to">To: n.park@meadow.io · Written 22h ago</div>
+              </div>
+              <span class="email-badge badge-amber">Recall available</span>
+            </div>
+
+            <!-- Row 3: neutral — delivered notification -->
+            <div class="email-row tint-none">
+              <div>
+                <div class="email-subject">Thanks for yesterday ✨</div>
+                <div class="email-to">To: sam@riverfield.com · Sent yesterday</div>
+              </div>
+              <span class="email-badge badge-delivered">Delivered ✓</span>
+            </div>
+
+          </div>
+        </div>
+      </div><!-- /browser -->
+
+      <!-- Legend -->
+      <div class="mockup-legend">
+        <div class="legend-item">
+          <span class="legend-swatch sw-green">Sending in 18h</span>
+          <span class="legend-arrow">→</span>
+          <span class="legend-feature">24-hour hold</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch sw-amber">Recall available</span>
+          <span class="legend-arrow">→</span>
+          <span class="legend-feature">Pre-delivery recall</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch sw-delivered">Delivered ✓</span>
+          <span class="legend-arrow">→</span>
+          <span class="legend-feature">Gentle delivery notification</span>
+        </div>
+      </div>
+
+    </div><!-- /mockup-wrap -->
+  </section>
+
+  <!-- ── STAT BAND ── -->
+  <div class="stat-band">
+    <div class="stat-band-inner">
+      <div class="stat-item">
+        <div class="stat-num">40<em>%</em></div>
+        <div class="stat-desc">of users report feeling less anxious about email within their first week</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">24<em>hrs</em></div>
+        <div class="stat-desc">of breathing room between every message you write and the moment it's received</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">12<em>k</em></div>
+        <div class="stat-desc">people already writing calmer, more considered emails with Slowmail</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JOURNAL TESTIMONIALS ── -->
+  <section class="journals">
+    <div class="section-header">
+      <div class="section-eyebrow">From our community</div>
+      <h2>How people are feeling</h2>
+      <p>Real entries from Slowmail users, shared with permission.</p>
+    </div>
+
+    <div class="journals-grid">
+
+      <div class="journal-card">
+        <div class="journal-header">
+          <div class="journal-avatar"
+               style="background:linear-gradient(135deg,#b8d4bc,#7a9e7a);"></div>
+          <div class="journal-author">
+            <div class="name">Maya R.</div>
+            <div class="since">Using Slowmail since January</div>
+          </div>
+          <div class="journal-mood">😌</div>
+        </div>
+        <p class="journal-entry">
+          "I wrote what I thought was a perfectly calm message to my manager.
+          Read it the next morning before it sent. It was not calm at all.
+          I rewrote it completely. Slowmail has saved more relationships
+          than I can count."
+        </p>
+        <div class="journal-date">March 2026</div>
+      </div>
+
+      <div class="journal-card">
+        <div class="journal-header">
+          <div class="journal-avatar"
+               style="background:linear-gradient(135deg,#e2ddf0,#a090c8);"></div>
+          <div class="journal-author">
+            <div class="name">Jordan K.</div>
+            <div class="since">Using Slowmail since February</div>
+          </div>
+          <div class="journal-mood">🌿</div>
+        </div>
+        <p class="journal-entry">
+          "I used to check my email constantly, anxious about replies.
+          Now that I know my own messages take a day, I've completely
+          stopped expecting instant responses. My nervous system is
+          genuinely grateful."
+        </p>
+        <div class="journal-date">March 2026</div>
+      </div>
+
+      <div class="journal-card">
+        <div class="journal-header">
+          <div class="journal-avatar"
+               style="background:linear-gradient(135deg,#f5e6e0,#c8907a);"></div>
+          <div class="journal-author">
+            <div class="name">Sam L.</div>
+            <div class="since">Using Slowmail since December</div>
+          </div>
+          <div class="journal-mood">💛</div>
+        </div>
+        <p class="journal-entry">
+          "I sleep better. That sounds dramatic but it's true. I used to lie
+          awake going over emails I'd sent. Now I know I have until morning
+          to change anything, and somehow that's enough to let me rest."
+        </p>
+        <div class="journal-date">February 2026</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SIGN UP ── -->
+  <section class="signup" id="begin">
+    <div class="signup-inner">
+      <div class="section-eyebrow" style="margin-bottom:0.75rem;">Begin today</div>
+      <h2>
+        A calmer inbox is<br>
+        <em>one day away.</em>
+      </h2>
+      <p>
+        Join thousands of people who've slowed their email down
+        and discovered how much lighter their days can feel.
+        Free to start, gentle by design.
+      </p>
+
+      <div class="signup-form">
+        <div class="field-wrap">
+          <label class="field-label" for="name">Your name</label>
+          <input class="field-input" type="text" id="name" placeholder="How shall we greet you?">
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="email">Your email</label>
+          <input class="field-input" type="email" id="email" placeholder="you@example.com">
+        </div>
+        <button class="btn-submit">Begin my calm journey 🌿</button>
+        <p class="signup-assurance">
+          We'll never send you anything urgent. Your first email
+          arrives tomorrow — and that's exactly the point.
+        </p>
+      </div>
+
+      <div class="assurance-list">
+        <div class="assurance-item">
+          <div class="check-soft">✓</div>
+          Free forever
+        </div>
+        <div class="assurance-item">
+          <div class="check-soft">✓</div>
+          No credit card
+        </div>
+        <div class="assurance-item">
+          <div class="check-soft">✓</div>
+          Cancel gently, anytime
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-leaf">🌿</div>
+          <span class="logo-name">Slowmail</span>
+        </div>
+        <p>A calmer way to write, send, and receive email. Built for the anxious, the thoughtful, and the tired.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">How it helps</a></li>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Wellbeing</h4>
+        <ul>
+          <li><a href="#">Email anxiety</a></li>
+          <li><a href="#">Digital wellness</a></li>
+          <li><a href="#">Our philosophy</a></li>
+          <li><a href="#">Community</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 Slowmail — All emails rest for 24 hours before delivery</span>
+      <span>Made with <span class="footer-love">🌿</span> and a lot of patience</span>
+    </div>
+  </footer>
+
+</body>
+</html>
