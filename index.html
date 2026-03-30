@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slowmail — Design Process Gallery</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Shared palette — mirrors v25 */
+      --sage-deep:   #4a7c59;
+      --sage:        #6b9e7a;
+      --sage-mid:    #8fba9a;
+      --sage-light:  #b8d4bc;
+      --sage-pale:   #daeede;
+      --sage-ghost:  #eef6ef;
+      --warm-white:  #faf8f4;
+      --cream:       #f3ede2;
+      --blush:       #f5e6e0;
+      --amber-pale:  #fef3dc;
+      --amber:       #d4912a;
+      --ink:         #2d3a2e;
+      --ink-soft:    #4a5e4c;
+      --ink-mid:     #7a8f7c;
+      --ink-pale:    #a8b8aa;
+      --ink-ghost:   #ccd8cc;
+      --shadow-sm:   0 2px 12px rgba(74,124,89,0.08);
+      --shadow-md:   0 6px 24px rgba(74,124,89,0.10);
+      --shadow-lg:   0 16px 48px rgba(74,124,89,0.14);
+      --r-sm:  10px;
+      --r-md:  16px;
+      --r-lg:  24px;
+      --r-xl:  36px;
+      --r-full: 999px;
+
+      /* Card sizing — drives iframe scale */
+      --card-w: 246px;
+      --preview-scale: 0.1922;   /* 246 / 1280 */
+      --preview-h: 154px;        /* 800 * 0.1922 */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--warm-white);
+      color: var(--ink);
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,248,244,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--sage-ghost);
+      padding: 0.9rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      text-decoration: none;
+    }
+
+    .logo-leaf {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--sage-mid), var(--sage-deep));
+      border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 0.95rem;
+      font-weight: normal;
+      color: var(--ink);
+    }
+
+    .nav-sep {
+      color: var(--ink-ghost);
+      font-size: 0.8rem;
+    }
+
+    .nav-title {
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+      letter-spacing: 0.01em;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-right a {
+      font-size: 0.8rem;
+      color: var(--ink-pale);
+      text-decoration: none;
+    }
+
+    .nav-right a:hover { color: var(--sage-deep); }
+
+    /* ══════════════════════════════
+       PAGE HEADER
+    ══════════════════════════════ */
+    .page-header {
+      padding: 5rem 2.5rem 4rem;
+      background: linear-gradient(180deg, var(--sage-ghost) 0%, var(--warm-white) 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle decorative rings */
+    .header-rings {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .header-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--sage-light);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.18;
+    }
+
+    .header-ring:nth-child(1) { width: 280px; height: 280px; }
+    .header-ring:nth-child(2) { width: 520px; height: 520px; opacity: 0.10; }
+    .header-ring:nth-child(3) { width: 780px; height: 780px; opacity: 0.05; }
+
+    .page-header-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .header-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-header h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: normal;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-header h1 em {
+      font-style: italic;
+      color: var(--sage-deep);
+    }
+
+    .page-header p {
+      font-size: 0.98rem;
+      line-height: 1.8;
+      color: var(--ink-mid);
+      max-width: 480px;
+      margin: 0 auto 2.25rem;
+    }
+
+    /* Stat row */
+    .header-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .header-stat {
+      padding: 0 1.75rem;
+      border-right: 1px solid var(--sage-pale);
+      text-align: center;
+    }
+
+    .header-stat:last-child { border-right: none; }
+
+    .header-stat-num {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--sage-deep);
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+
+    .header-stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-pale);
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════
+       GALLERY MAIN
+    ══════════════════════════════ */
+    .gallery-main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 4rem 2.5rem 6rem;
+    }
+
+    /* ── Phase heading ── */
+    .phase {
+      margin-bottom: 4rem;
+    }
+
+    .phase-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--sage-pale);
+    }
+
+    .phase-label {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phase-num {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 0.3rem;
+    }
+
+    .phase-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.3rem;
+      font-weight: normal;
+      color: var(--ink);
+    }
+
+    .phase-meta {
+      font-size: 0.78rem;
+      color: var(--ink-pale);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .phase-desc {
+      font-size: 0.83rem;
+      line-height: 1.72;
+      color: var(--ink-mid);
+      max-width: 680px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Card grid ── */
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    /* ── Version card ── */
+    .version-card {
+      display: block;
+      text-decoration: none;
+      background: var(--warm-white);
+      border: 1px solid var(--sage-pale);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .version-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--sage-light);
+    }
+
+    /* Final version highlight */
+    .version-card.is-final {
+      border-color: var(--sage);
+      box-shadow: 0 0 0 2px var(--sage-pale), var(--shadow-md);
+    }
+
+    .version-card.is-final:hover {
+      box-shadow: 0 0 0 2px var(--sage-light), var(--shadow-lg);
+    }
+
+    /* ── Preview window ── */
+    .card-preview {
+      width: 100%;
+      height: var(--preview-h);
+      overflow: hidden;
+      position: relative;
+      background: var(--sage-ghost);
+      border-bottom: 1px solid var(--sage-pale);
+      pointer-events: none;
+    }
+
+    .card-preview iframe {
+      width: 1280px;
+      height: 800px;
+      transform: scale(var(--preview-scale));
+      transform-origin: top left;
+      border: none;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Overlay on hover to signal clickability */
+    .version-card:hover .card-preview::after {
+      content: 'Open →';
+      position: absolute;
+      inset: 0;
+      background: rgba(74,124,89,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--sage-deep);
+      pointer-events: none;
+    }
+
+    /* ── Card info ── */
+    .card-info {
+      padding: 0.9rem 1rem 1rem;
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-vnum {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-pale);
+      background: var(--sage-ghost);
+      border: 1px solid var(--sage-pale);
+      border-radius: var(--r-full);
+      padding: 0.18rem 0.55rem;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+
+    .badge-final {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--warm-white);
+      background: var(--sage-deep);
+      border-radius: var(--r-full);
+      padding: 0.22rem 0.6rem;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+
+    .card-style {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 0.28rem;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.72rem;
+      line-height: 1.6;
+      color: var(--ink-pale);
+    }
+
+    /* ── Refinement series card — subtle cream tint ── */
+    .version-card.is-refinement {
+      background: #fdfbf7;
+    }
+
+    /* ── Final card — larger in its own row ── */
+    .phase-final-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .version-card.card-hero {
+      grid-column: span 1;
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background: var(--ink);
+      padding: 2.5rem 2.5rem 2rem;
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .footer-brand .logo-name {
+      color: rgba(250,248,244,0.6);
+    }
+
+    .footer-note {
+      font-size: 0.72rem;
+      color: rgba(250,248,244,0.22);
+      line-height: 1.7;
+    }
+
+    .footer-love { color: var(--sage-mid); }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-leaf">🌿</div>
+    <span class="logo-name">Slowmail</span>
+  </a>
+  <span class="nav-sep">/</span>
+  <span class="nav-title">Design Process Gallery</span>
+  <div class="nav-right">
+    <a href="#exploration">Exploration</a>
+    <a href="#discovery">Discovery</a>
+    <a href="#refinement">Refinement</a>
+    <a href="v_25.html" target="_blank">View Final →</a>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-rings">
+    <div class="header-ring"></div>
+    <div class="header-ring"></div>
+    <div class="header-ring"></div>
+  </div>
+  <div class="page-header-inner">
+    <div class="header-eyebrow">Design Process · Build Ship Design · Week 1</div>
+    <h1>25 ways to say<br><em>slow down.</em></h1>
+    <p>
+      A complete design exploration for Slowmail — a fictional email service that
+      delays every message by 24 hours. Each iteration asks the same question
+      through an entirely different visual lens.
+    </p>
+    <div class="header-stats">
+      <div class="header-stat">
+        <div class="header-stat-num">25</div>
+        <div class="header-stat-label">Iterations</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-num">3</div>
+        <div class="header-stat-label">Phases</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-num">1</div>
+        <div class="header-stat-label">Concept</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── GALLERY ── -->
+<main class="gallery-main">
+
+  <!-- ═══════════════════════════════════
+       PHASE 1 — EXPLORATION (v1–v14)
+  ═══════════════════════════════════ -->
+  <section class="phase" id="exploration">
+    <div class="phase-header">
+      <div class="phase-label">
+        <div class="phase-num">Phase 01</div>
+        <div class="phase-title">Exploration</div>
+      </div>
+      <div class="phase-meta">v1 – v14 &nbsp;·&nbsp; 14 iterations<br>Testing what Slowmail could feel like</div>
+    </div>
+    <p class="phase-desc">
+      No constraints, no convergence. Each iteration treats Slowmail as a completely different kind of product —
+      borrowing the visual language of newspapers, record labels, government services, dating apps, and more.
+      The goal was to find which tones felt true to the concept of intentional slowness.
+    </p>
+
+    <div class="phase-grid">
+
+      <!-- v1 -->
+      <a href="v_1.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_1.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v1</span>
+          </div>
+          <div class="card-style">Minimal / Editorial</div>
+          <div class="card-desc">Clean serif typography, restrained palette</div>
+        </div>
+      </a>
+
+      <!-- v2 -->
+      <a href="v_2.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_2.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v2</span>
+          </div>
+          <div class="card-style">Minimal / Editorial II</div>
+          <div class="card-desc">Clean serif typography, restrained palette</div>
+        </div>
+      </a>
+
+      <!-- v3 -->
+      <a href="v_3.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_3.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v3</span>
+          </div>
+          <div class="card-style">Newspaper Broadsheet</div>
+          <div class="card-desc">Full editorial newspaper layout</div>
+        </div>
+      </a>
+
+      <!-- v4 -->
+      <a href="v_4.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_4.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v4</span>
+          </div>
+          <div class="card-style">GeoCities / Retro Web</div>
+          <div class="card-desc">Chaotic 90s internet aesthetic</div>
+        </div>
+      </a>
+
+      <!-- v5 -->
+      <a href="v_5.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_5.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v5</span>
+          </div>
+          <div class="card-style">Food Magazine</div>
+          <div class="card-desc">Recipe card format, warm editorial</div>
+        </div>
+      </a>
+
+      <!-- v6 -->
+      <a href="v_6.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_6.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v6</span>
+          </div>
+          <div class="card-style">UK Government (GOV.UK)</div>
+          <div class="card-desc">Bureaucratic official service design</div>
+        </div>
+      </a>
+
+      <!-- v7 -->
+      <a href="v_7.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_7.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v7</span>
+          </div>
+          <div class="card-style">Children's Storybook</div>
+          <div class="card-desc">Illustrated bedtime story with owl character</div>
+        </div>
+      </a>
+
+      <!-- v8 -->
+      <a href="v_8.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_8.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v8</span>
+          </div>
+          <div class="card-style">Academic Paper</div>
+          <div class="card-desc">Two-column journal article with citations</div>
+        </div>
+      </a>
+
+      <!-- v9 -->
+      <a href="v_9.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_9.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v9</span>
+          </div>
+          <div class="card-style">Airline Booking</div>
+          <div class="card-desc">Departure board, boarding pass UI</div>
+        </div>
+      </a>
+
+      <!-- v10 -->
+      <a href="v_10.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_10.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v10</span>
+          </div>
+          <div class="card-style">Matrix / Hacker Terminal</div>
+          <div class="card-desc">Green on black, scanlines, glitch effects</div>
+        </div>
+      </a>
+
+      <!-- v11 -->
+      <a href="v_11.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_11.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v11</span>
+          </div>
+          <div class="card-style">Airmail Postcard</div>
+          <div class="card-desc">Diagonal stripe borders, wax seal stamp</div>
+        </div>
+      </a>
+
+      <!-- v12 -->
+      <a href="v_12.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_12.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v12</span>
+          </div>
+          <div class="card-style">Brutalist</div>
+          <div class="card-desc">Heavy borders, bold black and white, no frills</div>
+        </div>
+      </a>
+
+      <!-- v13 -->
+      <a href="v_13.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_13.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v13</span>
+          </div>
+          <div class="card-style">Music Streaming</div>
+          <div class="card-desc">Dark mode album page with vinyl animation</div>
+        </div>
+      </a>
+
+      <!-- v14 -->
+      <a href="v_14.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_14.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v14</span>
+          </div>
+          <div class="card-style">Dating App</div>
+          <div class="card-desc">Swipe cards, match percentage, rose/purple gradient</div>
+        </div>
+      </a>
+
+    </div><!-- /phase-grid -->
+  </section>
+
+
+  <!-- ═══════════════════════════════════
+       PHASE 2 — DISCOVERY (v15–v19)
+  ═══════════════════════════════════ -->
+  <section class="phase" id="discovery">
+    <div class="phase-header">
+      <div class="phase-label">
+        <div class="phase-num">Phase 02</div>
+        <div class="phase-title">Narrowing Down</div>
+      </div>
+      <div class="phase-meta">v15 – v19 &nbsp;·&nbsp; 5 iterations<br>Finding the right register</div>
+    </div>
+    <p class="phase-desc">
+      After fourteen wildly different directions, a pattern emerged — the
+      concept of intentional slowness resonated most with lighter, warmer
+      visual tones. These five versions test that instinct without committing
+      to it: each one restrained, each one considered, each one asking whether
+      calm could be the product's true register.
+    </p>
+
+    <div class="phase-grid">
+
+      <!-- v15 -->
+      <a href="v_15.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_15.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v15</span>
+          </div>
+          <div class="card-style">Japanese Minimalism</div>
+          <div class="card-desc">Washi paper, Ma concept, gold accents</div>
+        </div>
+      </a>
+
+      <!-- v16 -->
+      <a href="v_16.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_16.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v16</span>
+          </div>
+          <div class="card-style">Gen Z / Playful SaaS</div>
+          <div class="card-desc">Pastel blobs, bouncy buttons, sticker row</div>
+        </div>
+      </a>
+
+      <!-- v17 -->
+      <a href="v_17.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_17.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v17</span>
+          </div>
+          <div class="card-style">Luxury Fashion House</div>
+          <div class="card-desc">Gold rules, envelope art, invitation form</div>
+        </div>
+      </a>
+
+      <!-- v18 -->
+      <a href="v_18.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_18.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v18</span>
+          </div>
+          <div class="card-style">Modern SaaS</div>
+          <div class="card-desc">Clean blue, browser mockup, pricing cards</div>
+        </div>
+      </a>
+
+      <!-- v19 -->
+      <a href="v_19.html" target="_blank" class="version-card">
+        <div class="card-preview">
+          <iframe src="v_19.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v19</span>
+          </div>
+          <div class="card-style">Wellness / Calm</div>
+          <div class="card-desc">Sage green, breathing animation, journal cards</div>
+        </div>
+      </a>
+
+    </div><!-- /phase-grid -->
+  </section>
+
+
+  <!-- ═══════════════════════════════════
+       PHASE 3 — REFINEMENT (v20–v25)
+  ═══════════════════════════════════ -->
+  <section class="phase" id="refinement">
+    <div class="phase-header">
+      <div class="phase-label">
+        <div class="phase-num">Phase 03</div>
+        <div class="phase-title">Refinement</div>
+      </div>
+      <div class="phase-meta">v20 – v25 &nbsp;·&nbsp; 6 iterations<br>Polishing the chosen direction</div>
+    </div>
+    <p class="phase-desc">
+      From these five directions, v19 emerged as the strongest — sage green,
+      warm typography, and a wellness tone that felt true to what Slowmail
+      actually is. Six consecutive iterations
+      refine the architecture, content hierarchy, social proof, product mockup, typography,
+      and narrative flow — converging toward a single, launch-ready design.
+    </p>
+
+    <div class="phase-grid">
+
+      <!-- v20 -->
+      <a href="v_20.html" target="_blank" class="version-card is-refinement">
+        <div class="card-preview">
+          <iframe src="v_20.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v20</span>
+          </div>
+          <div class="card-style">Convergence Begins</div>
+          <div class="card-desc">v19 palette, restructured content, breathing rings in hero background</div>
+        </div>
+      </a>
+
+      <!-- v21 -->
+      <a href="v_21.html" target="_blank" class="version-card is-refinement">
+        <div class="card-preview">
+          <iframe src="v_21.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v21</span>
+          </div>
+          <div class="card-style">Social Proof Added</div>
+          <div class="card-desc">Logo bar + stats + customer stories replacing green stat band</div>
+        </div>
+      </a>
+
+      <!-- v22 -->
+      <a href="v_22.html" target="_blank" class="version-card is-refinement">
+        <div class="card-preview">
+          <iframe src="v_22.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v22</span>
+          </div>
+          <div class="card-style">Mockup Deepened</div>
+          <div class="card-desc">Feature-to-mockup numbering system, 4th email row, color-coded legend</div>
+        </div>
+      </a>
+
+      <!-- v23 -->
+      <a href="v_23.html" target="_blank" class="version-card is-refinement">
+        <div class="card-preview">
+          <iframe src="v_23.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v23</span>
+          </div>
+          <div class="card-style">Polish Pass 1</div>
+          <div class="card-desc">Stat band eyebrow, journal overlap transition, ruled lines more visible</div>
+        </div>
+      </a>
+
+      <!-- v24 -->
+      <a href="v_24.html" target="_blank" class="version-card is-refinement">
+        <div class="card-preview">
+          <iframe src="v_24.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v24</span>
+          </div>
+          <div class="card-style">Polish Pass 2</div>
+          <div class="card-desc">Typography consistency, section overlaps, simplified footer</div>
+        </div>
+      </a>
+
+      <!-- v25 — FINAL -->
+      <a href="v_25.html" target="_blank" class="version-card is-refinement is-final">
+        <div class="card-preview">
+          <iframe src="v_25.html" scrolling="no" tabindex="-1"></iframe>
+        </div>
+        <div class="card-info">
+          <div class="card-top-row">
+            <span class="card-vnum">v25</span>
+            <span class="badge-final">Final ✓</span>
+          </div>
+          <div class="card-style">Complete</div>
+          <div class="card-desc">"How it works" 3-step section, FAQ accordion, full polish complete</div>
+        </div>
+      </a>
+
+    </div><!-- /phase-grid -->
+  </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo-leaf" style="width:24px;height:24px;font-size:0.75rem;">🌿</div>
+      <span class="logo-name" style="font-family:Georgia,serif;font-size:0.88rem;">Slowmail</span>
+    </div>
+    <div class="footer-note">
+      25 iterations &nbsp;·&nbsp; Pure HTML &amp; CSS &nbsp;·&nbsp; No JavaScript &nbsp;·&nbsp;
+      Made with <span class="footer-love">🌿</span> and a lot of patience
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
